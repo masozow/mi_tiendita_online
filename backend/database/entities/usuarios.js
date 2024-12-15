@@ -1,20 +1,41 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
+import { encription } from "../../utilities/encrypt.js";
 
-async function insertar(nombreMarca, idEstado) {
+async function insertar(
+  correo,
+  nombre,
+  password,
+  telefono,
+  fechaNacimiento,
+  idEstado,
+  idRol
+) {
   try {
+    const hashedPassword = await encription.hashedPassword(password);
+
     const resultado = await sequelize.query(
       `
-      DECLARE @output_message nvarchar(255)
-      EXEC sp_insertarMarca @nombre= :nombre, 
-                            @idEstado= :idEst, 
-                            @message=@output_message OUTPUT
-      SELECT @output_message AS mensaje;
-      `,
+        DECLARE @output_message nvarchar(255)
+        EXEC sp_insertarUsuario @email= :correo,
+                                @nombre= :nombre, 
+                                @password= :hashedPassword, 
+                                @telefono= :telefono,
+                                @fechaNacimiento= :fechaNacimiento,
+                                @idEstado= :idEstado,
+                                @idRol= :idRol,
+                                @message=@output_message OUTPUT
+        SELECT @output_message AS mensaje;
+        `,
       {
         replacements: {
-          nombre: nombreMarca,
-          idEst: idEstado,
+          correo,
+          nombre,
+          hashedPassword,
+          telefono,
+          fechaNacimiento,
+          idEstado,
+          idRol,
         },
         type: QueryTypes.SELECT,
       }
@@ -31,25 +52,43 @@ async function insertar(nombreMarca, idEstado) {
 }
 
 async function actualizar({
-  idMarca,
-  nombreMarca = null,
+  idUsuario,
+  correo = null,
+  nombre = null,
+  password = null,
+  telefono = null,
+  fechaNacimiento = null,
   idEstado = null,
+  idRol = null,
 } = {}) {
   try {
+    const hashedPassword = password
+      ? await encription.hashedPassword(password)
+      : null;
     const resultado = await sequelize.query(
       `
         DECLARE @output_message nvarchar(255)
-        EXEC sp_actualizarMarca @id= :id,
-                                @nombre= :nombre, 
-                                @idEstado= :idEst, 
-                                @message=@output_message OUTPUT
+        EXEC sp_actualizarUsuario   @id= :idUsuario,
+                                    @email= :correo,
+                                    @nombre= :nombre,
+                                    @password= :pass,
+                                    @telefono= :telefono,
+                                    @fechaNacimiento= :fechaNacimiento,
+                                    @idRol= :idRol, 
+                                    @idEstado= :idEstado, 
+                                    @message=@output_message OUTPUT
         SELECT @output_message AS mensaje;
         `,
       {
         replacements: {
-          id: idMarca,
-          nombre: nombreMarca,
-          idEst: idEstado,
+          idUsuario,
+          correo,
+          nombre,
+          pass: hashedPassword,
+          telefono,
+          fechaNacimiento,
+          idRol,
+          idEstado,
         },
         type: QueryTypes.SELECT,
       }
@@ -82,5 +121,5 @@ async function obtenerTodo(idEstado = 1) {
     console.error("Error al consultar la vista:", err);
   }
 }
-const marcas = { insertar, actualizar, obtenerTodo };
-export { marcas };
+const usuarios = { insertar, actualizar, obtenerTodo };
+export { usuarios };
