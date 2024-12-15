@@ -1,4 +1,4 @@
-// import { obtenerTodosProductos,obtenerTodosProductosActivosStockMayorCero } from './entities/productos.js';
+import { productos } from "./entities/productos.js";
 // import {insertarEstado,actualizarEstado, obtenerTodosEstados} from './entities/estados.js';
 // import {obtenerTodosRoles}from './entities/roles.js';
 // import { insertarProducto, actualizarProducto } from "./entities/productos.js";
@@ -7,7 +7,7 @@ import { categorias } from "./entities/categorias_productos.js";
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();
-    // const resultado = await obtenerTodosProductos();
+    const resultado = await productos.obtenerTodoPorID(3);
     // const resultado = await insertarEstado('Prueba');
     // const resultado = await actualizarEstado(1,'Activo');
     // const resultado = await obtenerTodosEstados();

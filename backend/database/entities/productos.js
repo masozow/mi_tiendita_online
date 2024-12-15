@@ -136,17 +136,33 @@ async function obtenerTodosProductosActivosStockMayorCero() {
         type: QueryTypes.SELECT,
       }
     );
-    console.log("Datos obtenidos de la vista:", datos);
     return datos;
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
 }
 
+async function obtenerTodoPorID(ID) {
+  try {
+    const datos = await sequelize.query(
+      "SELECT * FROM vw_Total_productos_activos_stock_mayor_cero WHERE ID= :ID",
+      {
+        replacements: {
+          ID,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    console.error("Error al consultar la vista:", err);
+  }
+}
 const productos = {
   insertar,
   actualizar,
   obtenerTodo,
+  obtenerTodoPorID,
   obtenerTodosProductosActivosStockMayorCero,
 };
 export { productos };
