@@ -1,18 +1,16 @@
 import { QueryTypes } from 'sequelize';
-import sequelize from '../config/sequelize.js'; // Importa la conexión
+import sequelize from '../config/sequelize.js'; 
 
-// Función para obtener productos
 async function obtenerTodosProductos() {
   try {
-    const usuarios = await sequelize.query('EXEC sp_obtenerTodosProductos', {
+    const productos = await sequelize.query('EXEC sp_obtenerTodosProductos', {
       type: QueryTypes.SELECT,
     });
-    return usuarios;
+    return productos;
   } catch (err) {
     console.error('Error al ejecutar el procedimiento:', err);
-    throw err; // Lanza el error para que el llamador pueda manejarlo
+    throw err; 
   } finally {
-    // Cerrar la conexión después de la consulta
     await sequelize.close();
     console.log('Conexión cerrada.');
   }
