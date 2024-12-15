@@ -1,7 +1,7 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
 
-async function insertarMarca(nombreMarca, idEstado) {
+async function insertar(nombreMarca, idEstado) {
   try {
     const resultado = await sequelize.query(
       `
@@ -30,7 +30,7 @@ async function insertarMarca(nombreMarca, idEstado) {
   }
 }
 
-async function actualizarMarca({
+async function actualizar({
   idMarca,
   nombreMarca = null,
   idEstado = null,
@@ -65,7 +65,7 @@ async function actualizarMarca({
   }
 }
 
-async function obtenerTodasMarcas(idEstado = 1) {
+async function obtenerTodo(idEstado = 1) {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_ObtenerTodasMarcas WHERE Estado_idEstado= :idEstado",
@@ -82,5 +82,5 @@ async function obtenerTodasMarcas(idEstado = 1) {
     console.error("Error al consultar la vista:", err);
   }
 }
-
-export { insertarMarca, actualizarMarca, obtenerTodasMarcas };
+const marcas = { insertar, actualizar, obtenerTodo };
+export { marcas };

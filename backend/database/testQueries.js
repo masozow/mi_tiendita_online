@@ -2,12 +2,8 @@
 // import {insertarEstado,actualizarEstado, obtenerTodosEstados} from './entities/estados.js';
 // import {obtenerTodosRoles}from './entities/roles.js';
 // import { insertarProducto, actualizarProducto } from "./entities/productos.js";
-import {
-  insertarMarca,
-  actualizarMarca,
-  obtenerTodasMarcas,
-} from "./entities/marcas_productos.js";
-
+// import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./entities/marcas_productos.js";
+import { categorias } from "./entities/categorias_productos.js";
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();
@@ -26,7 +22,14 @@ async function main() {
     //   idMarca: 28,
     //   nombreMarca: "Maggi",
     // });
-    const resultado = await obtenerTodasMarcas();
+    // const resultado = await obtenerTodasMarcas();
+    // const resultado = await cateogrias.insertar("Abarrotes", 1);
+    // const resultado = await categorias.actualizar({
+    //   id: 11,
+    //   nombre: "Abarrotes",
+    //   idEstado: 2,
+    // });
+    // const resultado = await categorias.obtenerTodo(2);
     console.log("Resultado query:", resultado);
   } catch (err) {
     console.error("Error en la operación:", err);
