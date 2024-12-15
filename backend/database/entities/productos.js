@@ -1,7 +1,7 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
 
-async function insertarProducto(
+async function insertar(
   codigoProducto,
   nombreProducto,
   stockProducto,
@@ -54,7 +54,7 @@ async function insertarProducto(
   }
 }
 
-async function actualizarProducto({
+async function actualizar({
   idProducto,
   codigoProducto = null,
   nombreProducto = null,
@@ -113,7 +113,7 @@ async function actualizarProducto({
   }
 }
 
-async function obtenerTodosProductos() {
+async function obtenerTodo() {
   try {
     const productos = await sequelize.query("EXEC sp_obtenerTodosProductos", {
       type: QueryTypes.SELECT,
@@ -143,9 +143,10 @@ async function obtenerTodosProductosActivosStockMayorCero() {
   }
 }
 
-export {
-  obtenerTodosProductos,
+const productos = {
+  insertar,
+  actualizar,
+  obtenerTodo,
   obtenerTodosProductosActivosStockMayorCero,
-  insertarProducto,
-  actualizarProducto,
 };
+export { productos };
