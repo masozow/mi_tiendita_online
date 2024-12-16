@@ -6,8 +6,7 @@
 // import { categorias } from "./entities/categorias_productos.js";
 // import { usuarios } from "./entities/usuarios.js";
 // import { clientes } from "./entities/clientes.js";
-// import { operadores } from "./entities/operadores.js";
-import { ordenes } from "./entities/ordenes.js";
+import { operadores } from "./entities/operadores.js";
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();

@@ -1,32 +1,34 @@
-import dotenv from "dotenv";
-import { Sequelize } from "sequelize";
+import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
+import tedious from 'tedious';
 
 dotenv.config();
 const sequelize = new Sequelize({
-  dialect: "mssql",
+  dialect: 'mssql',
   host: process.env.DB_SERVER, // Dirección del servidor
-  port: 1433, // Cambia el puerto si no es el predeterminado
+  port: 1433,                  // Cambia el puerto si no es el predeterminado
   database: process.env.DB_DATABASE, // Nombre de la base de datos
-  username: process.env.DB_USER, // Usuario de la base de datos
+  username: process.env.DB_USER,     // Usuario de la base de datos
   password: process.env.DB_PASSWORD, // Contraseña del usuario
   dialectOptions: {
     options: {
-      encrypt: false,
-      trustServerCertificate: true,
+      encrypt: false,               // Cambia a true si usas SSL
+      trustServerCertificate: true, // Cambia a true para entornos locales
     },
   },
 });
 
 async function testConnection() {
-  try {
-    await sequelize.authenticate();
-    console.log("Conexión exitosa con la base de datos.");
-  } catch (error) {
-    console.error("Error al conectar con la base de datos:", error);
-  }
+    try {
+        await sequelize.authenticate();
+        console.log('Conexión exitosa con la base de datos.');
+    } catch (error) {
+        console.error('Error al conectar con la base de datos:', error);
+    }
 }
 
 testConnection();
+
 
 // const sequelize = new Sequelize({
 //     dialect: MsSqlDialect,
@@ -49,10 +51,10 @@ testConnection();
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Conexión establecida correctamente.");
+    console.log('Conexión establecida correctamente.');
   })
   .catch((error) => {
-    console.error("No se pudo conectar a la base de datos: \n", error);
+    console.error('No se pudo conectar a la base de datos: \n', error);
   });
 
 export default sequelize;
