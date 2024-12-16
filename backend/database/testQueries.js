@@ -6,7 +6,9 @@
 // import { categorias } from "./entities/categorias_productos.js";
 // import { usuarios } from "./entities/usuarios.js";
 // import { clientes } from "./entities/clientes.js";
-import { operadores } from "./entities/operadores.js";
+// import { operadores } from "./entities/operadores.js";
+import { ordenes } from "./entities/ordenes.js";
+
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();
@@ -84,8 +86,14 @@ async function main() {
     //     { cantidad: 3.0, precio: 70.0, subtotal: 210.0, idProducto: 21 },
     //   ])
     // );
-    const resultado = "probando los archivos después de moverlos";
-    console.log("Resultado query:", resultado);
+    // const resultado = ordenes.actualizar({
+    //   idOrden: 9,
+    //   direccion: "5 avenida 3-45 zona 12, Guatemala, Guatemala",
+    // });
+    // const resultado = await ordenes.obtenerTodo();
+    // const resultado = await ordenes.obtenerOrdenPorID(9);
+    const resultado = await ordenes.obtenerDetallePorID(9);
+    console.log("Resultado query: \n", resultado);
   } catch (err) {
     console.error("Error en la operación:", err);
   }
