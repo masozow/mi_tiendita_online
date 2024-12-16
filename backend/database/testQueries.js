@@ -6,7 +6,8 @@
 // import { categorias } from "./entities/categorias_productos.js";
 // import { usuarios } from "./entities/usuarios.js";
 // import { clientes } from "./entities/clientes.js";
-import { operadores } from "./entities/operadores.js";
+// import { operadores } from "./entities/operadores.js";
+import { ordenes } from "./entities/ordenes.js";
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();
@@ -66,7 +67,24 @@ async function main() {
     //   idUsuario: 14,
     // });
     // const resultado = await operadores.obtenerTodo();
-    const resultado = await operadores.obtenerTodoPorID(8);
+    // const resultado = await operadores.obtenerTodoPorID(8);
+    const resultado = await ordenes.insertar(
+      "Maria Gómez",
+      "5 avenida 3-45 zona 1, Guatemala, Guatemala",
+      "584930128",
+      "maria.gomez@example.com",
+      "2024-12-21",
+      20310.0,
+      3,
+      2,
+      5,
+      JSON.stringify([
+        { cantidad: 3.0, precio: 700.0, subtotal: 2100.0, idProducto: 14 },
+        { cantidad: 1.0, precio: 6000.0, subtotal: 6000.0, idProducto: 2 },
+        { cantidad: 5.0, precio: 2400.0, subtotal: 12000.0, idProducto: 12 },
+        { cantidad: 3.0, precio: 70.0, subtotal: 210.0, idProducto: 21 },
+      ])
+    );
     console.log("Resultado query:", resultado);
   } catch (err) {
     console.error("Error en la operación:", err);
