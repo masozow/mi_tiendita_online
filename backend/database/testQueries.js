@@ -4,8 +4,8 @@
 // import { insertarProducto, actualizarProducto } from "./entities/productos.js";
 // import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./entities/marcas_productos.js";
 // import { categorias } from "./entities/categorias_productos.js";
-
-import { usuarios } from "./entities/usuarios.js";
+// import { usuarios } from "./entities/usuarios.js";
+import { clientes } from "./entities/clientes.js";
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();
@@ -41,13 +41,24 @@ async function main() {
     //   1,
     //   2
     // );
-    const resultado = await usuarios.actualizar({
-      idUsuario: 14,
-      password: "MyPassword123",
-      // $2b$10$gCtOuMWc1.2J.GF.qLXjNurRP9vuiGD.W4ATmBk9nvcXPEzG2ijpO
-      // $2b$10$3Tu2a.zs/o5MebErPd.r..hT95yrbfY4QzYXr7qzSuZiNlKKMNNTK
-      //$2b$10$b8dfQS7hrkaoezK80SIIR.OzYct59fFHivdGU7iYUww8qnh9cghXu
-    });
+
+    // const resultado = await usuarios.actualizar({
+    //   idUsuario: 14,
+    //   password: "MyPassword123",
+    // });
+    // const resultado = await clientes.insertar(
+    //   "Jhon Smith",
+    //   "Jhon Smith",
+    //   "Calle 123",
+    //   14,
+    //   1
+    // );
+    // const resultado = await clientes.actualizar({
+    //   idCliente: 7,
+    //   nombre: "John Smith",
+    // });
+    // const resultado = await clientes.obtenerTodo();
+    const resultado = await clientes.obtenerTodoPorID(7);
     console.log("Resultado query:", resultado);
   } catch (err) {
     console.error("Error en la operación:", err);
