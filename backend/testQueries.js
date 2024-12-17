@@ -1,13 +1,12 @@
-// import { productos } from "./controllers/productos.js";
-// import {insertarEstado,actualizarEstado, obtenerTodosEstados} from './controllers/estados.js';
-// import {obtenerTodosRoles}from './controllers/roles.js';
-// import { insertarProducto, actualizarProducto } from "./controllers/productos.js";
-// import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./controllers/marcas_productos.js";
-// import { categorias } from "./controllers/categorias_productos.js";
-// import { usuarios } from "./controllers/usuarios.js";
-// import { clientes } from "./controllers/clientes.js";
-// import { operadores } from "./controllers/operadores.js";
-import { ordenes } from "./controllers/ordenes.js";
+import { productos } from "./models/productos.model.js";
+// import {insertarEstado,actualizarEstado, obtenerTodosEstados} from './models/estados.model.js';
+// import {obtenerTodosRoles}from './models/roles.model.js';
+// import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./models/marcas_productos.model.js";
+// import { categorias } from "./models/categorias_productos.model.js";
+// import { usuarios } from "./models/usuarios.model.js";
+// import { clientes } from "./models/clientes.model.js";
+// import { operadores } from "./models/operadores.model.js";
+import { ordenes } from "./models/ordenes.model.js";
 
 async function main() {
   try {

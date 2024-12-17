@@ -1,7 +1,7 @@
 import { QueryTypes } from "sequelize";
-import sequelize from "./config/sequelize.js";
+import sequelize from "../config/sequelize.js";
 
-async function insertar(
+const insertar = async ({
   codigoProducto,
   nombreProducto,
   stockProducto,
@@ -10,8 +10,8 @@ async function insertar(
   fotoProducto = "",
   idCategoria,
   idEstado,
-  idMarca
-) {
+  idMarca,
+} = {}) => {
   try {
     const resultado = await sequelize.query(
       `
@@ -48,13 +48,10 @@ async function insertar(
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
-}
+};
 
-async function actualizar({
+const actualizar = async ({
   idProducto,
   codigoProducto = null,
   nombreProducto = null,
@@ -65,7 +62,7 @@ async function actualizar({
   idCategoria = null,
   idEstado = null,
   idMarca = null,
-} = {}) {
+} = {}) => {
   try {
     if (!idProducto) {
       throw new Error("El id es obligatorio.");
@@ -107,13 +104,10 @@ async function actualizar({
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
-}
+};
 
-async function obtenerTodo() {
+const obtenerTodo = async () => {
   try {
     const productos = await sequelize.query("EXEC sp_obtenerTodosProductos", {
       type: QueryTypes.SELECT,
@@ -122,13 +116,10 @@ async function obtenerTodo() {
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
-}
+};
 
-async function obtenerTodosProductosActivosStockMayorCero() {
+const obtenerTodosProductosActivosStockMayorCero = async () => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_Total_productos_activos_stock_mayor_cero",
@@ -140,9 +131,9 @@ async function obtenerTodosProductosActivosStockMayorCero() {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
 
-async function obtenerTodoPorID(ID) {
+const obtenerTodoPorID = async (ID) => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_Total_productos_activos_stock_mayor_cero WHERE ID= :ID",
@@ -157,7 +148,8 @@ async function obtenerTodoPorID(ID) {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
+
 const productos = {
   insertar,
   actualizar,
@@ -165,4 +157,5 @@ const productos = {
   obtenerTodoPorID,
   obtenerTodosProductosActivosStockMayorCero,
 };
+
 export { productos };

@@ -1,18 +1,24 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "./config/sequelize.js";
 
-async function insertar(idUsuario, idEstado) {
+async function insertar(razonSocial, nombre, direccion, idUsuario, idEstado) {
   try {
     const resultado = await sequelize.query(
       `
         DECLARE @output_message nvarchar(255)
-        EXEC sp_insertarOperador      @idUsuario= :idUsuario, 
+        EXEC sp_insertarCliente      @razonSocial= :razonSocial, 
+                                      @nombre= :nombre, 
+                                      @direccion= :direccion, 
+                                      @idUsuario= :idUsuario, 
                                       @idEstado= :idEstado, 
                                       @message=@output_message OUTPUT
         SELECT @output_message AS mensaje;
         `,
       {
         replacements: {
+          razonSocial,
+          nombre,
+          direccion,
           idUsuario,
           idEstado,
         },
@@ -24,34 +30,40 @@ async function insertar(idUsuario, idEstado) {
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
 async function actualizar({
-  idOperador,
+  idCliente,
+  razonSocial = null,
+  nombre = null,
+  direccion = null,
   idUsuario = null,
   idEstado = null,
 } = {}) {
   try {
-    if (!idOperador) {
+    if (!idCliente) {
       throw new Error("El id es obligatorio.");
     }
 
     const resultado = await sequelize.query(
       `
-          DECLARE @output_message nvarchar(255)
-          EXEC sp_actualizarOperador    @id= :idOperador,
-                                        @idUsuario= :idUsuario, 
-                                        @idEstado= :idEstado, 
-                                        @message=@output_message OUTPUT
-          SELECT @output_message AS mensaje;
-          `,
+        DECLARE @output_message nvarchar(255)
+        EXEC sp_actualizarCliente   @id= :idCliente,  
+                                    @razonSocial= :razonSocial, 
+                                    @nombre= :nombre, 
+                                    @direccion= :direccion, 
+                                    @idUsuario= :idUsuario, 
+                                    @idEstado= :idEstado, 
+                                    @message=@output_message OUTPUT
+        SELECT @output_message AS mensaje;
+        `,
       {
         replacements: {
-          idOperador,
+          idCliente,
+          razonSocial,
+          nombre,
+          direccion,
           idUsuario,
           idEstado,
         },
@@ -63,16 +75,13 @@ async function actualizar({
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
 async function obtenerTodo() {
   try {
     const productos = await sequelize.query(
-      `SELECT * FROM vw_ObtenerTodosOperadores`,
+      `SELECT * FROM vw_ObtenerTodosClientes`,
       {
         type: QueryTypes.SELECT,
       }
@@ -81,16 +90,13 @@ async function obtenerTodo() {
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
 async function obtenerTodoPorID(ID) {
   try {
     const datos = await sequelize.query(
-      "SELECT * FROM vw_ObtenerTodosOperadores WHERE ID= :ID",
+      "SELECT * FROM vw_ObtenerTodosClientes WHERE ID= :ID",
       {
         replacements: {
           ID,
@@ -104,10 +110,10 @@ async function obtenerTodoPorID(ID) {
   }
 }
 
-const operadores = {
+const clientes = {
   insertar,
   actualizar,
   obtenerTodo,
   obtenerTodoPorID,
 };
-export { operadores };
+export { clientes };

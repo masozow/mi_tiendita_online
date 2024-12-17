@@ -22,9 +22,6 @@ async function insertar(nombreEstado) {
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
@@ -49,9 +46,6 @@ async function actualizar(idEstado, nombreEstado) {
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
