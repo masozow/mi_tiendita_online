@@ -1,6 +1,25 @@
+/**
+ * @module models/productos.model
+ * @description Modelo de Productos
+ */
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
 
+/**
+ * Inserta un nuevo producto.
+ *
+ * @param {Object} datos Objeto con los datos del producto a insertar.
+ * @param {string} datos.codigoProducto Código del producto.
+ * @param {string} datos.nombreProducto Nombre del producto.
+ * @param {number} datos.stockProducto Stock del producto.
+ * @param {number} datos.costoProducto Costo del producto.
+ * @param {number} datos.precioProducto Precio del producto.
+ * @param {string} [datos.fotoProducto=""] Foto del producto.
+ * @param {number} datos.idCategoria ID de la categoría del producto.
+ * @param {number} datos.idEstado ID del estado del producto.
+ * @param {number} datos.idMarca ID de la marca del producto.
+ * @returns {Promise<string>} Mensaje de resultado de la operación.
+ */
 const insertar = async ({
   codigoProducto,
   nombreProducto,
@@ -51,6 +70,21 @@ const insertar = async ({
   }
 };
 
+/**
+ * Actualiza un producto en la base de datos.
+ *
+ * @param {number} idProducto ID del producto a actualizar.
+ * @param {string} [codigoProducto] Código del producto.
+ * @param {string} [nombreProducto] Nombre del producto.
+ * @param {number} [stockProducto] Stock del producto.
+ * @param {number} [costoProducto] Costo del producto.
+ * @param {number} [precioProducto] Precio del producto.
+ * @param {string} [fotoProducto] Foto del producto.
+ * @param {number} [idCategoria] ID de la categoría del producto.
+ * @param {number} [idEstado] ID del estado del producto.
+ * @param {number} [idMarca] ID de la marca del producto.
+ * @returns {Promise<string>} Mensaje de resultado de la operación.
+ */
 const actualizar = async ({
   idProducto,
   codigoProducto = null,
@@ -107,6 +141,13 @@ const actualizar = async ({
   }
 };
 
+/**
+ * Obtiene todos los productos de la base de datos.
+ *
+ * @returns {Promise<Array<any>>} Un array de objetos con los datos de los productos.
+ * @throws {Error} Si ocurre un error al ejecutar el procedimiento.
+ */
+
 const obtenerTodo = async () => {
   try {
     const productos = await sequelize.query("EXEC sp_obtenerTodosProductos", {
@@ -119,6 +160,12 @@ const obtenerTodo = async () => {
   }
 };
 
+/**
+ * Obtiene todos los productos con stock mayor a cero y estatus activo.
+ *
+ * @returns {Promise<Array<any>>} Un array de objetos con los datos de los productos.
+ * @throws {Error} Si ocurre un error al ejecutar el procedimiento.
+ */
 const obtenerTodosProductosActivosStockMayorCero = async () => {
   try {
     const datos = await sequelize.query(
@@ -132,6 +179,14 @@ const obtenerTodosProductosActivosStockMayorCero = async () => {
     console.error("Error al consultar la vista:", err);
   }
 };
+
+/**
+ * Obtiene todos los datos de un producto por su ID.
+ *
+ * @param {number} ID ID del producto a obtener.
+ * @returns {Promise<Array<any>>} Un array de objetos con los datos del producto.
+ * @throws {Error} Si ocurre un error al ejecutar el procedimiento.
+ */
 
 const obtenerTodoPorID = async (ID) => {
   try {

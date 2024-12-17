@@ -1,6 +1,7 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
-async function insertar(
+
+const insertar = async (
   nombre,
   direccion,
   telefono,
@@ -11,7 +12,7 @@ async function insertar(
   idCliente,
   idOperador,
   detalle
-) {
+) => {
   try {
     const resultado = await sequelize.query(
       `
@@ -51,8 +52,9 @@ async function insertar(
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
-async function actualizar({
+};
+
+const actualizar = async ({
   idOrden,
   nombre = null,
   direccion = null,
@@ -63,7 +65,7 @@ async function actualizar({
   idEstado = null,
   idCliente = null,
   idOperador = null,
-} = {}) {
+} = {}) => {
   try {
     if (!idOrden) {
       throw new Error("El id es obligatorio.");
@@ -106,8 +108,9 @@ async function actualizar({
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
-async function obtenerTodo() {
+};
+
+const obtenerTodo = async () => {
   try {
     const productos = await sequelize.query(
       `SELECT * FROM vw_ObtenerTodasOrdenes`,
@@ -120,8 +123,9 @@ async function obtenerTodo() {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
-async function obtenerOrdenPorID(ID) {
+};
+
+const obtenerOrdenPorID = async (ID) => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_ObtenerTodasOrdenes WHERE idOrden= :ID",
@@ -136,9 +140,9 @@ async function obtenerOrdenPorID(ID) {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
 
-async function obtenerDetallePorID(ID) {
+const obtenerDetallePorID = async (ID) => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_ObtenerTodoOrdenDetalle WHERE Orden_idOrden= :ID",
@@ -153,7 +157,7 @@ async function obtenerDetallePorID(ID) {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
 
 const ordenes = {
   insertar,

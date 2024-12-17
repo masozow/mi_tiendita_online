@@ -1,7 +1,7 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "./config/sequelize.js";
 
-async function insertar(idUsuario, idEstado) {
+const insertar = async (idUsuario, idEstado) => {
   try {
     const resultado = await sequelize.query(
       `
@@ -25,13 +25,13 @@ async function insertar(idUsuario, idEstado) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function actualizar({
+const actualizar = async ({
   idOperador,
   idUsuario = null,
   idEstado = null,
-} = {}) {
+} = {}) => {
   try {
     if (!idOperador) {
       throw new Error("El id es obligatorio.");
@@ -61,9 +61,9 @@ async function actualizar({
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function obtenerTodo() {
+const obtenerTodo = async () => {
   try {
     const productos = await sequelize.query(
       `SELECT * FROM vw_ObtenerTodosOperadores`,
@@ -76,9 +76,9 @@ async function obtenerTodo() {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function obtenerTodoPorID(ID) {
+const obtenerTodoPorID = async (ID) => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_ObtenerTodosOperadores WHERE ID= :ID",
@@ -93,7 +93,7 @@ async function obtenerTodoPorID(ID) {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
 
 const operadores = {
   insertar,

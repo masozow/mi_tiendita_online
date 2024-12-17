@@ -1,7 +1,17 @@
-import { QueryTypes } from "sequelize";
-import sequelize from "./config/sequelize.js";
+/**
+ * @module models/categorias_productos.model
+ * @description Modelo de categorias de productos.
+ * Importa QueryTypes de Sequelize y la configuración de Sequelize de la base de datos.
+ */
 
-async function insertar(nombreCategoria, idEstado = 1) {
+/**
+ * Inserta una nueva categoría de productos.
+ *
+ * @param {string} nombreCategoria Nombre de la categoría.
+ * @param {number} [idEstado=1] ID del estado de la categoría.
+ * @returns {Promise<string>} Mensaje de resultado de la operación.
+ */
+const insertar = async (nombreCategoria, idEstado = 1) => {
   try {
     const resultado = await sequelize.query(
       `
@@ -25,9 +35,18 @@ async function insertar(nombreCategoria, idEstado = 1) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function actualizar({ id, nombre = null, idEstado = null } = {}) {
+/**
+ * Actualiza una categoría de productos.
+ *
+ * @param {Object} datos Objeto con los datos de la categoría a actualizar.
+ * @param {number} datos.id ID de la categoría a actualizar.
+ * @param {string} [datos.nombre] Nuevo nombre de la categoría.
+ * @param {number} [datos.idEstado] Nuevo ID del estado de la categoría.
+ * @returns {Promise<string>} Mensaje de resultado de la operación.
+ */
+const actualizar = async ({ id, nombre = null, idEstado = null } = {}) => {
   try {
     const resultado = await sequelize.query(
       `
@@ -53,9 +72,15 @@ async function actualizar({ id, nombre = null, idEstado = null } = {}) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function obtenerTodo(idEstado = 1) {
+/**
+ * Obtiene todas las categorías de productos.
+ *
+ * @param {number} [idEstado=1] ID del estado de las categorías a obtener.
+ * @returns {Promise<Object[]>} Array de objetos con los datos de las categorías.
+ */
+const obtenerTodo = async (idEstado = 1) => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_ObtenerTodasCategorias WHERE ESTADO= :idEstado",
@@ -71,11 +96,19 @@ async function obtenerTodo(idEstado = 1) {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
+
+/**
+ * Objeto que contiene los metodos para interactuar con la tabla de categorías de productos.
+ *
+ * @property {function} insertar Inserta una nueva categoría de productos.
+ * @property {function} actualizar Actualiza una categoría de productos.
+ * @property {function} obtenerTodo Obtiene todas las categorías de productos.
+ */
 const categorias = {
   insertar,
   actualizar,
   obtenerTodo,
 };
+
 export { categorias };
-// , obtenerTodasCategorias

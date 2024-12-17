@@ -1,7 +1,7 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "./config/sequelize.js";
 
-async function insertar(nombreEstado) {
+const insertar = async (nombreEstado) => {
   try {
     const resultado = await sequelize.query(
       `
@@ -23,9 +23,9 @@ async function insertar(nombreEstado) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function actualizar(idEstado, nombreEstado) {
+const actualizar = async (idEstado, nombreEstado) => {
   try {
     const resultado = await sequelize.query(
       `
@@ -47,9 +47,9 @@ async function actualizar(idEstado, nombreEstado) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function obtenerTodo() {
+const obtenerTodo = async () => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_obtenerTodosEstados",
@@ -61,6 +61,6 @@ async function obtenerTodo() {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
 const estados = { insertar, actualizar, obtenerTodo };
 export { estados };

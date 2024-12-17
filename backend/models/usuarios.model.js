@@ -2,7 +2,7 @@ import { QueryTypes } from "sequelize";
 import sequelize from "./config/sequelize.js";
 import { encription } from "../utilities/encrypt.js";
 
-async function insertar(
+const insertar = async (
   correo,
   nombre,
   password,
@@ -10,7 +10,7 @@ async function insertar(
   fechaNacimiento,
   idEstado,
   idRol
-) {
+) => {
   try {
     const hashedPassword = await encription.hashedPassword(password);
 
@@ -46,9 +46,9 @@ async function insertar(
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function actualizar({
+const actualizar = async ({
   idUsuario,
   correo = null,
   nombre = null,
@@ -57,7 +57,7 @@ async function actualizar({
   fechaNacimiento = null,
   idEstado = null,
   idRol = null,
-} = {}) {
+} = {}) => {
   try {
     const hashedPassword = password
       ? await encription.hashedPassword(password)
@@ -96,9 +96,9 @@ async function actualizar({
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function obtenerTodo(idEstado = 1) {
+const obtenerTodo = async (idEstado = 1) => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_ObtenerTodasMarcas WHERE Estado_idEstado= :idEstado",
@@ -114,6 +114,6 @@ async function obtenerTodo(idEstado = 1) {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
 const usuarios = { insertar, actualizar, obtenerTodo };
 export { usuarios };

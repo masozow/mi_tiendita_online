@@ -1,8 +1,14 @@
+/**
+ * @file controllers/productos.controller.js
+ * @module controllers/productos.controller
+ * @description Controlador de productos
+ * @namespace productosController
+ */
 import { productos } from "../models/productos.model.js";
 
 const get = async (req, res) => {
   try {
-    const Productos = await productos.obtenerTodo();
+    const Productos = await productos.obtenerTodosProductosActivosStockMayorCero();
     res.status(200).json({ success: true, data: Productos });
   } catch (error) {
     console.log("Error obteniendo los productos:", error.message);
@@ -49,23 +55,18 @@ const create = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  //idProducto
   const { id } = req.params;
 
-  const product = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res
-      .status(404)
-      .json({ success: false, message: "Invalid Product Id" });
-  }
-
+  const productoBody = req.body;
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(id, product, {
-      new: true,
+    const resultado = await productos.actualizar({
+      idProducto: id,
+      ...productoBody,
     });
-    res.status(200).json({ success: true, data: updatedProduct });
+
+    res.status(200).json({ success: true, data: resultado });
   } catch (error) {
+    console.error("Error in Update product:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
@@ -73,17 +74,15 @@ const update = async (req, res) => {
 const delete_ = async (req, res) => {
   const { id } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res
-      .status(404)
-      .json({ success: false, message: "Invalid Product Id" });
-  }
-
   try {
-    await Product.findByIdAndDelete(id);
-    res.status(200).json({ success: true, message: "Product deleted" });
+    const resultado = await productos.actualizar({
+      idProducto: id,
+      idEstado: 2,
+    });
+
+    res.status(200).json({ success: true, data: resultado });
   } catch (error) {
-    console.log("error in deleting product:", error.message);
+    console.error("Error in Delete product:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
