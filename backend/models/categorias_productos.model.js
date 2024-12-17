@@ -3,7 +3,8 @@
  * @description Modelo de categorias de productos.
  * Importa QueryTypes de Sequelize y la configuración de Sequelize de la base de datos.
  */
-
+import { QueryTypes } from "sequelize";
+import sequelize from "../config/sequelize.js";
 /**
  * Inserta una nueva categoría de productos.
  *
@@ -91,24 +92,49 @@ const obtenerTodo = async (idEstado = 1) => {
         type: QueryTypes.SELECT,
       }
     );
-    console.log("Datos obtenidos de la vista:", datos);
     return datos;
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
 };
-
+/**
+ * Obtiene una categoría de productos por su ID.
+ *
+ * @param {number} ID ID de la categoría a obtener.
+ * @param {number} [idEstado=1] ID del estado de la categoría a obtener.
+ * @returns {Promise<Object[]>} Array de objetos con los datos de la categoría.
+ */
+const obtenerTodoPorID = async (ID, idEstado = 1) => {
+  try {
+    const datos = await sequelize.query(
+      "SELECT * FROM vw_ObtenerTodasCategorias WHERE ID= :ID AND ESTADO= :idEstado",
+      {
+        replacements: {
+          ID,
+          idEstado,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    console.error("Error al consultar la vista:", err);
+  }
+};
 /**
  * Objeto que contiene los metodos para interactuar con la tabla de categorías de productos.
  *
+ * @typedef {Object} Categorias
  * @property {function} insertar Inserta una nueva categoría de productos.
  * @property {function} actualizar Actualiza una categoría de productos.
  * @property {function} obtenerTodo Obtiene todas las categorías de productos.
+ * @property {function} obtenerTodoPorID Obtiene una categoría de productos por su ID.
  */
 const categorias = {
   insertar,
   actualizar,
   obtenerTodo,
+  obtenerTodoPorID,
 };
 
 export { categorias };

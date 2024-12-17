@@ -204,7 +204,16 @@ const obtenerTodoPorID = async (ID) => {
     console.error("Error al consultar la vista:", err);
   }
 };
-
+/**
+ * Objeto que contiene los metodos para interactuar con la tabla de productos.
+ *
+ * @typedef {Object} Productos
+ * @property {function} insertar Inserta un nuevo producto.
+ * @property {function} actualizar Actualiza un producto.
+ * @property {function} obtenerTodo Obtiene todos los productos.
+ * @property {function} obtenerTodoPorID Obtiene un producto por su ID.
+ * @property {function} obtenerTodosProductosActivosStockMayorCero Obtiene todos los productos con stock mayor a cero y estatus activo.
+ */
 const productos = {
   insertar,
   actualizar,

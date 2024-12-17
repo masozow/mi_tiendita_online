@@ -2,11 +2,11 @@ import { productos } from "./models/productos.model.js";
 // import {insertarEstado,actualizarEstado, obtenerTodosEstados} from './models/estados.model.js';
 // import {obtenerTodosRoles}from './models/roles.model.js';
 // import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./models/marcas_productos.model.js";
-// import { categorias } from "./models/categorias_productos.model.js";
+import { categorias } from "./models/categorias_productos.model.js";
 // import { usuarios } from "./models/usuarios.model.js";
 // import { clientes } from "./models/clientes.model.js";
 // import { operadores } from "./models/operadores.model.js";
-import { ordenes } from "./models/ordenes.model.js";
+// import { ordenes } from "./models/ordenes.model.js";
 
 async function main() {
   try {
@@ -33,7 +33,8 @@ async function main() {
     //   nombre: "Abarrotes",
     //   idEstado: 2,
     // });
-    // const resultado = await categorias.obtenerTodo(2);
+    // const resultado = await categorias.obtenerTodo();
+    // const resultado = await categorias.obtenerTodoPorID(10);
     // const resultado = await usuarios.insertar(
     //   "usuario@example.com",
     //   "Jhon Smith",
@@ -91,7 +92,7 @@ async function main() {
     // });
     // const resultado = await ordenes.obtenerTodo();
     // const resultado = await ordenes.obtenerOrdenPorID(9);
-    const resultado = await ordenes.obtenerDetallePorID(9);
+    // const resultado = await ordenes.obtenerDetallePorID(9);
     console.log("Resultado query: \n", resultado);
   } catch (err) {
     console.error("Error en la operación:", err);
