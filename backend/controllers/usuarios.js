@@ -1,6 +1,6 @@
 import { QueryTypes } from "sequelize";
-import sequelize from "../config/sequelize.js";
-import { encription } from "../../utilities/encrypt.js";
+import sequelize from "./config/sequelize.js";
+import { encription } from "../utilities/encrypt.js";
 
 async function insertar(
   correo,

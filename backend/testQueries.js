@@ -1,13 +1,13 @@
-// import { productos } from "./entities/productos.js";
-// import {insertarEstado,actualizarEstado, obtenerTodosEstados} from './entities/estados.js';
-// import {obtenerTodosRoles}from './entities/roles.js';
-// import { insertarProducto, actualizarProducto } from "./entities/productos.js";
-// import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./entities/marcas_productos.js";
-// import { categorias } from "./entities/categorias_productos.js";
-// import { usuarios } from "./entities/usuarios.js";
-// import { clientes } from "./entities/clientes.js";
-// import { operadores } from "./entities/operadores.js";
-import { ordenes } from "./entities/ordenes.js";
+// import { productos } from "./controllers/productos.js";
+// import {insertarEstado,actualizarEstado, obtenerTodosEstados} from './controllers/estados.js';
+// import {obtenerTodosRoles}from './controllers/roles.js';
+// import { insertarProducto, actualizarProducto } from "./controllers/productos.js";
+// import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./controllers/marcas_productos.js";
+// import { categorias } from "./controllers/categorias_productos.js";
+// import { usuarios } from "./controllers/usuarios.js";
+// import { clientes } from "./controllers/clientes.js";
+// import { operadores } from "./controllers/operadores.js";
+import { ordenes } from "./controllers/ordenes.js";
 
 async function main() {
   try {
