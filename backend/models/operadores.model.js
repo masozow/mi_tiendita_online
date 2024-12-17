@@ -1,5 +1,5 @@
 import { QueryTypes } from "sequelize";
-import sequelize from "./config/sequelize.js";
+import sequelize from "../config/sequelize.js";
 
 const insertar = async (idUsuario, idEstado) => {
   try {

@@ -3,7 +3,7 @@
  * @description Modelo de Clientes
  */
 import { QueryTypes } from "sequelize";
-import sequelize from "./config/sequelize.js";
+import sequelize from "../config/sequelize.js";
 
 /**
  * Inserta un nuevo cliente en la base de datos.
@@ -15,23 +15,23 @@ import sequelize from "./config/sequelize.js";
  * @param {number} idEstado ID del estado en el que se encuentra el cliente.
  * @returns {Promise<string>} Mensaje de resultado de la operación.
  */
-const insertar = async (
+const insertar = async ({
   razonSocial,
   nombre,
   direccion,
   idUsuario,
-  idEstado
-) => {
+  idEstado,
+} = {}) => {
   try {
     const resultado = await sequelize.query(
       `
         DECLARE @output_message nvarchar(255)
-        EXEC sp_insertarCliente      @razonSocial= :razonSocial, 
-                                      @nombre= :nombre, 
-                                      @direccion= :direccion, 
-                                      @idUsuario= :idUsuario, 
-                                      @idEstado= :idEstado, 
-                                      @message=@output_message OUTPUT
+        EXEC sp_insertarCliente @razonSocial= :razonSocial, 
+                                @nombre= :nombre,       
+                                @direccion= :direccion,                                      
+                                @idUsuario= :idUsuario,                                       
+                                @idEstado= :idEstado,                                       
+                                @message=@output_message OUTPUT
         SELECT @output_message AS mensaje;
         `,
       {
@@ -65,7 +65,7 @@ const insertar = async (
  * @returns {Promise<string>} Mensaje de resultado de la operación.
  */
 const actualizar = async ({
-  idCliente,
+  id,
   razonSocial = null,
   nombre = null,
   direccion = null,
@@ -73,7 +73,7 @@ const actualizar = async ({
   idEstado = null,
 }) => {
   try {
-    if (!idCliente) {
+    if (!id) {
       throw new Error("El id es obligatorio.");
     }
 
@@ -91,7 +91,7 @@ const actualizar = async ({
         `,
       {
         replacements: {
-          idCliente,
+          idCliente: id,
           razonSocial,
           nombre,
           direccion,
@@ -117,7 +117,7 @@ const actualizar = async ({
 const obtenerTodo = async () => {
   try {
     const productos = await sequelize.query(
-      `SELECT * FROM vw_ObtenerTodosClientes`,
+      `SELECT * FROM vw_ObtenerTodosClientes WHERE ID_ESTADO = 1`,
       {
         type: QueryTypes.SELECT,
       }
@@ -151,7 +151,15 @@ const obtenerTodoPorID = async (ID) => {
     console.error("Error al consultar la vista:", err);
   }
 };
-
+/**
+ * Objeto que contiene los metodos para interactuar con la tabla de clientes.
+ *
+ * @typedef {Object} Clientes
+ * @property {function} insertar Inserta un nuevo cliente.
+ * @property {function} actualizar Actualiza un cliente.
+ * @property {function} obtenerTodo Obtiene todos los clientes.
+ * @property {function} obtenerTodoPorID Obtiene un cliente por su ID.
+ */
 const clientes = {
   insertar,
   actualizar,
