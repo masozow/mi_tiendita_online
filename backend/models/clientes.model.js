@@ -1,5 +1,5 @@
 import { QueryTypes } from "sequelize";
-import sequelize from "../config/sequelize.js";
+import sequelize from "./config/sequelize.js";
 
 async function insertar(razonSocial, nombre, direccion, idUsuario, idEstado) {
   try {
@@ -30,9 +30,6 @@ async function insertar(razonSocial, nombre, direccion, idUsuario, idEstado) {
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
@@ -78,9 +75,6 @@ async function actualizar({
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
@@ -96,9 +90,6 @@ async function obtenerTodo() {
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 

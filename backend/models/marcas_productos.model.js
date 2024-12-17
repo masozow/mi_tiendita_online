@@ -1,5 +1,5 @@
 import { QueryTypes } from "sequelize";
-import sequelize from "../config/sequelize.js";
+import sequelize from "./config/sequelize.js";
 
 async function insertar(nombreMarca, idEstado) {
   try {
@@ -24,9 +24,6 @@ async function insertar(nombreMarca, idEstado) {
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
@@ -59,9 +56,6 @@ async function actualizar({
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 

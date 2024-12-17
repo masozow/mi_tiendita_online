@@ -1,6 +1,6 @@
 import { QueryTypes } from "sequelize";
-import sequelize from "../config/sequelize.js";
-import { encription } from "../../utilities/encrypt.js";
+import sequelize from "./config/sequelize.js";
+import { encription } from "../utilities/encrypt.js";
 
 async function insertar(
   correo,
@@ -45,9 +45,6 @@ async function insertar(
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
@@ -98,9 +95,6 @@ async function actualizar({
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
-  } finally {
-    await sequelize.close();
-    console.log("Conexión cerrada.");
   }
 }
 
