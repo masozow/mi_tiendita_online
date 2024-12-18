@@ -6,10 +6,10 @@
 // import { usuarios } from "./models/usuarios.model.js";
 // import { clientes } from "./models/clientes.model.js";
 // import { operadores } from "./models/operadores.model.js";
-// import { ordenes } from "./models/ordenes.model.js";
-import { roles } from "./models/roles.model.js";
-import { usuarios } from "./models/usuarios.model.js";
-import { encription } from "./utilities/encrypt.js";
+import { ordenes } from "./models/ordenes.model.js";
+// import { roles } from "./models/roles.model.js";
+// import { usuarios } from "./models/usuarios.model.js";
+// import { encription } from "./utilities/encrypt.js";
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();
@@ -73,23 +73,23 @@ async function main() {
     // });
     // const resultado = await operadores.obtenerTodo();
     // const resultado = await operadores.obtenerTodoPorID(8);
-    // const resultado = await ordenes.insertar(
-    //   "Maria Gómez",
-    //   "5 avenida 3-45 zona 1, Guatemala, Guatemala",
-    //   "584930128",
-    //   "maria.gomez@example.com",
-    //   "2024-12-21",
-    //   20310.0,
-    //   3,
-    //   2,
-    //   5,
-    //   JSON.stringify([
-    //     { cantidad: 3.0, precio: 700.0, subtotal: 2100.0, idProducto: 14 },
-    //     { cantidad: 1.0, precio: 6000.0, subtotal: 6000.0, idProducto: 2 },
-    //     { cantidad: 5.0, precio: 2400.0, subtotal: 12000.0, idProducto: 12 },
-    //     { cantidad: 3.0, precio: 70.0, subtotal: 210.0, idProducto: 21 },
-    //   ])
-    // );
+    const resultado = await ordenes.insertar(
+      "Maria Gómez",
+      "5 avenida 3-45 zona 1, Guatemala, Guatemala",
+      "584930128",
+      "maria.gomez@example.com",
+      "2024-12-21",
+      20310.0,
+      3,
+      2,
+      5,
+      JSON.stringify([
+        { cantidad: 3.0, precio: 700.0, subtotal: 2100.0, idProducto: 14 },
+        { cantidad: 1.0, precio: 6000.0, subtotal: 6000.0, idProducto: 2 },
+        { cantidad: 5.0, precio: 2400.0, subtotal: 12000.0, idProducto: 12 },
+        { cantidad: 3.0, precio: 70.0, subtotal: 210.0, idProducto: 21 },
+      ])
+    );
     // const resultado = ordenes.actualizar({
     //   idOrden: 9,
     //   direccion: "5 avenida 3-45 zona 12, Guatemala, Guatemala",
@@ -109,9 +109,9 @@ async function main() {
     //   "elepassword",
     //   "$2b$10$qjIku6rGWXzjc2iZ.Hr2DuQOK0sIm1KpGLCnm.VZ9eJAZ4mHt.uku"
     // );
-    const resultado = await usuarios.obtenerPasswordPorCorreo(
-      "eleonora@example.com"
-    );
+    // const resultado = await usuarios.obtenerPasswordPorCorreo(
+    //   "eleonora@example.com"
+    // );
     console.log("Resultado query: \n", resultado);
   } catch (err) {
     console.error("Error en la operación:", err);
