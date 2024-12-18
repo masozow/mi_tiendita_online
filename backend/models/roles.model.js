@@ -1,7 +1,7 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
 
-// Función para obtener productos
+// Función para obtener roles
 const obtenerTodo = async () => {
   try {
     const datos = await sequelize.query("SELECT * FROM vw_obtenerTodosRoles", {
