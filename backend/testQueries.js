@@ -1,10 +1,10 @@
 // import { productos } from "./models/productos.model.js";
-import { estados } from "./models/estados.model.js";
+// import { estados } from "./models/estados.model.js";
 // import {obtenerTodosRoles}from './models/roles.model.js';
-// import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./models/marcas_productos.model.js";
+import { marcas } from "./models/marcas_productos.model.js";
 // import { categorias } from "./models/categorias_productos.model.js";
 // import { usuarios } from "./models/usuarios.model.js";
-import { clientes } from "./models/clientes.model.js";
+// import { clientes } from "./models/clientes.model.js";
 // import { operadores } from "./models/operadores.model.js";
 // import { ordenes } from "./models/ordenes.model.js";
 
@@ -14,7 +14,7 @@ async function main() {
     // const resultado = await productos.obtenerTodoPorID(3);
     // const resultado = await insertarEstado('Prueba');
     // const resultado = await actualizarEstado(1,'Activo');
-    const resultado = await estados.obtenerTodo();
+    // const resultado = await estados.obtenerTodo();
     // const resultado = await estados.obtenerTodoPorID(1);
     // const resultado = await obtenerTodosRoles();
     // const resultado = await insertarProducto('48795409777','Galaxy a23',18.00,3000.00,4000.00,'',2,1,2);
@@ -22,12 +22,13 @@ async function main() {
     //   idProducto: 24,
     //   nombreProducto: "Galaxy A23",
     // });
-    // const resultado = await insertarMarca("Maggi", 1);
-    // const resultado = await actualizarMarca({
+    // const resultado = await marcas.insertar("Maggi", 1);
+    // const resultado = await marcas.actualizar({
     //   idMarca: 28,
     //   nombreMarca: "Maggi",
     // });
-    // const resultado = await obtenerTodasMarcas();
+    const resultado = await marcas.obtenerTodo();
+    // const resultado = await marcas.obtenerTodoPorID(9);
     // const resultado = await cateogrias.insertar("Abarrotes", 1);
     // const resultado = await categorias.actualizar({
     //   id: 11,

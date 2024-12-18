@@ -94,6 +94,16 @@ const delete_ = async (req, res) => {
   }
 };
 
+/**
+ * Objeto que contiene los metodos para interactuar con la tabla de estados.
+ *
+ * @typedef {Object} Estados
+ * @property {function} get Obtiene todos los estados.
+ * @property {function} getByID Obtiene un estado por su ID.
+ * @property {function} create Crea un nuevo estado.
+ * @property {function} update Actualiza un estado.
+ * @property {function} delete_ Elimina un estado.
+ */
 const Estado = {
   get,
   getByID,
