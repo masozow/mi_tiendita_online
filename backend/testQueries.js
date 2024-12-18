@@ -5,9 +5,9 @@
 // import { categorias } from "./models/categorias_productos.model.js";
 // import { usuarios } from "./models/usuarios.model.js";
 // import { clientes } from "./models/clientes.model.js";
-import { operadores } from "./models/operadores.model.js";
+// import { operadores } from "./models/operadores.model.js";
 // import { ordenes } from "./models/ordenes.model.js";
-
+import { roles } from "./models/roles.model.js";
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();
@@ -64,7 +64,7 @@ async function main() {
     // });
     // const resultado = await clientes.obtenerTodo();
     // const resultado = await clientes.obtenerTodoPorID(7);
-    const resultado = await operadores.insertar(14, 1);
+    // const resultado = await operadores.insertar(14, 1);
     // const resultado = await operadores.actualizar({
     //   idOperador: 8,
     //   idUsuario: 14,
@@ -95,6 +95,14 @@ async function main() {
     // const resultado = await ordenes.obtenerTodo();
     // const resultado = await ordenes.obtenerOrdenPorID(9);
     // const resultado = await ordenes.obtenerDetallePorID(9);
+    // const resultado = await roles.obtenerTodo();
+    // const resultado = await roles.obtenerTodoPorID(2);
+    // const resultado = await roles.insertar({ nombre: "Prueba" });
+    const resultado = await roles.actualizar({
+      id: 3,
+      nombre: "Probando",
+      idEstado: 2,
+    });
     console.log("Resultado query: \n", resultado);
   } catch (err) {
     console.error("Error en la operación:", err);
