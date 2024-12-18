@@ -1,5 +1,5 @@
 // import { productos } from "./models/productos.model.js";
-// import {insertarEstado,actualizarEstado, obtenerTodosEstados} from './models/estados.model.js';
+import { estados } from "./models/estados.model.js";
 // import {obtenerTodosRoles}from './models/roles.model.js';
 // import {  insertarMarca,  actualizarMarca,  obtenerTodasMarcas,} from "./models/marcas_productos.model.js";
 // import { categorias } from "./models/categorias_productos.model.js";
@@ -14,7 +14,8 @@ async function main() {
     // const resultado = await productos.obtenerTodoPorID(3);
     // const resultado = await insertarEstado('Prueba');
     // const resultado = await actualizarEstado(1,'Activo');
-    // const resultado = await obtenerTodosEstados();
+    const resultado = await estados.obtenerTodo();
+    // const resultado = await estados.obtenerTodoPorID(1);
     // const resultado = await obtenerTodosRoles();
     // const resultado = await insertarProducto('48795409777','Galaxy a23',18.00,3000.00,4000.00,'',2,1,2);
     // const resultado = await actualizarProducto({
@@ -49,13 +50,13 @@ async function main() {
     //   idUsuario: 14,
     //   password: "MyPassword123",
     // });
-    const resultado = await clientes.insertar(
-      "Jhon Smith",
-      "Jhon Smith",
-      "Calle 123",
-      14,
-      1
-    );
+    // const resultado = await clientes.insertar(
+    //   "Jhon Smith",
+    //   "Jhon Smith",
+    //   "Calle 123",
+    //   14,
+    //   1
+    // );
     // const resultado = await clientes.actualizar({
     //   idCliente: 7,
     //   nombre: "John Smith",
