@@ -1,11 +1,11 @@
 // import { productos } from "./models/productos.model.js";
 // import { estados } from "./models/estados.model.js";
 // import {obtenerTodosRoles}from './models/roles.model.js';
-import { marcas } from "./models/marcas_productos.model.js";
+// import { marcas } from "./models/marcas_productos.model.js";
 // import { categorias } from "./models/categorias_productos.model.js";
 // import { usuarios } from "./models/usuarios.model.js";
 // import { clientes } from "./models/clientes.model.js";
-// import { operadores } from "./models/operadores.model.js";
+import { operadores } from "./models/operadores.model.js";
 // import { ordenes } from "./models/ordenes.model.js";
 
 async function main() {
@@ -27,7 +27,7 @@ async function main() {
     //   idMarca: 28,
     //   nombreMarca: "Maggi",
     // });
-    const resultado = await marcas.obtenerTodo();
+    // const resultado = await marcas.obtenerTodo();
     // const resultado = await marcas.obtenerTodoPorID(9);
     // const resultado = await cateogrias.insertar("Abarrotes", 1);
     // const resultado = await categorias.actualizar({
@@ -64,7 +64,7 @@ async function main() {
     // });
     // const resultado = await clientes.obtenerTodo();
     // const resultado = await clientes.obtenerTodoPorID(7);
-    // const resultado = await operadores.insertar(7, 1);
+    const resultado = await operadores.insertar(14, 1);
     // const resultado = await operadores.actualizar({
     //   idOperador: 8,
     //   idUsuario: 14,
