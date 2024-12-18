@@ -1,7 +1,7 @@
 import { QueryTypes } from "sequelize";
-import sequelize from "./config/sequelize.js";
+import sequelize from "../config/sequelize.js";
 
-async function insertar(idUsuario, idEstado) {
+const insertar = async ({ idUsuario, idEstado } = {}) => {
   try {
     const resultado = await sequelize.query(
       `
@@ -25,22 +25,18 @@ async function insertar(idUsuario, idEstado) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function actualizar({
-  idOperador,
-  idUsuario = null,
-  idEstado = null,
-} = {}) {
+const actualizar = async ({ id, idUsuario = null, idEstado = null } = {}) => {
   try {
-    if (!idOperador) {
+    if (!id) {
       throw new Error("El id es obligatorio.");
     }
 
     const resultado = await sequelize.query(
       `
           DECLARE @output_message nvarchar(255)
-          EXEC sp_actualizarOperador    @id= :idOperador,
+          EXEC sp_actualizarOperador    @id= :id,
                                         @idUsuario= :idUsuario, 
                                         @idEstado= :idEstado, 
                                         @message=@output_message OUTPUT
@@ -48,7 +44,7 @@ async function actualizar({
           `,
       {
         replacements: {
-          idOperador,
+          id,
           idUsuario,
           idEstado,
         },
@@ -61,12 +57,12 @@ async function actualizar({
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function obtenerTodo() {
+const obtenerTodo = async () => {
   try {
     const productos = await sequelize.query(
-      `SELECT * FROM vw_ObtenerTodosOperadores`,
+      `SELECT * FROM vw_ObtenerTodosOperadores WHERE ID_ESTADO = 1`,
       {
         type: QueryTypes.SELECT,
       }
@@ -76,9 +72,9 @@ async function obtenerTodo() {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
   }
-}
+};
 
-async function obtenerTodoPorID(ID) {
+const obtenerTodoPorID = async (ID) => {
   try {
     const datos = await sequelize.query(
       "SELECT * FROM vw_ObtenerTodosOperadores WHERE ID= :ID",
@@ -93,8 +89,17 @@ async function obtenerTodoPorID(ID) {
   } catch (err) {
     console.error("Error al consultar la vista:", err);
   }
-}
+};
 
+/**
+ * Objeto que contiene los metodos para interactuar con la tabla de operadores.
+ *
+ * @typedef {Object} Operadores
+ * @property {function} insertar Inserta un nuevo operador.
+ * @property {function} actualizar Actualiza un operador.
+ * @property {function} obtenerTodo Obtiene todos los operadores.
+ * @property {function} obtenerTodoPorID Obtiene un operador por su ID.
+ */
 const operadores = {
   insertar,
   actualizar,
