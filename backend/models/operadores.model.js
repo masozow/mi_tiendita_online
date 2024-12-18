@@ -1,6 +1,22 @@
+/**
+ * @file operadores.model.js
+ * @module models/operadores.model
+ * @description Modelo para interactuar con la tabla de operadores.
+ * Importa QueryTypes de Sequelize y la configuracio  de Sequelize de la base de datos.
+ * @requires sequelize
+ * @requires QueryTypes
+ */
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
 
+/**
+ * Inserta un nuevo operador.
+ *
+ * @async
+ * @function insertar
+ * @param {{ idUsuario: number, idEstado: number }} - Objeto con los datos del operador a insertar.
+ * @returns {Promise<string|undefined>} El mensaje de respuesta del procedimiento almacenado.
+ */
 const insertar = async ({ idUsuario, idEstado } = {}) => {
   try {
     const resultado = await sequelize.query(
@@ -26,6 +42,17 @@ const insertar = async ({ idUsuario, idEstado } = {}) => {
     throw err;
   }
 };
+
+/**
+ * Actualiza un operador en la base de datos.
+ *
+ * @param {Object} params - Objeto con los datos para actualizar el operador.
+ * @param {number} params.id - ID del operador a actualizar.
+ * @param {number} [params.idUsuario=null] - ID del usuario asociado al operador.
+ * @param {number} [params.idEstado=null] - ID del estado del operador.
+ * @returns {Promise<string>} Mensaje de resultado de la operación.
+ * @throws {Error} Si el ID no es proporcionado o si ocurre un error al ejecutar el procedimiento.
+ */
 
 const actualizar = async ({ id, idUsuario = null, idEstado = null } = {}) => {
   try {
@@ -59,6 +86,12 @@ const actualizar = async ({ id, idUsuario = null, idEstado = null } = {}) => {
   }
 };
 
+/**
+ * Obtiene todos los operadores de la base de datos.
+ *
+ * @returns {Promise<Object[]>} Un array de objetos con los datos de los operadores.
+ * @throws {Error} Si ocurre un error al ejecutar el procedimiento.
+ */
 const obtenerTodo = async () => {
   try {
     const productos = await sequelize.query(
@@ -74,6 +107,12 @@ const obtenerTodo = async () => {
   }
 };
 
+/**
+ * Obtiene un operador por su ID.
+ *
+ * @param {number} ID ID del operador a obtener.
+ * @returns {Promise<Object[]>} Array de objetos con los datos del operador.
+ */
 const obtenerTodoPorID = async (ID) => {
   try {
     const datos = await sequelize.query(

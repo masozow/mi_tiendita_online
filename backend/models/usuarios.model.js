@@ -1,25 +1,35 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
-import { encription } from "../utilities/encrypt.js";
 
-const insertar = async (
+/**
+ * Inserta un nuevo usuario en la base de datos.
+ *
+ * @param {Object} params Parámetros para insertar un nuevo usuario.
+ * @param {string} params.correo Correo electrónico del usuario.
+ * @param {string} params.nombre Nombre del usuario.
+ * @param {string} params.password Contraseña del usuario.
+ * @param {string} params.telefono Teléfono del usuario.
+ * @param {string} params.fechaNacimiento Fecha de nacimiento del usuario.
+ * @param {number} params.idEstado ID del estado del usuario.
+ * @param {number} params.idRol ID del rol del usuario.
+ * @returns {Promise<string>} Mensaje de resultado de la operación.
+ */
+const insertar = async ({
   correo,
   nombre,
   password,
   telefono,
   fechaNacimiento,
   idEstado,
-  idRol
-) => {
+  idRol,
+} = {}) => {
   try {
-    const hashedPassword = await encription.hashedPassword(password);
-
     const resultado = await sequelize.query(
       `
         DECLARE @output_message nvarchar(255)
         EXEC sp_insertarUsuario @email= :correo,
                                 @nombre= :nombre, 
-                                @password= :hashedPassword, 
+                                @password= :password, 
                                 @telefono= :telefono,
                                 @fechaNacimiento= :fechaNacimiento,
                                 @idEstado= :idEstado,
@@ -31,7 +41,7 @@ const insertar = async (
         replacements: {
           correo,
           nombre,
-          hashedPassword,
+          password,
           telefono,
           fechaNacimiento,
           idEstado,
@@ -48,8 +58,22 @@ const insertar = async (
   }
 };
 
+/**
+ * Actualiza un usuario en la base de datos.
+ *
+ * @param {Object} params Parámetros para actualizar un usuario.
+ * @param {number} params.idUsuario ID del usuario a actualizar.
+ * @param {string} [params.correo=null] Correo electrónico del usuario.
+ * @param {string} [params.nombre=null] Nombre del usuario.
+ * @param {string} [params.password=null] Contraseña del usuario.
+ * @param {string} [params.telefono=null] Teléfono del usuario.
+ * @param {string} [params.fechaNacimiento=null] Fecha de nacimiento del usuario.
+ * @param {number} [params.idEstado=null] ID del estado del usuario.
+ * @param {number} [params.idRol=null] ID del rol del usuario.
+ * @returns {Promise<string>} Mensaje de resultado de la operación.
+ */
 const actualizar = async ({
-  idUsuario,
+  id,
   correo = null,
   nombre = null,
   password = null,
@@ -59,16 +83,13 @@ const actualizar = async ({
   idRol = null,
 } = {}) => {
   try {
-    const hashedPassword = password
-      ? await encription.hashedPassword(password)
-      : null;
     const resultado = await sequelize.query(
       `
         DECLARE @output_message nvarchar(255)
-        EXEC sp_actualizarUsuario   @id= :idUsuario,
+        EXEC sp_actualizarUsuario   @id= :id,
                                     @email= :correo,
                                     @nombre= :nombre,
-                                    @password= :pass,
+                                    @password= :password,
                                     @telefono= :telefono,
                                     @fechaNacimiento= :fechaNacimiento,
                                     @idRol= :idRol, 
@@ -78,10 +99,10 @@ const actualizar = async ({
         `,
       {
         replacements: {
-          idUsuario,
+          id,
           correo,
           nombre,
-          pass: hashedPassword,
+          password,
           telefono,
           fechaNacimiento,
           idRol,
@@ -98,10 +119,18 @@ const actualizar = async ({
   }
 };
 
+/**
+ * Obtiene todos los usuarios.
+ *
+ * @async
+ * @function obtenerTodo
+ * @param {number} [idEstado=1] ID del estado de los usuarios a obtener.
+ * @returns {Promise<Object[]>} Array de objetos con los datos de los usuarios.
+ */
 const obtenerTodo = async (idEstado = 1) => {
   try {
     const datos = await sequelize.query(
-      "SELECT * FROM vw_ObtenerTodasMarcas WHERE Estado_idEstado= :idEstado",
+      "SELECT * FROM vw_obtenerTodosUsuarios WHERE ID_ESTADO= :idEstado",
       {
         replacements: {
           idEstado,
@@ -115,5 +144,72 @@ const obtenerTodo = async (idEstado = 1) => {
     console.error("Error al consultar la vista:", err);
   }
 };
-const usuarios = { insertar, actualizar, obtenerTodo };
+
+/**
+ * Obtiene todos los datos de un usuario por su ID.
+ *
+ * @async
+ * @function obtenerTodoPorID
+ * @param {number} ID - ID del usuario a obtener.
+ * @returns {Promise<Object[]>} Promesa que resuelve a un array de objetos con los datos del usuario.
+ */
+const obtenerTodoPorID = async (ID) => {
+  try {
+    const datos = await sequelize.query(
+      "SELECT * FROM vw_obtenerTodosUsuarios WHERE ID= :ID",
+      {
+        replacements: {
+          ID,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    console.error("Error al consultar la vista:", err);
+  }
+};
+
+/**
+ * Obtiene la contraseña de un usuario por su correo electrónico.
+ *
+ * @async
+ * @function obtenerPasswordPorCorreo
+ * @param {string} email Correo electrónico del usuario.
+ * @returns {Promise<Object[]>} Promesa que resuelve a un array de objetos con la contraseña del usuario.
+ */
+const obtenerPasswordPorCorreo = async (correo) => {
+  try {
+    const datos = await sequelize.query(
+      "EXEC sp_obtenerPassword @correo= :correo",
+      {
+        replacements: {
+          correo,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    console.error("Error al consultar la vista:", err);
+  }
+};
+
+/**
+ * Objeto que contiene los métodos para interactuar con la tabla de usuarios.
+ *
+ * @typedef {Object} Usuarios
+ * @property {function} insertar Inserta un nuevo usuario.
+ * @property {function} actualizar Actualiza un usuario existente.
+ * @property {function} obtenerTodo Obtiene todos los usuarios.
+ * @property {function} obtenerTodoPorID Obtiene un usuario por su ID.
+ * @property {function} obtenerPasswordPorCorreo Obtiene la contraseña de un usuario por su correo electrónico.
+ */
+const usuarios = {
+  insertar,
+  actualizar,
+  obtenerTodo,
+  obtenerTodoPorID,
+  obtenerPasswordPorCorreo,
+};
 export { usuarios };
