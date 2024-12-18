@@ -8,6 +8,8 @@
 // import { operadores } from "./models/operadores.model.js";
 // import { ordenes } from "./models/ordenes.model.js";
 import { roles } from "./models/roles.model.js";
+import { usuarios } from "./models/usuarios.model.js";
+import { encription } from "./utilities/encrypt.js";
 async function main() {
   try {
     // const resultado = await obtenerTodosProductosActivosStockMayorCero();
@@ -98,11 +100,18 @@ async function main() {
     // const resultado = await roles.obtenerTodo();
     // const resultado = await roles.obtenerTodoPorID(2);
     // const resultado = await roles.insertar({ nombre: "Prueba" });
-    const resultado = await roles.actualizar({
-      id: 3,
-      nombre: "Probando",
-      idEstado: 2,
-    });
+    // const resultado = await roles.actualizar({
+    //   id: 3,
+    //   nombre: "Probando",
+    //   idEstado: 2,
+    // });
+    // const resultado = await encription.comparePassword(
+    //   "elepassword",
+    //   "$2b$10$qjIku6rGWXzjc2iZ.Hr2DuQOK0sIm1KpGLCnm.VZ9eJAZ4mHt.uku"
+    // );
+    const resultado = await usuarios.obtenerPasswordPorCorreo(
+      "eleonora@example.com"
+    );
     console.log("Resultado query: \n", resultado);
   } catch (err) {
     console.error("Error en la operación:", err);
