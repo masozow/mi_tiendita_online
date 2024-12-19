@@ -6,6 +6,7 @@
  */
 import { usuarios } from "../models/usuarios.model.js";
 import { encription } from "../utilities/encrypt.js";
+import { tokenSign } from "../utilities/generateToken.js";
 
 /**
  * Obtiene todos los usuarios.
@@ -58,21 +59,42 @@ const getByID = async (req, res) => {
  */
 const login = async (req, res) => {
   const { correo, password } = req.body;
-  console.log("password: ", password);
   try {
     const contrasena = await usuarios.obtenerPasswordPorCorreo(correo);
-    let resultado = null;
-    if (contrasena) {
-      const contrasenaPlana = contrasena[0].PASSWORD;
-      resultado = await encription.comparePassword(password, contrasenaPlana);
+    if (!contrasena || contrasena.length === 0) {
+      // Respuesta si no se encuentra el usuario
+      return res
+        .status(404)
+        .json({ success: false, data: "Usuario no encontrado" });
     }
-    res.status(200).json({ success: true, data: resultado });
+
+    const contrasenaPlana = contrasena[0].PASSWORD;
+    const resultado = await encription.comparePassword(
+      password,
+      contrasenaPlana
+    );
+
+    if (resultado) {
+      const user = {
+        id: contrasena[0].ID,
+        correo: correo,
+        idRol: contrasena[0].ID_ROL,
+      };
+      const tokenSession = await tokenSign(user);
+      // Respuesta en caso de login exitoso
+      return res.send({ success: true, data: user, tokenSession });
+    } else {
+      // Respuesta en caso de contraseña incorrecta
+      return res
+        .status(409)
+        .json({ success: false, data: "Contraseña incorrecta" });
+    }
   } catch (error) {
-    console.log("Error haciendo el login:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error("Error haciendo el login:", error.message);
+    // Respuesta en caso de error del servidor
+    return res.status(500).json({ success: false, data: "Server Error" });
   }
 };
-
 /**
  * Crea un nuevo usuario.
  *
