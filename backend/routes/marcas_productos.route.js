@@ -1,12 +1,14 @@
 import express from "express";
+import { checkAuth } from "../middleware/auth.js";
+import { checkRole } from "../middleware/roleAuth.js";
 import { Marca } from "../controllers/marcas_productos.controller.js";
 
 const router = express.Router();
 
-router.get("/", Marca.get);
-router.get("/:id", Marca.getByID);
-router.post("/", Marca.create);
-router.put("/:id", Marca.update);
-router.delete("/:id", Marca.delete_);
+router.get("/", checkAuth, checkRole(["Super usuario"]), Marca.get);
+router.get("/:id", checkAuth, Marca.getByID);
+router.post("/", checkAuth, checkRole(["Super usuario"]), Marca.create);
+router.put("/:id", checkAuth, checkRole(["Super usuario"]), Marca.update);
+router.delete("/:id", checkAuth, checkRole(["Super usuario"]), Marca.delete_);
 
 export default router;

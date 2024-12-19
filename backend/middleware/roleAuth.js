@@ -3,7 +3,7 @@ import { usuarios } from "../models/usuarios.model.js";
 
 const checkRole = (roles) => async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(" ").pop(); // Obtener el token del encabezado de la solicitud
+    const token = req.signedCookies.authToken; // Obtener el token del encabezado de la solicitud
     if (!token) {
       return res
         .status(401)

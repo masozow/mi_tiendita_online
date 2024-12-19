@@ -82,12 +82,24 @@ const login = async (req, res) => {
       };
       const tokenSession = await tokenSign(user);
       // Respuesta en caso de login exitoso
-      return res.send({ success: true, data: user, tokenSession });
+      if (process.env.NODE_ENV !== "prod") console.log("token: ", tokenSession);
+      // Establecer la cookie firmada
+      res.cookie("authToken", tokenSession, {
+        httpOnly: true, // La cookie no puede ser accedida desde el cliente
+        signed: true, // La cookie estará firmada
+        secure: process.env.NODE_ENV === "prod", // La cookie solo se enviará por HTTPS en producción
+        sameSite: "strict", // La cookie solo se enviará en la misma solicitud
+        maxAge: 24 * 60 * 60 * 1000, // Expira en 1 día
+      });
+      return res.status(200).json({
+        success: true,
+        data: "Sesión iniciada con éxito",
+      });
     } else {
       // Respuesta en caso de contraseña incorrecta
       return res
         .status(409)
-        .json({ success: false, data: "Contraseña incorrecta" });
+        .json({ success: false, data: "Credenciales incorrectas" });
     }
   } catch (error) {
     console.error("Error haciendo el login:", error.message);
@@ -95,6 +107,45 @@ const login = async (req, res) => {
     return res.status(500).json({ success: false, data: "Server Error" });
   }
 };
+/**
+ * Finaliza la sesión del usuario eliminando la cookie de autenticación.
+ *
+ * @async
+ * @function logout
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {Promise<void>} Promesa que resuelve cuando la sesión se ha cerrado.
+ */
+const logout = async (req, res) => {
+  try {
+    const token = req.signedCookies.authToken;
+
+    if (!token) {
+      // Si no hay cookie presente
+      return res
+        .status(400)
+        .json({ success: false, data: "No hay sesión activa para cerrar" });
+    }
+
+    // Elimina la cookie del cliente
+    res.clearCookie("authToken", {
+      httpOnly: true,
+      signed: true,
+      secure: process.env.NODE_ENV === "prod",
+      sameSite: "strict",
+    });
+
+    // Respuesta exitosa
+    return res.status(200).json({
+      success: true,
+      data: "Sesión cerrada con éxito",
+    });
+  } catch (error) {
+    console.error("Error cerrando sesión:", error.message);
+    return res.status(500).json({ success: false, data: "Server Error" });
+  }
+};
+
 /**
  * Crea un nuevo usuario.
  *
@@ -184,6 +235,7 @@ const Usuario = {
   update,
   delete_,
   login,
+  logout,
 };
 
 export { Usuario };

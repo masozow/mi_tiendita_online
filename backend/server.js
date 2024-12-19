@@ -8,10 +8,16 @@ import operadoresRoutes from "./routes/operadores.route.js";
 import rolesRoutes from "./routes/roles.route.js";
 import usuariosRoutes from "./routes/usuarios.route.js";
 import ordenesRoutes from "./routes/ordenes.route.js";
+import cookieParser from "cookie-parser";
 
+//Configuraciones
 const app = express();
-app.use(express.json());
 
+//Middlewares
+app.use(express.json());
+app.use(cookieParser(process.env.COOKIE_SECRET));
+
+//Rutas
 app.use("/api/productos", productosRoutes);
 app.use("/api/categorias", categoriasRoutes);
 app.use("/api/clientes", clientesRoutes);
@@ -22,6 +28,7 @@ app.use("/api/roles", rolesRoutes);
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/ordenes", ordenesRoutes);
 
+//Iniciar el servidor
 app.listen(5000, () => {
   console.log("Server started at http://localhost:5000");
 });

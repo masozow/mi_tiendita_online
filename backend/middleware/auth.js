@@ -1,8 +1,18 @@
 import { verifyToken } from "../utilities/generateToken.js";
 
+/**
+ * Verifica si el token de autenticación en el encabezado de la solicitud es válido.
+ *
+ * @async
+ * @function checkAuth
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @param {function} next - La siguiente función en la cadena de middleware.
+ * @returns {Promise<void>} Promesa que resuelve cuando se verifica el token.
+ */
 const checkAuth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(" ").pop(); // Obtener el token del encabezado de la solicitud
+    const token = req.signedCookies.authToken; // Obtener el token del encabezado de la solicitud
     if (!token) {
       return res
         .status(401)
@@ -24,5 +34,4 @@ const checkAuth = async (req, res, next) => {
   }
 };
 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQsImNvcnJlbyI6ImVsZW9ub3JhQGV4YW1wbGUuY29tIiwiaWRSb2wiOjIsImlhdCI6MTczNDU4NDc1OCwiZXhwIjoxNzM0NjcxMTU4fQ.nzkB0TPZL2eJp8rAlxXew_hs2LguK4nBILN70wq_IC8
 export { checkAuth };
