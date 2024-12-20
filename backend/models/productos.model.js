@@ -136,8 +136,7 @@ const actualizar = async ({
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
     errorAndLogHandler({ level: "error", message: err });
     throw err;
