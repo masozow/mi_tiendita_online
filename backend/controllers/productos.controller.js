@@ -5,6 +5,8 @@
  * @namespace productosController
  */
 import { productos } from "../models/productos.model.js";
+import path from "path";
+import fs from "fs";
 
 const get = async (req, res) => {
   try {
@@ -77,18 +79,19 @@ const update = async (req, res) => {
       filePath = `statics/${req.file.filename}`;
     }
 
-    if (filePath) {
-      const productoActual = await productos.obtenerTodoPorID(id);
+    const productoActual = await productos.obtenerTodoPorID(id);
+    console.log("productoActual: ", productoActual[0].FOTO);
+    if (productoActual[0]?.FOTO) {
+      const filePathAnterior = path.resolve(
+        "backend/",
+        `${productoActual[0].FOTO}`
+      );
 
-      if (productoActual?.fotoProducto) {
-        const filePathAnterior = path.join(
-          __dirname,
-          `..${productoActual.fotoProducto}`
-        );
-
-        if (fs.existsSync(filePathAnterior)) {
-          fs.unlinkSync(filePathAnterior);
-        }
+      if (fs.existsSync(filePathAnterior)) {
+        fs.unlinkSync(filePathAnterior);
+        console.log(`Archivo anterior eliminado: ${filePathAnterior}`);
+      } else {
+        console.warn(`Archivo anterior no encontrado: ${filePathAnterior}`);
       }
     }
 
