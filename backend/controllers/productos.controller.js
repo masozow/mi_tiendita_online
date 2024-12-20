@@ -7,8 +7,10 @@
 import { productos } from "../models/productos.model.js";
 import path from "path";
 import fs from "fs";
+import logHandler from "../utilities/logHandler.js";
 
 const get = async (req, res) => {
+  console.log("usuario: ", req.user);
   try {
     const Productos =
       await productos.obtenerTodosProductosActivosStockMayorCero();
@@ -61,7 +63,13 @@ const create = async (req, res) => {
       ...productoBody,
       fotoProducto: filePath,
     });
-
+    //falta modificar el SP para regresar el ID del nuevo producto creado
+    logHandler({
+      level: "info",
+      message: "Producto creado",
+      genericId: null,
+      userId: req.user.id,
+    });
     res.status(200).json({ success: true, data: resultado });
   } catch (error) {
     console.error("Error al crear producto:", error.message);
