@@ -150,6 +150,40 @@ const actualizar = async ({
 };
 
 /**
+ * Cancela una orden en la base de datos.
+ *
+ * @param {number} idOrden ID de la orden a cancelar.
+ * @returns {Promise<string>} Mensaje de resultado de la operación.
+ */
+const cancelar = async (idOrden) => {
+  console.log("idOrden: ", idOrden);
+  try {
+    if (!idOrden) {
+      throw new Error("El id es obligatorio.");
+    }
+    const resultado = await sequelize.query(
+      `
+        DECLARE @output_message nvarchar(255)
+        EXEC sp_cancelarOrden @id= :idOrden,
+                              @message=@output_message OUTPUT
+        SELECT @output_message AS mensaje;
+        `,
+      {
+        replacements: {
+          idOrden,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    const mensaje = resultado[0]?.mensaje;
+    return mensaje;
+  } catch (err) {
+    console.error("Error al ejecutar el procedimiento:", err);
+    throw err;
+  }
+};
+
+/**
  * Obtiene todas las ordenes de la base de datos.
  *
  * @returns {Promise<Object[]>} Un array de objetos con los datos de las ordenes.
@@ -260,6 +294,7 @@ const ordenes = {
   obtenerOrdenPorID,
   obtenerOrdenPorIDCliente,
   obtenerDetallePorID,
+  cancelar,
 };
 
 export { ordenes };

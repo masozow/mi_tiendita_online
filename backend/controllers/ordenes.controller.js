@@ -21,8 +21,8 @@ const get = async (req, res) => {
     const Ordenes = await ordenes.obtenerTodo();
     res.status(200).json({ success: true, data: Ordenes });
   } catch (error) {
-    console.log("Error obteniendo las ordenes:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.log("Error al obtener las ordenes:", error.message);
+    res.status(500).json({ success: false, message: "Error del servidor" });
   }
 };
 
@@ -41,8 +41,8 @@ const getByID = async (req, res) => {
     const Ordenes = await ordenes.obtenerOrdenPorID(id);
     res.status(200).json({ success: true, data: Ordenes });
   } catch (error) {
-    console.log("Error obteniendo la orden:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.log("Error al obtener la orden:", error.message);
+    res.status(500).json({ success: false, message: "Error del servidor" });
   }
 };
 
@@ -61,8 +61,8 @@ const getByIDCliente = async (req, res) => {
     const Ordenes = await ordenes.obtenerOrdenPorIDCliente(id);
     res.status(200).json({ success: true, data: Ordenes });
   } catch (error) {
-    console.log("Error obteniendo la orden:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.log("Error al obtener la orden:", error.message);
+    res.status(500).json({ success: false, message: "Error del servidor" });
   }
 };
 
@@ -81,8 +81,8 @@ const getDetalleByID = async (req, res) => {
     const Ordenes = await ordenes.obtenerDetallePorID(id);
     res.status(200).json({ success: true, data: Ordenes });
   } catch (error) {
-    console.log("Error obteniendo la orden:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.log("Error al obtener la orden:", error.message);
+    res.status(500).json({ success: false, message: "Error del servidor" });
   }
 };
 
@@ -128,8 +128,8 @@ const create = async (req, res) => {
     });
     res.status(201).json({ success: true, data: resultado });
   } catch (error) {
-    console.error("Error in Create order:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error("Error al crear orden:", error.message);
+    res.status(500).json({ success: false, message: "Error del servidor" });
   }
 };
 
@@ -155,8 +155,8 @@ const update = async (req, res) => {
 
     res.status(200).json({ success: true, data: resultado });
   } catch (error) {
-    console.error("Error in Update order:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error("Error al actualizar orden:", error.message);
+    res.status(500).json({ success: false, message: "Error del servidor" });
   }
 };
 
@@ -180,11 +180,21 @@ const delete_ = async (req, res) => {
 
     res.status(200).json({ success: true, data: resultado });
   } catch (error) {
-    console.error("Error in Delete order:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    console.error("Error al borrar órden:", error.message);
+    res.status(500).json({ success: false, message: "Error del servidor" });
   }
 };
-
+const cancel = async (req, res) => {
+  const { id } = req.params;
+  console.log("id from params:", id);
+  try {
+    const resultado = await ordenes.cancelar(id);
+    res.status(200).json({ success: true, data: resultado });
+  } catch (error) {
+    console.error("Error en cancelar órden:", error.message);
+    res.status(500).json({ success: false, message: "Error del servidor" });
+  }
+};
 /**
  * Objeto que contiene los métodos para interactuar con las ordenes.
  *
@@ -205,6 +215,7 @@ const Orden = {
   create,
   update,
   delete_,
+  cancel,
 };
 
 export { Orden };
