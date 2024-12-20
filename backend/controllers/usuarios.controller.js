@@ -7,6 +7,7 @@
 import { usuarios } from "../models/usuarios.model.js";
 import { encription } from "../utilities/encrypt.js";
 import { tokenSign } from "../utilities/generateToken.js";
+import logHandler from "../utilities/logHandler.js";
 
 /**
  * Obtiene todos los usuarios.
@@ -82,7 +83,11 @@ const login = async (req, res) => {
       };
       const tokenSession = await tokenSign(user);
       // Respuesta en caso de login exitoso
-      if (process.env.NODE_ENV !== "prod") console.log("token: ", tokenSession);
+      await logHandler({
+        level: "info",
+        message: "Login exitoso",
+        userId: user.id,
+      });
       // Establecer la cookie firmada
       res.cookie("authToken", tokenSession, {
         httpOnly: true, // La cookie no puede ser accedida desde el cliente
