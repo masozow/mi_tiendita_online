@@ -7,7 +7,7 @@
 import { productos } from "../models/productos.model.js";
 import path from "path";
 import fs from "fs";
-import logHandler from "../utilities/logHandler.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 const get = async (req, res) => {
   console.log("usuario: ", req.user);
@@ -63,17 +63,23 @@ const create = async (req, res) => {
       ...productoBody,
       fotoProducto: filePath,
     });
-    //falta modificar el SP para regresar el ID del nuevo producto creado
-    logHandler({
-      level: "info",
-      message: "Producto creado",
-      genericId: null,
-      userId: req.user.id,
-    });
-    res.status(200).json({ success: true, data: resultado });
+    console.log("resultado controller: ", resultado[0].mensaje);
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Insertar Producto",
+        genericId: resultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.error("Error al crear producto:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: error.message,
+      })
+    );
   }
 };
 

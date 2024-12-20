@@ -17,7 +17,7 @@ const initDb = async () => {
       level TEXT NOT NULL,
       message TEXT NOT NULL,
       generic_id TEXT,
-      user_id INTEGER NOT NULL,
+      user_id INTEGER,
       timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);

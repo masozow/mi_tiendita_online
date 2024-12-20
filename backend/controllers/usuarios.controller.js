@@ -7,7 +7,7 @@
 import { usuarios } from "../models/usuarios.model.js";
 import { encription } from "../utilities/encrypt.js";
 import { tokenSign } from "../utilities/generateToken.js";
-import logHandler from "../utilities/logHandler.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Obtiene todos los usuarios.
@@ -78,16 +78,10 @@ const login = async (req, res) => {
     if (resultado) {
       const user = {
         id: contrasena[0].ID,
-        correo: correo,
         idRol: contrasena[0].ID_ROL,
       };
       const tokenSession = await tokenSign(user);
-      // Respuesta en caso de login exitoso
-      await logHandler({
-        level: "info",
-        message: "Login exitoso",
-        userId: user.id,
-      });
+
       // Establecer la cookie firmada
       res.cookie("authToken", tokenSession, {
         httpOnly: true, // La cookie no puede ser accedida desde el cliente
@@ -96,20 +90,29 @@ const login = async (req, res) => {
         sameSite: "strict", // La cookie solo se enviará en la misma solicitud
         maxAge: 24 * 60 * 60 * 1000, // Expira en 1 día
       });
-      return res.status(200).json({
-        success: true,
-        data: "Sesión iniciada con éxito",
-      });
+      return res.status(200).json(
+        await errorAndLogHandler({
+          level: errorLevels.info,
+          message: "Bienvenid@",
+        })
+      );
     } else {
       // Respuesta en caso de contraseña incorrecta
-      return res
-        .status(409)
-        .json({ success: false, data: "Credenciales incorrectas" });
+      return res.status(409).json(
+        await errorAndLogHandler({
+          level: errorLevels.warn,
+          message: "Contraseña incorrecta",
+        })
+      );
     }
   } catch (error) {
-    console.error("Error haciendo el login:", error.message);
     // Respuesta en caso de error del servidor
-    return res.status(500).json({ success: false, data: "Server Error" });
+    return res.status(500).json(
+      await errorAndLogHandler({
+        message: "Error haciendo el login",
+        userId: contrasena[0].ID || 0,
+      })
+    );
   }
 };
 /**

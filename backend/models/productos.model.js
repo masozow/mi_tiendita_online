@@ -4,6 +4,7 @@
  */
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Inserta un nuevo producto.
@@ -35,6 +36,7 @@ const insertar = async ({
     const resultado = await sequelize.query(
       `
       DECLARE @output_message nvarchar(255)
+      DECLARE @output_id int
       EXEC sp_insertarProducto      @codigo= :codigo, 
                                     @nombre= :nombre, 
                                     @stock= :stock, 
@@ -44,8 +46,9 @@ const insertar = async ({
                                     @idCategoria= :idCat, 
                                     @idEstado= :idEst, 
                                     @idMarca= :idMar, 
-                                    @message=@output_message OUTPUT
-      SELECT @output_message AS mensaje;
+                                    @message= @output_message OUTPUT,
+                                    @id= @output_id OUTPUT
+      SELECT @output_message AS mensaje, @output_id as id;
       `,
       {
         replacements: {
@@ -62,8 +65,8 @@ const insertar = async ({
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    console.log("resultado: ", resultado);
+    return resultado;
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
@@ -136,7 +139,7 @@ const actualizar = async ({
     const mensaje = resultado[0]?.mensaje;
     return mensaje;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({ level: "error", message: err });
     throw err;
   }
 };
