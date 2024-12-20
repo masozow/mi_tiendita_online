@@ -35,7 +35,7 @@ const create = async (req, res) => {
   console.log("productoBody: ", productoBody);
   console.log("req.file: ", req.file); // Ya contiene los datos del archivo cargado
 
-  let filePath = null;
+  let filePath = "";
 
   if (
     !productoBody.codigoProducto ||
