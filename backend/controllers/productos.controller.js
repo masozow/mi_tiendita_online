@@ -8,7 +8,8 @@ import { productos } from "../models/productos.model.js";
 
 const get = async (req, res) => {
   try {
-    const Productos = await productos.obtenerTodosProductosActivosStockMayorCero();
+    const Productos =
+      await productos.obtenerTodosProductosActivosStockMayorCero();
     res.status(200).json({ success: true, data: Productos });
   } catch (error) {
     console.log("Error obteniendo los productos:", error.message);
@@ -31,6 +32,11 @@ const getByID = async (req, res) => {
 
 const create = async (req, res) => {
   const productoBody = req.body;
+  console.log("productoBody: ", productoBody);
+  console.log("req.file: ", req.file); // Ya contiene los datos del archivo cargado
+
+  let filePath = null;
+
   if (
     !productoBody.codigoProducto ||
     !productoBody.nombreProducto ||
@@ -45,28 +51,56 @@ const create = async (req, res) => {
   }
 
   try {
-    // const resultado = productoBody;
-    const resultado = await productos.insertar(productoBody);
-    res.status(201).json({ success: true, data: resultado });
+    if (req.file) {
+      filePath = `backend/statics/${req.file.filename}`;
+    }
+
+    const resultado = await productos.insertar({
+      ...productoBody,
+      fotoProducto: filePath,
+    });
+
+    res.status(200).json({ success: true, data: resultado });
   } catch (error) {
-    console.error("Error in Create product:", error.message);
+    console.error("Error al crear producto:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
 const update = async (req, res) => {
   const { id } = req.params;
-
   const productoBody = req.body;
+  let filePath = null;
+
   try {
+    if (req.file) {
+      filePath = `statics/${req.file.filename}`;
+    }
+
+    if (filePath) {
+      const productoActual = await productos.obtenerTodoPorID(id);
+
+      if (productoActual?.fotoProducto) {
+        const filePathAnterior = path.join(
+          __dirname,
+          `..${productoActual.fotoProducto}`
+        );
+
+        if (fs.existsSync(filePathAnterior)) {
+          fs.unlinkSync(filePathAnterior);
+        }
+      }
+    }
+
     const resultado = await productos.actualizar({
       idProducto: id,
       ...productoBody,
+      fotoProducto: filePath,
     });
 
     res.status(200).json({ success: true, data: resultado });
   } catch (error) {
-    console.error("Error in Update product:", error.message);
+    console.error("Error al actualizar producto:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
