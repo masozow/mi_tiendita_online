@@ -8,6 +8,7 @@
  */
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 /**
  * Inserta una nueva orden con su detalle.
  *
@@ -41,6 +42,7 @@ const insertar = async ({
     const resultado = await sequelize.query(
       `
         DECLARE @output_message nvarchar(255)
+        DECLARE @output_id int
         EXEC sp_insertarOrdenConDetalles    @nombre= :nombre,
                                             @direccion= :direccion,
                                             @telefono= :telefono,
@@ -51,8 +53,9 @@ const insertar = async ({
                                             @idCliente= :idCliente, 
                                             @idOperador= :idOperador, 
                                             @detalleJson= :detalle,
-                                            @message=@output_message OUTPUT
-        SELECT @output_message AS mensaje;
+                                            @message=@output_message OUTPUT,
+                                            @idOrden= @output_id OUTPUT
+        SELECT @output_message AS mensaje, @output_id as id;
         `,
       {
         replacements: {
@@ -70,10 +73,12 @@ const insertar = async ({
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -141,10 +146,12 @@ const actualizar = async ({
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -175,8 +182,7 @@ const cancelar = async (idOrden) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
     console.error("Error al ejecutar el procedimiento:", err);
     throw err;
@@ -199,7 +205,10 @@ const obtenerTodo = async () => {
     );
     return productos;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
     throw err;
   }
 };
@@ -224,7 +233,11 @@ const obtenerOrdenPorID = async (ID) => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
   }
 };
 /**
@@ -248,7 +261,11 @@ const obtenerOrdenPorIDCliente = async (idCliente) => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
   }
 };
 
@@ -272,7 +289,11 @@ const obtenerDetallePorID = async (ID) => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
   }
 };
 

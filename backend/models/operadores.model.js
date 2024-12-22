@@ -144,6 +144,27 @@ const obtenerTodoPorID = async (ID) => {
   }
 };
 
+const obtenerTodoPorIDUsuario = async (ID) => {
+  try {
+    const datos = await sequelize.query(
+      "SELECT * FROM vw_ObtenerTodosOperadores WHERE ID_USUARIO= :ID",
+      {
+        replacements: {
+          ID,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
+  }
+};
+
 /**
  * Objeto que contiene los metodos para interactuar con la tabla de operadores.
  *
@@ -158,5 +179,6 @@ const operadores = {
   actualizar,
   obtenerTodo,
   obtenerTodoPorID,
+  obtenerTodoPorIDUsuario,
 };
 export { operadores };

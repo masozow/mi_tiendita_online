@@ -130,16 +130,6 @@ const update = async (req, res) => {
 
 /**
  * Elimina un operador.
- *
- * @async
- * @function delete_
- * @param {Object} req - Objeto de solicitud que contiene el ID del operador en los parámetros.
- * @param {Object} res - Objeto de respuesta utilizado para enviar la respuesta HTTP.
- * @returns {Promise<void>} Promesa que resuelve cuando se elimina el operador.
- */
-
-/**
- * Elimina un operador.
  * @async
  * @function delete_
  * @param {Object} req - Objeto de solicitud que contiene el ID del operador en los parámetros.
