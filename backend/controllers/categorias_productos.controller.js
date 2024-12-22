@@ -5,6 +5,7 @@
  * @namespace categorias_productosController
  */
 import { categorias } from "../models/categorias_productos.model.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Obtiene todas las categorias de productos.
@@ -91,11 +92,26 @@ const update = async (req, res) => {
   const { id } = req.params;
   const { nombre, idEstado } = req.body;
   try {
-    const mensaje = await categorias.actualizar({ id, nombre, idEstado });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await categorias.actualizar({ id, nombre, idEstado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message:
+          resultado[0].mensaje +
+          JSON.stringify({ ...req.body }) +
+          "/ Actualizar Categoría",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error actualizando la categoria:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error actualizando la categoría: " + error.message,
+      })
+    );
   }
 };
 
@@ -109,11 +125,23 @@ const update = async (req, res) => {
 const delete_ = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await categorias.actualizar({ id, idEstado: 2 });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await categorias.actualizar({ id, idEstado: 2 });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Eliminar Categoría",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error eliminando la categoria:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error eliminando la categoría: " + error.message,
+      })
+    );
   }
 };
 const Categoria = {

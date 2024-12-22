@@ -5,6 +5,7 @@
 
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Inserta una nueva marca en la base de datos.
