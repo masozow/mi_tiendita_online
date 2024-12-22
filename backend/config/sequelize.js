@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
-import tedious from "tedious";
 
 dotenv.config();
 const sequelize = new Sequelize({

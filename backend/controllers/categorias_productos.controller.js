@@ -77,7 +77,7 @@ const create = async (req, res) => {
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: `Error agregando la categoría: ` + error.message,
+        message: `Error insertando la categoría: ` + error.message,
         userId: req.user.id,
       })
     );
