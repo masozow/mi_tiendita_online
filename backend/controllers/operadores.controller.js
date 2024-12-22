@@ -5,6 +5,7 @@
  * @namespace operadoresController
  */
 import { operadores } from "../models/operadores.model.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Obtiene todos los operadores.
@@ -21,8 +22,13 @@ const get = async (req, res) => {
     const Operadores = await operadores.obtenerTodo();
     res.status(200).json({ success: true, data: Operadores });
   } catch (error) {
-    console.log("Error obteniendo los operadores:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo los operadores: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -42,8 +48,14 @@ const getByID = async (req, res) => {
     const Operador = await operadores.obtenerTodoPorID(id);
     res.status(200).json({ success: true, data: Operador });
   } catch (error) {
-    console.log("Error obteniendo el operador:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo el operador: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -58,11 +70,24 @@ const getByID = async (req, res) => {
  */
 const create = async (req, res) => {
   try {
-    const mensaje = await operadores.insertar({ ...req.body });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await operadores.insertar({ ...req.body });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Insertar Operador",
+        genericId: resultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error creando el operador:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error agregando el operador: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -78,11 +103,28 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await operadores.actualizar({ id, ...req.body });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await operadores.actualizar({ id, ...req.body });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message:
+          resultado[0].mensaje +
+          JSON.stringify({ ...req.body }) +
+          "/ Actualizar Operador",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error actualizando el operador:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error actualizando el operador: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -107,11 +149,25 @@ const update = async (req, res) => {
 const delete_ = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await operadores.actualizar({ id, idEstado: 2 });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await operadores.actualizar({ id, idEstado: 2 });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Eliminar Operador",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error eliminando el operador:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error eliminando el operador: " + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 

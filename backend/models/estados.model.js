@@ -23,7 +23,7 @@ const insertar = async ({ nombre } = {}) => {
         EXECUTE dbo.sp_insertarEstado @nombre= :nombre, 
                                       @message=@output_message OUTPUT,
                                       @id= @output_id OUTPUT
-      SELECT @output_message AS mensaje, @output_id as id;
+        SELECT @output_message AS mensaje, @output_id as id;
         `,
       {
         replacements: {
