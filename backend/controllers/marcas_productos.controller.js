@@ -70,7 +70,6 @@ const create = async (req, res) => {
 
   try {
     const resultado = await marcas.insertar({ ...req.body });
-    console.log("resultado: ", resultado);
     res.status(200).json(
       await errorAndLogHandler({
         level: errorLevels.info,

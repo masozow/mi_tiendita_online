@@ -18,8 +18,13 @@ const get = async (req, res) => {
     const Categorias = await categorias.obtenerTodo();
     res.status(200).json({ success: true, data: Categorias });
   } catch (error) {
-    console.log("Error obteniendo las categorias:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo las categorías: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -36,8 +41,12 @@ const getByID = async (req, res) => {
     const Categorias = await categorias.obtenerTodoPorID(id);
     res.status(200).json({ success: true, data: Categorias });
   } catch (error) {
-    console.log("Error obteniendo la categoria:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo la categoría: ${id} ` + error.message,
+      })
+    );
   }
 };
 
@@ -51,11 +60,23 @@ const getByID = async (req, res) => {
 const create = async (req, res) => {
   const { nombre, idEstado } = req.body;
   try {
-    const mensaje = await categorias.insertar(nombre, idEstado);
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await categorias.insertar(nombre, idEstado);
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Insertar Categoría",
+        genericId: resultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error creando la categoria:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: error.message,
+      })
+    );
   }
 };
 
