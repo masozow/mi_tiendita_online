@@ -5,6 +5,7 @@
 
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Inserta una nueva marca en la base de datos.
@@ -19,10 +20,12 @@ const insertar = async ({ nombre, idEstado } = {}) => {
     const resultado = await sequelize.query(
       `
       DECLARE @output_message nvarchar(255)
+      DECLARE @output_id int
       EXEC sp_insertarMarca @nombre= :nombre, 
                             @idEstado= :idEstado, 
-                            @message=@output_message OUTPUT
-      SELECT @output_message AS mensaje;
+                            @message=@output_message OUTPUT,
+                            @id= @output_id OUTPUT
+      SELECT @output_message AS mensaje, @output_id as id;
       `,
       {
         replacements: {
@@ -32,10 +35,12 @@ const insertar = async ({ nombre, idEstado } = {}) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -69,10 +74,13 @@ const actualizar = async ({ id, nombre = null, idEstado = null } = {}) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
+    const mensaje = resultado;
     return mensaje;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -94,10 +102,12 @@ const obtenerTodo = async (idEstado = 1) => {
         type: QueryTypes.SELECT,
       }
     );
-    console.log("Datos obtenidos de la vista:", datos);
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
   }
 };
 
@@ -120,7 +130,10 @@ const obtenerTodoPorID = async (ID) => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
   }
 };
 

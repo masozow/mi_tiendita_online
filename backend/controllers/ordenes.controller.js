@@ -5,6 +5,8 @@
  * @namespace ordenesController
  */
 import { ordenes } from "../models/ordenes.model.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
+import { operadores } from "../models/operadores.model.js";
 
 /**
  * Obtiene todas las ordenes.
@@ -21,8 +23,13 @@ const get = async (req, res) => {
     const Ordenes = await ordenes.obtenerTodo();
     res.status(200).json({ success: true, data: Ordenes });
   } catch (error) {
-    console.log("Error al obtener las ordenes:", error.message);
-    res.status(500).json({ success: false, message: "Error del servidor" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo las ordenes: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -41,8 +48,14 @@ const getByID = async (req, res) => {
     const Ordenes = await ordenes.obtenerOrdenPorID(id);
     res.status(200).json({ success: true, data: Ordenes });
   } catch (error) {
-    console.log("Error al obtener la orden:", error.message);
-    res.status(500).json({ success: false, message: "Error del servidor" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo la orden: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -61,8 +74,14 @@ const getByIDCliente = async (req, res) => {
     const Ordenes = await ordenes.obtenerOrdenPorIDCliente(id);
     res.status(200).json({ success: true, data: Ordenes });
   } catch (error) {
-    console.log("Error al obtener la orden:", error.message);
-    res.status(500).json({ success: false, message: "Error del servidor" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo las ordenes del cliente: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -81,8 +100,14 @@ const getDetalleByID = async (req, res) => {
     const Ordenes = await ordenes.obtenerDetallePorID(id);
     res.status(200).json({ success: true, data: Ordenes });
   } catch (error) {
-    console.log("Error al obtener la orden:", error.message);
-    res.status(500).json({ success: false, message: "Error del servidor" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo el detalle de la orden: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -97,17 +122,10 @@ const getDetalleByID = async (req, res) => {
  * @throws {Error} Si ocurre un error al crear la orden.
  * @description Convierte el detalle de la orden a JSON y verifica los campos obligatorios antes de insertar la orden en la base de datos.
  */
-
 const create = async (req, res) => {
   const ordenBody = req.body;
   const { detalle } = ordenBody;
   const detalleJSON = JSON.stringify(detalle);
-
-  console.log("detalle: ", ordenBody.detalle);
-  console.log("datos a guardar: ", {
-    ...ordenBody,
-    detalle: detalleJSON,
-  });
   if (
     !ordenBody.nombre ||
     !ordenBody.direccion ||
@@ -121,15 +139,33 @@ const create = async (req, res) => {
       message: "Por favor coloque todos los campos obligatorios.",
     });
   }
+  const idUsuario = req.user.id;
   try {
+    const operador = idUsuario
+      ? await operadores.obtenerTodoPorIDUsuario(idUsuario)
+      : null;
     const resultado = await ordenes.insertar({
       ...ordenBody,
       detalle: detalleJSON,
+      idOperador: operador[0].ID,
     });
-    res.status(201).json({ success: true, data: resultado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Insertar Orden con detalle",
+        genericId: resultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.error("Error al crear orden:", error.message);
-    res.status(500).json({ success: false, message: "Error del servidor" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error agregando la orden con detalle: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -145,18 +181,41 @@ const create = async (req, res) => {
  */
 const update = async (req, res) => {
   const { id } = req.params;
-
+  const idUsuario = req.user.id;
   const ordenBody = req.body;
   try {
+    const operador = idUsuario
+      ? await operadores.obtenerTodoPorIDUsuario(idUsuario)
+      : null;
+
+    console.log("Operador: ", operador);
     const resultado = await ordenes.actualizar({
       idOrden: id,
       ...ordenBody,
+      idOperador: operador[0].ID,
     });
 
-    res.status(200).json({ success: true, data: resultado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message:
+          resultado[0].mensaje +
+          JSON.stringify({ ...req.body }) +
+          "/ Actualizar Orden",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.error("Error al actualizar orden:", error.message);
-    res.status(500).json({ success: false, message: "Error del servidor" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error actualizando la orden: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -171,28 +230,54 @@ const update = async (req, res) => {
  */
 const delete_ = async (req, res) => {
   const { id } = req.params;
-
   try {
     const resultado = await ordenes.actualizar({
       idOrden: id,
       idEstado: 2,
     });
 
-    res.status(200).json({ success: true, data: resultado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Eliminar Orden",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.error("Error al borrar órden:", error.message);
-    res.status(500).json({ success: false, message: "Error del servidor" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error eliminando la orden: " + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 const cancel = async (req, res) => {
   const { id } = req.params;
-  console.log("id from params:", id);
   try {
     const resultado = await ordenes.cancelar(id);
-    res.status(200).json({ success: true, data: resultado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Cancelar Orden",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.error("Error en cancelar órden:", error.message);
-    res.status(500).json({ success: false, message: "Error del servidor" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error cancelando la orden: " + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 /**

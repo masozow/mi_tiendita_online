@@ -5,7 +5,7 @@ import { Marca } from "../controllers/marcas_productos.controller.js";
 
 const router = express.Router();
 
-router.get("/", checkAuth, checkRole(["Super usuario"]), Marca.get);
+router.get("/", checkAuth, Marca.get);
 router.get("/:id", checkAuth, Marca.getByID);
 router.post("/", checkAuth, checkRole(["Super usuario"]), Marca.create);
 router.put("/:id", checkAuth, checkRole(["Super usuario"]), Marca.update);

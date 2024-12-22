@@ -5,7 +5,7 @@
  */
 
 import { marcas } from "../models/marcas_productos.model.js";
-
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 /**
  * Obtiene todas las marcas de productos.
  * @async
@@ -19,8 +19,13 @@ const get = async (req, res) => {
     const Marcas = await marcas.obtenerTodo();
     res.status(200).json({ success: true, data: Marcas });
   } catch (error) {
-    console.log("Error obteniendo las marcas:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo las marcas: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -38,8 +43,14 @@ const getByID = async (req, res) => {
     const Marca = await marcas.obtenerTodoPorID(id);
     res.status(200).json({ success: true, data: Marca });
   } catch (error) {
-    console.log("Error obteniendo la marca:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo la marca: ${id} ` + error.message,
+        userId: req.user.id,
+        genericId: id,
+      })
+    );
   }
 };
 
@@ -52,12 +63,32 @@ const getByID = async (req, res) => {
  * @returns {Promise<void>}
  */
 const create = async (req, res) => {
+  if (!req.body.nombre) {
+    return res.status(400).json({
+      success: false,
+      message: "Por favor coloque todos los campos obligatorios.",
+    });
+  }
+
   try {
-    const mensaje = await marcas.insertar({ ...req.body });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await marcas.insertar({ ...req.body });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Insertar Marca",
+        genericId: resultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error creando la marca:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error agregando la marca: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -72,11 +103,28 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await marcas.actualizar({ id, ...req.body });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await marcas.actualizar({ id, ...req.body });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message:
+          resultado[0].mensaje +
+          JSON.stringify({ ...req.body }) +
+          "/ Actualizar Marca",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error actualizando la marca:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error actualizando la marca: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -91,11 +139,25 @@ const update = async (req, res) => {
 const delete_ = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await marcas.actualizar({ id, idEstado: 2 });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await marcas.actualizar({ id, idEstado: 2 });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Eliminar Marca",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error eliminando la marca:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error eliminando la marca: " + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 

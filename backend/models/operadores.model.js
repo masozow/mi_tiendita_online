@@ -8,6 +8,7 @@
  */
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Inserta un nuevo operador.
@@ -22,10 +23,12 @@ const insertar = async ({ idUsuario, idEstado } = {}) => {
     const resultado = await sequelize.query(
       `
         DECLARE @output_message nvarchar(255)
+        DECLARE @output_id int
         EXEC sp_insertarOperador      @idUsuario= :idUsuario, 
                                       @idEstado= :idEstado, 
-                                      @message=@output_message OUTPUT
-        SELECT @output_message AS mensaje;
+                                      @message=@output_message OUTPUT,
+                                      @id= @output_id OUTPUT
+        SELECT @output_message AS mensaje, @output_id as id;
         `,
       {
         replacements: {
@@ -35,10 +38,12 @@ const insertar = async ({ idUsuario, idEstado } = {}) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -78,10 +83,12 @@ const actualizar = async ({ id, idUsuario = null, idEstado = null } = {}) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -102,7 +109,10 @@ const obtenerTodo = async () => {
     );
     return productos;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
     throw err;
   }
 };
@@ -126,7 +136,32 @@ const obtenerTodoPorID = async (ID) => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
+  }
+};
+
+const obtenerTodoPorIDUsuario = async (ID) => {
+  try {
+    const datos = await sequelize.query(
+      "SELECT * FROM vw_ObtenerTodosOperadores WHERE ID_USUARIO= :ID",
+      {
+        replacements: {
+          ID,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
   }
 };
 
@@ -144,5 +179,6 @@ const operadores = {
   actualizar,
   obtenerTodo,
   obtenerTodoPorID,
+  obtenerTodoPorIDUsuario,
 };
 export { operadores };

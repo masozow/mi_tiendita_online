@@ -5,6 +5,7 @@
  * @namespace estadosController
  */
 import { estados } from "../models/estados.model.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Obtiene todos los estados.
@@ -18,8 +19,13 @@ const get = async (req, res) => {
     const Estados = await estados.obtenerTodo();
     res.status(200).json({ success: true, data: Estados });
   } catch (error) {
-    console.log("Error obteniendo los estados:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo los estados: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -36,8 +42,14 @@ const getByID = async (req, res) => {
     const Estado = await estados.obtenerTodoPorID(id);
     res.status(200).json({ success: true, data: Estado });
   } catch (error) {
-    console.log("Error obteniendo el estado:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo el estado: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -50,11 +62,24 @@ const getByID = async (req, res) => {
  */
 const create = async (req, res) => {
   try {
-    const mensaje = await estados.insertar({ ...req.body });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await estados.insertar({ ...req.body });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Insertar Estado",
+        genericId: resultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error creando el estado:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error agregando el estado: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -68,11 +93,28 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await estados.actualizar({ id, ...req.body });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await estados.actualizar({ id, ...req.body });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message:
+          resultado[0].mensaje +
+          JSON.stringify({ ...req.body }) +
+          "/ Actualizar Estado",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error actualizando el estado:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error actualizando el estado: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -86,11 +128,25 @@ const update = async (req, res) => {
 const delete_ = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await estados.actualizar({ id, usable: 0 });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await estados.actualizar({ id, usable: 0 });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Eliminar Estado",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error eliminando el estado:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error eliminando el estado: " + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 

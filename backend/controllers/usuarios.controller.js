@@ -7,7 +7,7 @@
 import { usuarios } from "../models/usuarios.model.js";
 import { encription } from "../utilities/encrypt.js";
 import { tokenSign } from "../utilities/generateToken.js";
-import logHandler from "../utilities/logHandler.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 /**
  * Obtiene todos los usuarios.
@@ -24,8 +24,13 @@ const get = async (req, res) => {
     const Usuarios = await usuarios.obtenerTodo();
     res.status(200).json({ success: true, data: Usuarios });
   } catch (error) {
-    console.log("Error obteniendo los usuarios:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo los usuarios: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -44,8 +49,14 @@ const getByID = async (req, res) => {
     const Usuario = await usuarios.obtenerTodoPorID(id);
     res.status(200).json({ success: true, data: Usuario });
   } catch (error) {
-    console.log("Error obteniendo el usuario:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo el usuario: ` + error.message,
+        userId: req.user.id,
+        genericId: id,
+      })
+    );
   }
 };
 
@@ -61,15 +72,20 @@ const getByID = async (req, res) => {
 const login = async (req, res) => {
   const { correo, password } = req.body;
   try {
-    const contrasena = await usuarios.obtenerPasswordPorCorreo(correo);
-    if (!contrasena || contrasena.length === 0) {
+    const usuario = await usuarios.obtenerPasswordPorCorreo(correo);
+    if (!usuario || usuario.length === 0) {
       // Respuesta si no se encuentra el usuario
-      return res
-        .status(404)
-        .json({ success: false, data: "Usuario no encontrado" });
+      return res.status(404).json(
+        await errorAndLogHandler({
+          level: errorLevels.warn,
+          message: `Usuario no encontrado. `,
+          userId: req.user.id,
+          genericId: id,
+        })
+      );
     }
 
-    const contrasenaPlana = contrasena[0].PASSWORD;
+    const contrasenaPlana = usuario[0].PASSWORD;
     const resultado = await encription.comparePassword(
       password,
       contrasenaPlana
@@ -77,17 +93,11 @@ const login = async (req, res) => {
 
     if (resultado) {
       const user = {
-        id: contrasena[0].ID,
-        correo: correo,
-        idRol: contrasena[0].ID_ROL,
+        id: usuario[0].ID,
+        idRol: usuario[0].ID_ROL,
       };
       const tokenSession = await tokenSign(user);
-      // Respuesta en caso de login exitoso
-      await logHandler({
-        level: "info",
-        message: "Login exitoso",
-        userId: user.id,
-      });
+
       // Establecer la cookie firmada
       res.cookie("authToken", tokenSession, {
         httpOnly: true, // La cookie no puede ser accedida desde el cliente
@@ -96,20 +106,30 @@ const login = async (req, res) => {
         sameSite: "strict", // La cookie solo se enviará en la misma solicitud
         maxAge: 24 * 60 * 60 * 1000, // Expira en 1 día
       });
-      return res.status(200).json({
-        success: true,
-        data: "Sesión iniciada con éxito",
-      });
+      return res.status(200).json(
+        await errorAndLogHandler({
+          level: errorLevels.info,
+          message: "Bienvenid@",
+          userId: usuario[0].ID,
+          shouldSaveLog: true,
+        })
+      );
     } else {
       // Respuesta en caso de contraseña incorrecta
-      return res
-        .status(409)
-        .json({ success: false, data: "Credenciales incorrectas" });
+      return res.status(409).json(
+        await errorAndLogHandler({
+          level: errorLevels.warn,
+          message: "Contraseña incorrecta",
+        })
+      );
     }
   } catch (error) {
-    console.error("Error haciendo el login:", error.message);
     // Respuesta en caso de error del servidor
-    return res.status(500).json({ success: false, data: "Server Error" });
+    return res.status(500).json(
+      await errorAndLogHandler({
+        message: "Error haciendo el login",
+      })
+    );
   }
 };
 /**
@@ -127,9 +147,12 @@ const logout = async (req, res) => {
 
     if (!token) {
       // Si no hay cookie presente
-      return res
-        .status(400)
-        .json({ success: false, data: "No hay sesión activa para cerrar" });
+      return res.status(400).json(
+        await errorAndLogHandler({
+          level: errorLevels.warn,
+          message: "No hay sesión activa para cerrar",
+        })
+      );
     }
 
     // Elimina la cookie del cliente
@@ -141,13 +164,19 @@ const logout = async (req, res) => {
     });
 
     // Respuesta exitosa
-    return res.status(200).json({
-      success: true,
-      data: "Sesión cerrada con éxito",
-    });
+    return res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: "Sesión cerrada con éxito.",
+      })
+    );
   } catch (error) {
-    console.error("Error cerrando sesión:", error.message);
-    return res.status(500).json({ success: false, data: "Server Error" });
+    return res.status(500).json(
+      await errorAndLogHandler({
+        message: "Error cerrando sesión: " + error.message,
+        userId: req.user ? req.user.id : null,
+      })
+    );
   }
 };
 
@@ -164,14 +193,27 @@ const create = async (req, res) => {
   const { password } = req.body;
   const hashedPassword = await encription.hashedPassword(password);
   try {
-    const mensaje = await usuarios.insertar({
+    const resultado = await usuarios.insertar({
       ...req.body,
       password: hashedPassword,
     });
-    res.status(200).json({ success: true, message: mensaje });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Insertar Usuario",
+        genericId: resultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error creando el usuario:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error insertando el usuario: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -191,15 +233,32 @@ const update = async (req, res) => {
     ? await encription.hashedPassword(password)
     : password;
   try {
-    const mensaje = await usuarios.actualizar({
+    const resultado = await usuarios.actualizar({
       id,
       ...req.body,
       password: hashedPassword,
     });
-    res.status(200).json({ success: true, message: mensaje });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message:
+          resultado[0].mensaje +
+          JSON.stringify({ ...req.body, password: "changed_with_success" }) + //importante cambiar el password acá, si no se guardaría como texto plano en el log
+          "/ Actualizar Usuario",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error actualizando el usuario:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error actualizando el usuario: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -214,11 +273,25 @@ const update = async (req, res) => {
 const delete_ = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await usuarios.actualizar({ id, idEstado: 2 });
-    res.status(200).json({ success: true, message: mensaje });
+    const resultado = await usuarios.actualizar({ id, idEstado: 2 });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Eliminar Usuario",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.log("Error eliminando el usuario:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error eliminando el usuario: " + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 

@@ -7,6 +7,7 @@
 import { productos } from "../models/productos.model.js";
 import path from "path";
 import fs from "fs";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 const get = async (req, res) => {
   try {
@@ -14,8 +15,13 @@ const get = async (req, res) => {
       await productos.obtenerTodosProductosActivosStockMayorCero();
     res.status(200).json({ success: true, data: Productos });
   } catch (error) {
-    console.log("Error obteniendo los productos:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo los productos: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -24,11 +30,16 @@ const getByID = async (req, res) => {
   console.log("parametros: ", id);
   try {
     const Productos = await productos.obtenerTodoPorID(id);
-    console.log(Productos);
     res.status(200).json({ success: true, data: Productos });
   } catch (error) {
-    console.log("Error obteniendo los productos:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo el producto: ${id} ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -61,11 +72,23 @@ const create = async (req, res) => {
       ...productoBody,
       fotoProducto: filePath,
     });
-
-    res.status(200).json({ success: true, data: resultado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Insertar Producto",
+        genericId: resultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.error("Error al crear producto:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error agregando el producto: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -101,10 +124,27 @@ const update = async (req, res) => {
       fotoProducto: filePath,
     });
 
-    res.status(200).json({ success: true, data: resultado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message:
+          resultado[0].mensaje +
+          JSON.stringify({ ...productoBody, fotoProducto: filePath }) +
+          "/ Actualizar Producto",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.error("Error al actualizar producto:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error actualizando el producto: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -117,10 +157,24 @@ const delete_ = async (req, res) => {
       idEstado: 2,
     });
 
-    res.status(200).json({ success: true, data: resultado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Eliminar Producto",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
-    console.error("Error in Delete product:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: "Error eliminando el cliente: " + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
