@@ -65,10 +65,12 @@ const insertar = async ({
         type: QueryTypes.SELECT,
       }
     );
-    console.log("resultado: ", resultado);
     return resultado;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -138,7 +140,10 @@ const actualizar = async ({
     );
     return resultado;
   } catch (err) {
-    errorAndLogHandler({ level: "error", message: err });
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento:  " + err,
+    });
     throw err;
   }
 };
@@ -157,7 +162,7 @@ const obtenerTodo = async () => {
     });
     return productos;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({ level: errorLevels.error, message: err });
     throw err;
   }
 };
@@ -178,7 +183,10 @@ const obtenerTodosProductosActivosStockMayorCero = async () => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al consultar la vista:" + err,
+    });
   }
 };
 

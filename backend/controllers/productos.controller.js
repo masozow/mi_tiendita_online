@@ -10,14 +10,17 @@ import fs from "fs";
 import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 const get = async (req, res) => {
-  console.log("usuario: ", req.user);
   try {
     const Productos =
       await productos.obtenerTodosProductosActivosStockMayorCero();
     res.status(200).json({ success: true, data: Productos });
   } catch (error) {
-    console.log("Error obteniendo los productos:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo los productos: ` + error.message,
+      })
+    );
   }
 };
 
@@ -26,11 +29,14 @@ const getByID = async (req, res) => {
   console.log("parametros: ", id);
   try {
     const Productos = await productos.obtenerTodoPorID(id);
-    console.log(Productos);
     res.status(200).json({ success: true, data: Productos });
   } catch (error) {
-    console.log("Error obteniendo los productos:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo el producto: ${id} ` + error.message,
+      })
+    );
   }
 };
 
@@ -63,7 +69,6 @@ const create = async (req, res) => {
       ...productoBody,
       fotoProducto: filePath,
     });
-    console.log("resultado controller: ", resultado[0].mensaje);
     res.status(200).json(
       await errorAndLogHandler({
         level: errorLevels.info,
@@ -77,7 +82,7 @@ const create = async (req, res) => {
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: error.message,
+        message: "Error insertando el producto: " + error.message,
       })
     );
   }
@@ -131,7 +136,7 @@ const update = async (req, res) => {
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: error.message,
+        message: "Error actualizando el producto: " + error.message,
       })
     );
   }
@@ -156,11 +161,10 @@ const delete_ = async (req, res) => {
       })
     );
   } catch (error) {
-    console.error("Error in Delete product:", error.message);
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: error.message,
+        message: "Error eliminando el producto: " + error.message,
       })
     );
   }
