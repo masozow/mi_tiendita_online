@@ -19,6 +19,7 @@ const get = async (req, res) => {
       await errorAndLogHandler({
         level: errorLevels.error,
         message: `Error obteniendo los productos: ` + error.message,
+        userId: req.user.id,
       })
     );
   }
@@ -35,6 +36,7 @@ const getByID = async (req, res) => {
       await errorAndLogHandler({
         level: errorLevels.error,
         message: `Error obteniendo el producto: ${id} ` + error.message,
+        userId: req.user.id,
       })
     );
   }
@@ -83,6 +85,7 @@ const create = async (req, res) => {
       await errorAndLogHandler({
         level: errorLevels.error,
         message: "Error insertando el producto: " + error.message,
+        userId: req.user.id,
       })
     );
   }

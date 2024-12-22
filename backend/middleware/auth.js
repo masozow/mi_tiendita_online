@@ -16,7 +16,7 @@ const checkAuth = async (req, res, next) => {
     if (!token) {
       return res
         .status(401)
-        .json({ success: false, data: "Token no proporcionado" });
+        .json({ success: false, data: "El usuario no ha iniciado sesión" });
     }
     const decodedToken = await verifyToken(token);
     console.log(decodedToken);

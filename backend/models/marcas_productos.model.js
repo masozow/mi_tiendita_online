@@ -34,8 +34,7 @@ const insertar = async ({ nombre, idEstado } = {}) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
     errorAndLogHandler({
       level: errorLevels.error,
@@ -74,7 +73,7 @@ const actualizar = async ({ id, nombre = null, idEstado = null } = {}) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
+    const mensaje = resultado;
     return mensaje;
   } catch (err) {
     errorAndLogHandler({

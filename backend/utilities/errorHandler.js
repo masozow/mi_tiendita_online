@@ -35,7 +35,7 @@ const nivelEsError = (nivel) => {
  * @param {string} [options.genericId=null] - ID genérico asociado al log.
  * @param {number} [options.userId=null] - ID del usuario que generó el log.
  * @param {boolean} [options.shouldSaveLog=false] - Indica si se debe guardar el log independientemente del nivel.
- * @returns {Promise<Object>} Objeto que contiene el estado de éxito y el mensaje de error o el mensaje original.
+ * @returns {Promise<Object>} Objeto que contiene el estado de éxito (success) y el mensaje de error o el mensaje original (message).
  * @description Si el entorno no es de producción, imprime el mensaje al log de la consola.
  *              Si el mensaje contiene "ERROR", el nivel no es 'error', o shouldSaveLog es verdadero,
  *              guarda el log en la base de datos.
@@ -51,7 +51,10 @@ const errorAndLogHandler = async ({
     .toString()
     .toLowerCase()
     .includes("error");
-
+  const mensajeContieneRestriccionUNIQUE = message
+    .toString()
+    .toLowerCase()
+    .includes("unique");
   const success = mensajeContieneError ? errorLevels.error : level;
 
   if (mensajeContieneError || nivelEsError(level) || shouldSaveLog) {
@@ -64,7 +67,11 @@ const errorAndLogHandler = async ({
 
   return {
     success: success,
-    data: mensajeContieneError ? "Ha ocurrido un error. " : message,
+    data: mensajeContieneError
+      ? mensajeContieneRestriccionUNIQUE
+        ? "Ya existe un registro con ese nombre"
+        : "Ha ocurrido un error. "
+      : message,
   };
 };
 

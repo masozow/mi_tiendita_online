@@ -5,7 +5,7 @@
  */
 
 import { marcas } from "../models/marcas_productos.model.js";
-
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 /**
  * Obtiene todas las marcas de productos.
  * @async
@@ -19,8 +19,13 @@ const get = async (req, res) => {
     const Marcas = await marcas.obtenerTodo();
     res.status(200).json({ success: true, data: Marcas });
   } catch (error) {
-    console.log("Error obteniendo las marcas:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo las marcas: ` + error.message,
+        userId: req.user.id,
+      })
+    );
   }
 };
 
@@ -38,8 +43,12 @@ const getByID = async (req, res) => {
     const Marca = await marcas.obtenerTodoPorID(id);
     res.status(200).json({ success: true, data: Marca });
   } catch (error) {
-    console.log("Error obteniendo la marca:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo la marca: ${id} ` + error.message,
+      })
+    );
   }
 };
 
@@ -52,8 +61,16 @@ const getByID = async (req, res) => {
  * @returns {Promise<void>}
  */
 const create = async (req, res) => {
+  if (!req.body.nombre) {
+    return res.status(400).json({
+      success: false,
+      message: "Por favor coloque todos los campos obligatorios.",
+    });
+  }
+
   try {
     const resultado = await marcas.insertar({ ...req.body });
+    console.log("resultado: ", resultado);
     res.status(200).json(
       await errorAndLogHandler({
         level: errorLevels.info,
@@ -91,7 +108,7 @@ const update = async (req, res) => {
         message:
           resultado[0].mensaje +
           JSON.stringify({ ...req.body }) +
-          "/ Actualizar Producto",
+          "/ Actualizar Marca",
         genericId: id,
         userId: req.user.id,
         shouldSaveLog: true,
@@ -118,7 +135,7 @@ const update = async (req, res) => {
 const delete_ = async (req, res) => {
   const { id } = req.params;
   try {
-    const mensaje = await marcas.actualizar({ id, idEstado: 2 });
+    const resultado = await marcas.actualizar({ id, idEstado: 2 });
     res.status(200).json(
       await errorAndLogHandler({
         level: errorLevels.info,
