@@ -7,6 +7,8 @@
  */
 import { QueryTypes } from "sequelize";
 import sequelize from "../config/sequelize.js";
+import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
+
 /**
  * Inserta un nuevo rol en la base de datos.
  *
@@ -30,10 +32,12 @@ const insertar = async ({ nombre } = {}) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -67,10 +71,12 @@ const actualizar = async ({ id, nombre = null, idEstado = null } = {}) => {
         type: QueryTypes.SELECT,
       }
     );
-    const mensaje = resultado[0]?.mensaje;
-    return mensaje;
+    return resultado;
   } catch (err) {
-    console.error("Error al ejecutar el procedimiento:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al ejecutar el procedimiento: " + err,
+    });
     throw err;
   }
 };
@@ -94,7 +100,11 @@ const obtenerTodo = async (idEstado = 1) => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
   }
 };
 
@@ -117,7 +127,11 @@ const obtenerTodoPorID = async (ID) => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
   }
 };
 
