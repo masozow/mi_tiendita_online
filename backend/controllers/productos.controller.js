@@ -84,7 +84,7 @@ const create = async (req, res) => {
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: "Error insertando el producto: " + error.message,
+        message: `Error agregando el producto: ` + error.message,
         userId: req.user.id,
       })
     );
@@ -139,7 +139,9 @@ const update = async (req, res) => {
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: "Error actualizando el producto: " + error.message,
+        message: `Error actualizando el producto: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
       })
     );
   }
@@ -167,7 +169,9 @@ const delete_ = async (req, res) => {
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: "Error eliminando el producto: " + error.message,
+        message: "Error eliminando el cliente: " + error.message,
+        genericId: id,
+        userId: req.user.id,
       })
     );
   }

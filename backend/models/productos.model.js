@@ -187,6 +187,7 @@ const obtenerTodosProductosActivosStockMayorCero = async () => {
       level: errorLevels.error,
       message: "Error al consultar la vista:" + err,
     });
+    throw err;
   }
 };
 
@@ -211,7 +212,11 @@ const obtenerTodoPorID = async (ID) => {
     );
     return datos;
   } catch (err) {
-    console.error("Error al consultar la vista:", err);
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
   }
 };
 /**

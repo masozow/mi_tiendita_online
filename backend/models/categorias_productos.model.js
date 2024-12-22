@@ -105,6 +105,7 @@ const obtenerTodo = async (idEstado = 1) => {
       level: errorLevels.error,
       message: "Error al obtener la vista: " + err,
     });
+    throw err;
   }
 };
 /**
@@ -132,6 +133,7 @@ const obtenerTodoPorID = async (ID, idEstado = 1) => {
       level: errorLevels.error,
       message: "Error al obtener la vista: " + err,
     });
+    throw err;
   }
 };
 /**

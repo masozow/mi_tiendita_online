@@ -83,7 +83,8 @@ const create = async (req, res) => {
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: error.message,
+        message: `Error agregando la marca: ` + error.message,
+        userId: req.user.id,
       })
     );
   }
@@ -117,7 +118,9 @@ const update = async (req, res) => {
     res.status(500).json(
       await errorAndLogHandler({
         level: errorLevels.error,
-        message: "Error actualizando la marca: " + error.message,
+        message: `Error actualizando la marca: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
       })
     );
   }
@@ -149,6 +152,8 @@ const delete_ = async (req, res) => {
       await errorAndLogHandler({
         level: errorLevels.error,
         message: "Error eliminando la marca: " + error.message,
+        genericId: id,
+        userId: req.user.id,
       })
     );
   }
