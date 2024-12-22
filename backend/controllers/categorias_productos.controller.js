@@ -46,6 +46,8 @@ const getByID = async (req, res) => {
       await errorAndLogHandler({
         level: errorLevels.error,
         message: `Error obteniendo la categoría: ${id} ` + error.message,
+        userId: req.user.id,
+        genericId: id,
       })
     );
   }

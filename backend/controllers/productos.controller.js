@@ -36,6 +36,7 @@ const getByID = async (req, res) => {
       await errorAndLogHandler({
         level: errorLevels.error,
         message: `Error obteniendo el producto: ${id} ` + error.message,
+        genericId: id,
         userId: req.user.id,
       })
     );
