@@ -146,10 +146,23 @@ const delete_ = async (req, res) => {
       idEstado: 2,
     });
 
-    res.status(200).json({ success: true, data: resultado });
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: resultado[0].mensaje + "/ Eliminar Producto",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
   } catch (error) {
     console.error("Error in Delete product:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: error.message,
+      })
+    );
   }
 };
 
