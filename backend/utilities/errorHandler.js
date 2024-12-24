@@ -57,14 +57,30 @@ const errorAndLogHandler = async ({
     .includes("unique");
   const success = mensajeContieneError ? errorLevels.error : level;
 
-  if (mensajeContieneError || nivelEsError(level) || shouldSaveLog) {
+  if (
+    mensajeContieneError ||
+    nivelEsError(level) === false ||
+    shouldSaveLog != false
+  ) {
     await insertLog(success, message, genericId, userId);
   } else if (process.env.NODE_ENV !== "prod") {
-    console.log("message", message);
+    console.log(
+      "message:",
+      message,
+      "\n",
+      "success:",
+      success,
+      "\n",
+      "genericId:",
+      genericId,
+      "\n",
+      "userId:",
+      userId,
+      "\n"
+    );
   } else if (process.env.NODE_ENV === "prod") {
     await insertLog(success, message, genericId, userId);
   }
-
   return {
     success: success,
     data: mensajeContieneError
