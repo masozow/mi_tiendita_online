@@ -1,5 +1,6 @@
-# mi_tiendita_online
-Repositorio para el desafio Web.
+# Repositorio para el desafio Web.
+
+## mi_tiendita_online
 
 Para poder usar el proyecto, se debe tener un archivo .env con estas variables:
 
