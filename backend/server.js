@@ -22,6 +22,7 @@ app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //Rutas
 app.use("/api/productos", productosRoutes);
@@ -38,3 +39,5 @@ app.use("/api/ordenes", ordenesRoutes);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+export default app;

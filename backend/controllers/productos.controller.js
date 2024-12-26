@@ -92,9 +92,13 @@ const update = async (req, res) => {
   const productoBody = req.body;
   let filePath = null;
   console.log("file: ", req.file);
+  console.log("body: ", req.body);
   try {
     if (req.file) {
       filePath = `${process.env.UPLOAD_FOLDER}/${req.file.filename}`;
+      console.log("File uploaded to:", filePath);
+    } else {
+      console.log("No file uploaded");
     }
     console.log("filepath: ", filePath);
     const productoActual = await productos.obtenerTodoPorID(id);

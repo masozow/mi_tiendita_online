@@ -5,7 +5,6 @@ const UPLOADS_FOLDER = process.env.UPLOAD_FOLDER;
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log("Req body in upload: ", req.body);
     if (req.body[SchemaFields.NOMBRE_PRODUCTO]) {
       cb(null, UPLOADS_FOLDER);
     } else {
@@ -30,12 +29,12 @@ const upload = multer({
       return cb(null, false);
     }
     const isValidType =
-      /jpeg|jpg|png|pdf/.test(file.mimetype) &&
-      /jpeg|jpg|png|pdf/.test(path.extname(file.originalname).toLowerCase());
+      /jpeg|jpg|png/.test(file.mimetype) &&
+      /jpeg|jpg|png/.test(path.extname(file.originalname).toLowerCase());
     if (isValidType) {
       cb(null, true);
     } else {
-      req.fileValidationError = "Tipo de archivo no soportado.";
+      req.fileValidationError = true;
       cb(null, false);
     }
   },
