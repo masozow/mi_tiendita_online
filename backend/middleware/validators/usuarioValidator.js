@@ -1,64 +1,73 @@
 import { check } from "express-validator";
-import validate from "../../utilities/validate.js";
+import validate from "../validate.js";
+import SchemaFields from "./schemaFields.js";
+import errorMessages from "../locales.js";
 
 const getUsuarioByIDValidationRules = validate([
-  check("id").isInt().withMessage("ID debe ser un número entero"),
+  check(SchemaFields.ID).isInt().withMessage(errorMessages.ID_INT),
 ]);
 
 const createUsuarioValidationRules = validate([
-  check("correo").isEmail().withMessage("Correo electrónico no es válido"),
-  check("nombre").notEmpty().withMessage("Nombre es obligatorio"),
-  check("password")
+  check(SchemaFields.CORREO).isEmail().withMessage(errorMessages.CORREO_VALIDO),
+  check(SchemaFields.NOMBRE)
+    .notEmpty()
+    .withMessage(errorMessages.NOMBRE_OBLIGATORIO),
+  check(SchemaFields.PASSWORD)
     .isLength({ min: 6 })
-    .withMessage("La contraseña debe tener al menos 6 caracteres"),
-  check("telefono").notEmpty().withMessage("Teléfono es obligatorio"),
-  check("fechaNacimiento")
+    .withMessage(errorMessages.PASSWORD_MIN),
+  check(SchemaFields.TELEFONO)
+    .notEmpty()
+    .withMessage(errorMessages.TELEFONO_OBLIGATORIO),
+  check(SchemaFields.FECHA_NACIMIENTO)
     .isDate()
-    .withMessage("Fecha de nacimiento no es válida"),
-  check("idEstado")
+    .withMessage(errorMessages.FECHA_NACIMIENTO_VALIDA),
+  check(SchemaFields.ID_ESTADO)
     .isInt()
-    .withMessage("ID del estado debe ser un número entero"),
-  check("idRol").isInt().withMessage("ID del rol debe ser un número entero"),
+    .withMessage(errorMessages.ID_ESTADO_INT),
+  check(SchemaFields.ID_ROL).isInt().withMessage(errorMessages.ID_ROL_INT),
 ]);
 
 const updateUsuarioValidationRules = validate([
-  check("id").isInt().withMessage("ID debe ser un número entero"),
-  check("correo")
+  check(SchemaFields.ID).isInt().withMessage(errorMessages.ID_INT),
+  check(SchemaFields.CORREO)
     .optional()
     .isEmail()
-    .withMessage("Correo electrónico no es válido"),
-  check("nombre").optional().notEmpty().withMessage("Nombre es obligatorio"),
-  check("password")
-    .optional()
-    .isLength({ min: 6 })
-    .withMessage("La contraseña debe tener al menos 6 caracteres"),
-  check("telefono")
+    .withMessage(errorMessages.CORREO_VALIDO),
+  check(SchemaFields.NOMBRE)
     .optional()
     .notEmpty()
-    .withMessage("Teléfono es obligatorio"),
-  check("fechaNacimiento")
+    .withMessage(errorMessages.NOMBRE_OBLIGATORIO),
+  check(SchemaFields.PASSWORD)
+    .optional()
+    .isLength({ min: 6 })
+    .withMessage(errorMessages.PASSWORD_MIN),
+  check(SchemaFields.TELEFONO)
+    .optional()
+    .notEmpty()
+    .withMessage(errorMessages.TELEFONO_OBLIGATORIO),
+  check(SchemaFields.FECHA_NACIMIENTO)
     .optional()
     .isDate()
-    .withMessage("Fecha de nacimiento no es válida"),
-  check("idEstado")
+    .withMessage(errorMessages.FECHA_NACIMIENTO_VALIDA),
+  check(SchemaFields.ID_ESTADO)
     .optional()
     .isInt()
-    .withMessage("ID del estado debe ser un número entero"),
-  check("idRol")
+    .withMessage(errorMessages.ID_ESTADO_INT),
+  check(SchemaFields.ID_ROL)
     .optional()
     .isInt()
-    .withMessage("ID del rol debe ser un número entero"),
+    .withMessage(errorMessages.ID_ROL_INT),
 ]);
 
 const deleteUsuarioValidationRules = validate([
-  check("id").isInt().withMessage("ID debe ser un número entero"),
+  check(SchemaFields.ID).isInt().withMessage(errorMessages.ID_INT),
 ]);
 
 const loginUsuarioValidationRules = validate([
-  check("correo").isEmail().withMessage("Correo electrónico no es válido"),
-  check("password")
+  check(SchemaFields.CORREO).isEmail().withMessage(errorMessages.CORREO_VALIDO),
+  check(SchemaFields.PASSWORD)
     .isLength({ min: 6 })
-    .withMessage("La contraseña debe tener al menos 6 caracteres"),
+    .withMessage(errorMessages.PASSWORD_MIN),
 ]);
 
 const usuarioValidator = {

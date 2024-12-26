@@ -27,7 +27,6 @@ const get = async (req, res) => {
 
 const getByID = async (req, res) => {
   const { id } = req.params;
-  console.log("parametros: ", id);
   try {
     const Productos = await productos.obtenerTodoPorID(id);
     res.status(200).json({ success: true, data: Productos });
@@ -45,11 +44,7 @@ const getByID = async (req, res) => {
 
 const create = async (req, res) => {
   const productoBody = req.body;
-  console.log("productoBody: ", productoBody);
-  console.log("req.file: ", req.file); // Ya contiene los datos del archivo cargado
-
   let filePath = "";
-
   if (
     !productoBody.codigoProducto ||
     !productoBody.nombreProducto ||
@@ -58,14 +53,14 @@ const create = async (req, res) => {
     !productoBody.precioProducto
   ) {
     return res.status(400).json({
-      success: false,
+      success: errorLevels.warn,
       message: "Por favor coloque todos los campos obligatorios.",
     });
   }
 
   try {
     if (req.file) {
-      filePath = `backend/statics/${req.file.filename}`;
+      filePath = `${process.env.UPLOAD_FOLDER}/${req.file.filename}`;
     }
 
     const resultado = await productos.insertar({
@@ -96,19 +91,15 @@ const update = async (req, res) => {
   const { id } = req.params;
   const productoBody = req.body;
   let filePath = null;
-
+  console.log("file: ", req.file);
   try {
     if (req.file) {
-      filePath = `statics/${req.file.filename}`;
+      filePath = `${process.env.UPLOAD_FOLDER}/${req.file.filename}`;
     }
-
+    console.log("filepath: ", filePath);
     const productoActual = await productos.obtenerTodoPorID(id);
-    console.log("productoActual: ", productoActual[0].FOTO);
     if (productoActual[0]?.FOTO) {
-      const filePathAnterior = path.resolve(
-        "backend/",
-        `${productoActual[0].FOTO}`
-      );
+      const filePathAnterior = path.resolve(`${productoActual[0].FOTO}`);
 
       if (fs.existsSync(filePathAnterior)) {
         fs.unlinkSync(filePathAnterior);

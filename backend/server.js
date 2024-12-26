@@ -15,6 +15,7 @@ import ordenesRoutes from "./routes/ordenes.route.js";
 
 //Configuraciones
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 //Middlewares
 app.use(express.json());
@@ -34,6 +35,6 @@ app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/ordenes", ordenesRoutes);
 
 //Iniciar el servidor
-app.listen(5000, () => {
-  console.log("Server started at http://localhost:5000");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

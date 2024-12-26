@@ -14,22 +14,22 @@ const queryLog = async (level, userId) => {
 
     if (level && userId) {
       logs = await db.all(
-        "SELECT * FROM logs WHERE level = ? AND user_id = ? ORDER BY timestamp ASC",
+        "SELECT * FROM logs WHERE level = ? AND user_id = ? ORDER BY timestamp DESC",
         level,
         userId
       );
     } else if (level) {
       logs = await db.all(
-        "SELECT * FROM logs WHERE level = ? ORDER BY timestamp ASC",
+        "SELECT * FROM logs WHERE level = ? ORDER BY timestamp DESC",
         level
       );
     } else if (userId) {
       logs = await db.all(
-        "SELECT * FROM logs WHERE user_id = ? ORDER BY timestamp ASC",
+        "SELECT * FROM logs WHERE user_id = ? ORDER BY timestamp DESC",
         userId
       );
     } else {
-      logs = await db.all("SELECT * FROM logs ORDER BY timestamp ASC");
+      logs = await db.all("SELECT * FROM logs ORDER BY timestamp DESC");
     }
 
     return logs;

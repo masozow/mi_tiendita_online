@@ -1,25 +1,32 @@
 import { check } from "express-validator";
-import validate from "../../utilities/validate.js";
+import validate from "../validate.js";
+import SchemaFields from "./schemaFields.js";
+import errorMessages from "../locales.js";
 
 const getRolByIDValidationRules = validate([
-  check("id").isInt().withMessage("ID debe ser un número entero"),
+  check(SchemaFields.ID).isInt().withMessage(errorMessages.ID_INT),
 ]);
 
 const createRolValidationRules = validate([
-  check("nombre").notEmpty().withMessage("Nombre es obligatorio"),
+  check(SchemaFields.NOMBRE)
+    .notEmpty()
+    .withMessage(errorMessages.NOMBRE_OBLIGATORIO),
 ]);
 
 const updateRolValidationRules = validate([
-  check("id").isInt().withMessage("ID debe ser un número entero"),
-  check("nombre").optional().notEmpty().withMessage("Nombre es obligatorio"),
-  check("idEstado")
+  check(SchemaFields.ID).isInt().withMessage(errorMessages.ID_INT),
+  check(SchemaFields.NOMBRE)
+    .optional()
+    .notEmpty()
+    .withMessage(errorMessages.NOMBRE_OBLIGATORIO),
+  check(SchemaFields.ID_ESTADO)
     .optional()
     .isInt()
-    .withMessage("ID del estado debe ser un número entero"),
+    .withMessage(errorMessages.ID_ESTADO_INT),
 ]);
 
 const deleteRolValidationRules = validate([
-  check("id").isInt().withMessage("ID debe ser un número entero"),
+  check(SchemaFields.ID).isInt().withMessage(errorMessages.ID_INT),
 ]);
 
 const rolValidator = {
