@@ -4,14 +4,25 @@ Repositorio para el desafio Web.
 Para poder usar el proyecto, se debe tener un archivo .env con estas variables:
 
 NODE_ENV="dev" #"prod"
+
 DB_USER='el usuario que tenga la bd'
+
 DB_PASSWORD='el password que se le asigne a la bd'
+
 DB_SERVER='la dirección del servidor'
+
 DB_DATABASE='el nombre de la bd'
+
 JWT_SECRET='alguna clave'
+
 COOKIE_SECRET='alguna clave'
+
 BCRYPT_SALT_ROUNDS=##
+
 PORT=####
+
+UPLOAD_FOLDER="backend/statics"
+
 
 Luego instalar las dependencias con npm install, y levantar el servidor de desarrollo con npm run dev.
 
