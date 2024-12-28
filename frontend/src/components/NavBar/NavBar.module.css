@@ -1,8 +1,15 @@
 .navBar {
   height: 10vh;
-  margin-bottom: 10vh;
+  margin-bottom: 20vh;
 }
 
+.linkContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1vw;
+}
 a {
   text-decoration: none;
+  color: inherit;
 }
