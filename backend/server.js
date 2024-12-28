@@ -21,8 +21,6 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 //Rutas
 app.use("/api/productos", productosRoutes);
@@ -34,6 +32,19 @@ app.use("/api/operadores", operadoresRoutes);
 app.use("/api/roles", rolesRoutes);
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/ordenes", ordenesRoutes);
+
+// Parse incoming request bodies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Error-handling middleware
+app.use((err, req, res, next) => {
+  if (err) {
+    res.status(400).json({ error: err.message });
+  } else {
+    next();
+  }
+});
 
 //Iniciar el servidor
 app.listen(PORT, () => {
