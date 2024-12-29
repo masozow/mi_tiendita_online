@@ -10,16 +10,16 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "./loginMutation.jsx";
+import { useLoginMutation } from "../../hooks/loginMutation.jsx";
+import { yupResolver } from "@hookform/resolvers/yup";
+import schema from "../../utils/yupSchemas/Login.js";
 
-//eleonora@example.com
-//elepass
 const Login = () => {
   const navigate = useNavigate();
   const { mutate, isLoading, error } = useLoginMutation();
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Control del Snackbar
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // Mensaje del Snackbar
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
 
   const {
@@ -27,10 +27,7 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      correo: "",
-      password: "",
-    },
+    resolver: yupResolver(schema.loginSchema),
     mode: "onChange",
   });
 
@@ -79,13 +76,7 @@ const Login = () => {
             label="Correo"
             type="email"
             variant="outlined"
-            {...register("correo", {
-              required: "El correo es obligatorio",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "El correo no es válido",
-              },
-            })}
+            {...register("correo")}
             error={!!errors.correo}
             helperText={errors.correo?.message}
           />
@@ -95,15 +86,9 @@ const Login = () => {
             label="Contraseña"
             type="password"
             variant="outlined"
-            {...register("password", {
-              required: "La contraseña es obligatoria",
-              minLength: {
-                value: 6,
-                message: "La contraseña debe tener al menos 6 caracteres",
-              },
-            })}
-            error={!!errors.password} // Muestra error si hay
-            helperText={errors.password?.message} // Muestra el mensaje de error
+            {...register("password")}
+            error={!!errors.password}
+            helperText={errors.password?.message}
           />
           <Button type="submit" variant="contained" disabled={isLoading}>
             {isLoading ? "Cargando..." : "Iniciar sesión"}
