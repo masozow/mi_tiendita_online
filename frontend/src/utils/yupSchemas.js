@@ -11,8 +11,8 @@ const loginSchema = yup.object().shape({
     .min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
-const schema = {
+const schemas = {
   loginSchema,
 };
 
-export default schema;
+export default schemas;

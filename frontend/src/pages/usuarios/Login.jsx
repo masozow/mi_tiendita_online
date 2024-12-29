@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../hooks/loginMutation.jsx";
 import { yupResolver } from "@hookform/resolvers/yup";
-import schema from "../../utils/yupSchemas/Login.js";
+import schema from "../../utils/yupSchemas.js";
 
 const Login = () => {
   const navigate = useNavigate();
