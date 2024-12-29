@@ -17,21 +17,23 @@ import StorefrontIcon from "@mui/icons-material/Storefront";
 import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from "@mui/icons-material/Person";
 import CloseIcon from "@mui/icons-material/Close";
+import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import { useTheme } from "@mui/material/styles";
+
 // import { AccountMenu } from "./AccountMenu.jsx";
 const NavBar = () => {
+  const theme = useTheme();
   const menuItems = [
-    <IconButton
-      component={NavLink}
-      to="/carrito"
-      color="inherit"
-      aria-label="ver su carrito"
-    >
-      <ShoppingCartIcon color="inherit" aria-label="ver su carrito" />
+    <IconButton component={NavLink} to="/carrito" aria-label="ver su carrito">
+      <ShoppingCartIcon aria-label="ver su carrito" />
     </IconButton>,
-    <IconButton color="inherit">
-      <PersonIcon color="inherit" aria-label="opciones de usuario" />
+    <IconButton>
+      <PersonIcon aria-label="opciones de usuario" />
+    </IconButton>,
+    <IconButton>
+      <PowerSettingsNewIcon aria-label="cerrar sesión" />
     </IconButton>,
   ];
   const [anchorNav, setAnchorNav] = useState(null);
@@ -42,23 +44,26 @@ const NavBar = () => {
     setAnchorNav(null);
   };
   return (
-    <AppBar className="navBar" disableGutters position="fixed">
+    <AppBar
+      elevation={0}
+      position="fixed"
+      color="inherit"
+      sx={{ backgroundColor: theme.palette.background.default }}
+    >
       <Toolbar sx={{ minHeight: "3rem" }}>
         <IconButton
-          color="inherit"
           component={NavLink}
           to="/"
           edge="start"
           sx={{ display: { xs: "flex", md: "none" } }}
         >
-          <StorefrontIcon color="inherit" />
+          <StorefrontIcon />
         </IconButton>
-        <Container sx={{ flexGrow: 1 }} disableGutters>
+        <Container sx={{ flexGrow: 1 }}>
           <Typography
             component={NavLink}
             to="/"
             variant="h5"
-            color="inherit"
             sx={{ display: { xs: "none", md: "flex" } }}
           >
             Mi tiendita
@@ -66,36 +71,31 @@ const NavBar = () => {
         </Container>
         {/* <AccountMenu /> */}
         <Stack
-          disableGutters
           direction={"row"}
           spacing={1}
           sx={{ display: { xs: "none", md: "flex" } }}
         >
-          {menuItems.map((item) => item)}
+          {menuItems.map((item, key) => (
+            <React.Fragment key={key}>{item}</React.Fragment>
+          ))}
         </Stack>
         <Box sx={{ display: { xs: "flex", md: "none" } }}>
-          <IconButton
-            color="inherit"
-            size="large"
-            edge="start"
-            onClick={openMenu}
-          >
+          <IconButton size="large" edge="start" onClick={openMenu}>
             {anchorNav ? <CloseIcon /> : <MenuIcon />}
             {/* <MenuIcon /> */}
           </IconButton>
           <Menu
-            open={anchorNav}
+            open={Boolean(anchorNav)}
             sx={{ display: { xs: "flex", md: "none" } }}
             onClose={closeMenu}
-            color="inherit"
             anchorOrigin={{
               vertical: "top",
               horizontal: "right",
             }}
           >
             <MenuList>
-              {menuItems.map((item) => (
-                <MenuItem>{item}</MenuItem>
+              {menuItems.map((item, key) => (
+                <MenuItem key={key}>{item}</MenuItem>
               ))}
             </MenuList>
           </Menu>
