@@ -31,7 +31,7 @@ const Login = () => {
       correo: "",
       password: "",
     },
-    mode: "onChange", // Habilita la validación en tiempo real
+    mode: "onChange",
   });
 
   const handleSnackbarClose = () => {
@@ -86,8 +86,8 @@ const Login = () => {
                 message: "El correo no es válido",
               },
             })}
-            error={!!errors.correo} // Muestra error si hay
-            helperText={errors.correo?.message} // Muestra el mensaje de error
+            error={!!errors.correo}
+            helperText={errors.correo?.message}
           />
           <TextField
             id="password"
