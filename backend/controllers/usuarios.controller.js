@@ -73,14 +73,13 @@ const login = async (req, res) => {
   const { correo, password } = req.body;
   try {
     const usuario = await usuarios.obtenerPasswordPorCorreo(correo);
-    if (!usuario || usuario.length === 0) {
+    console.log("usuario: ", usuario);
+    if (!usuario || usuario?.length === 0) {
       // Respuesta si no se encuentra el usuario
       return res.status(404).json(
         await errorAndLogHandler({
           level: errorLevels.warn,
           message: `Usuario no encontrado. `,
-          userId: req.user.id,
-          genericId: id,
         })
       );
     }
@@ -93,12 +92,11 @@ const login = async (req, res) => {
 
     if (resultado) {
       const user = {
-        id: usuario[0].ID,
-        idRol: usuario[0].ID_ROL,
+        id: usuario[0]?.ID,
+        idRol: usuario[0]?.ID_ROL,
       };
       const tokenSession = await tokenSign(user);
 
-      // Establecer la cookie firmada
       res.cookie("authToken", tokenSession, {
         httpOnly: true, // La cookie no puede ser accedida desde el cliente
         signed: true, // La cookie estará firmada
@@ -109,14 +107,13 @@ const login = async (req, res) => {
       return res.status(200).json(
         await errorAndLogHandler({
           level: errorLevels.info,
-          message: "Bienvenid@",
+          message: `Bienvenid@ ${usuario[0].NOMBRE} | ${usuario[0].ID_ROL} - ${usuario[0].NOMBRE_ROL}`,
           userId: usuario[0].ID,
           shouldSaveLog: true,
         })
       );
     } else {
-      // Respuesta en caso de contraseña incorrecta
-      return res.status(409).json(
+      return res.status(401).json(
         await errorAndLogHandler({
           level: errorLevels.warn,
           message: "Contraseña incorrecta",
@@ -124,10 +121,9 @@ const login = async (req, res) => {
       );
     }
   } catch (error) {
-    // Respuesta en caso de error del servidor
     return res.status(500).json(
       await errorAndLogHandler({
-        message: "Error haciendo el login",
+        message: "Error haciendo el login: " + error,
       })
     );
   }

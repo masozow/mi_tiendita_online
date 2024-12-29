@@ -1,4 +1,4 @@
-import { check, body } from "express-validator";
+import { check } from "express-validator";
 import validate from "../validate.js";
 import SchemaFields from "./schemaFields.js";
 import errorMessages from "../locales.js";
@@ -45,9 +45,6 @@ const createProductoValidationRules = [
   check(SchemaFields.ID_MARCA)
     .isInt({ min: 1 })
     .withMessage(errorMessages.ID_MARCA_INT),
-  body("fileValidationError")
-    .custom((value, { req }) => !req.fileValidationError)
-    .withMessage(errorMessages.FILE_TYPE_NOT_SUPPORTED),
 ];
 
 const updateProductoValidationRules = [
@@ -97,9 +94,6 @@ const updateProductoValidationRules = [
     .optional()
     .isInt({ min: 1 })
     .withMessage(errorMessages.ID_MARCA_INT),
-  body("fileValidationError")
-    .custom((value, { req }) => !req.fileValidationError)
-    .withMessage(errorMessages.FILE_TYPE_NOT_SUPPORTED),
 ];
 
 const deleteProductoValidationRules = validate([
