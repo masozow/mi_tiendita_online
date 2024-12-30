@@ -10,14 +10,18 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../../hooks/loginMutation.jsx";
+import { useLoginMutation } from "../../hooks/useLoginMutation.jsx";
 import { yupResolver } from "@hookform/resolvers/yup";
 import schema from "../../utils/yupSchemas.js";
+import { useAuth } from "../../store/AuthContext.jsx";
+import { rolesDictionary } from "../../utils/rolesDictionary.js";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { mutate, isLoading, error } = useLoginMutation();
+  const { mutateAsync } = useLoginMutation();
+  const { refetch } = useAuth();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
@@ -35,23 +39,36 @@ const Login = () => {
     setSnackbarOpen(false);
   };
 
-  const onSubmit = (data) => {
-    mutate(data, {
-      onSuccess: (response) => {
-        const mensajeSolo = response.data?.toString().split("|")[0].trim();
-        setSnackbarMessage(mensajeSolo || "¡Bienvenido!");
-        setSeverity("success");
-        setSnackbarOpen(true);
-        setTimeout(() => {
-          navigate("/producto/");
-        }, 2000);
-      },
-      onError: (error) => {
-        setSnackbarMessage(error?.data || "Error desconocido");
-        setSeverity("error");
-        setSnackbarOpen(true);
-      },
-    });
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await mutateAsync(data); // Esperamos la respuesta de mutateAsync
+      console.log("Response: ", response);
+      const mensajeSolo = response.data?.toString().split("|")[0].trim();
+      setSnackbarMessage(mensajeSolo || "¡Bienvenido!");
+      setSeverity("success");
+      setSnackbarOpen(true);
+      await refetch(); // Re-fetch user data after login
+      const user = response.data?.user;
+      const userRole = parseInt(user?.ID_ROL, 10);
+      setTimeout(() => {
+        if (userRole === parseInt(rolesDictionary.Cliente, 10)) {
+          navigate("/producto/catalogo/");
+        } else if (userRole === parseInt(rolesDictionary.Operador, 10)) {
+          navigate("/ordenes/historial/");
+        } else {
+          navigate("/");
+        }
+        setIsLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.log("Error en onError: ", error);
+      const errorMessage = error?.data || "Error desconocido";
+      setSnackbarMessage(errorMessage);
+      setSeverity("error");
+      setSnackbarOpen(true);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -63,8 +80,7 @@ const Login = () => {
         justifyContent: "center",
         px: { xs: "1rem", md: "2rem" },
         flexGrow: 1,
-      }}
-    >
+      }}>
       <Typography variant="h5" sx={{ mb: "1rem" }}>
         Iniciar sesión
       </Typography>
@@ -99,8 +115,7 @@ const Login = () => {
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
+        onClose={handleSnackbarClose}>
         <Alert onClose={handleSnackbarClose} severity={severity}>
           {snackbarMessage}
         </Alert>

@@ -1,13 +1,11 @@
-import yup from "yup";
-
+import * as yup from "yup";
+import { es } from "yup-locales";
+yup.setLocale(es);
 const loginSchema = yup.object().shape({
-  correo: yup
-    .string()
-    .email("Correo no válido")
-    .required("El correo es requerido"),
+  correo: yup.string().email().required(),
   password: yup
     .string()
-    .required("La contraseña es requerida")
+    .required()
     .min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 

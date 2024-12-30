@@ -29,8 +29,8 @@ const NavBar = () => {
     <IconButton component={NavLink} to="/carrito" aria-label="ver su carrito">
       <ShoppingCartIcon aria-label="ver su carrito" />
     </IconButton>,
-    <IconButton>
-      <PersonIcon aria-label="opciones de usuario" />
+    <IconButton component={NavLink} to="/login">
+      <PersonIcon aria-label="iniciar sesión" />
     </IconButton>,
     <IconButton>
       <PowerSettingsNewIcon aria-label="cerrar sesión" />
@@ -48,15 +48,13 @@ const NavBar = () => {
       elevation={0}
       position="fixed"
       color="inherit"
-      sx={{ backgroundColor: theme.palette.background.default }}
-    >
+      sx={{ backgroundColor: theme.palette.background.default }}>
       <Toolbar sx={{ minHeight: "3rem" }}>
         <IconButton
           component={NavLink}
           to="/"
           edge="start"
-          sx={{ display: { xs: "flex", md: "none" } }}
-        >
+          sx={{ display: { xs: "flex", md: "none" } }}>
           <StorefrontIcon />
         </IconButton>
         <Container sx={{ flexGrow: 1 }}>
@@ -64,8 +62,7 @@ const NavBar = () => {
             component={NavLink}
             to="/"
             variant="h5"
-            sx={{ display: { xs: "none", md: "flex" } }}
-          >
+            sx={{ display: { xs: "none", md: "flex" } }}>
             Mi tiendita
           </Typography>
         </Container>
@@ -73,8 +70,7 @@ const NavBar = () => {
         <Stack
           direction={"row"}
           spacing={1}
-          sx={{ display: { xs: "none", md: "flex" } }}
-        >
+          sx={{ display: { xs: "none", md: "flex" } }}>
           {menuItems.map((item, key) => (
             <React.Fragment key={key}>{item}</React.Fragment>
           ))}
@@ -91,8 +87,7 @@ const NavBar = () => {
             anchorOrigin={{
               vertical: "top",
               horizontal: "right",
-            }}
-          >
+            }}>
             <MenuList>
               {menuItems.map((item, key) => (
                 <MenuItem key={key}>{item}</MenuItem>
