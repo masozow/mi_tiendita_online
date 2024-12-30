@@ -1,20 +1,16 @@
-import React, { useState } from "react";
-import {
-  TextField,
-  Button,
-  Stack,
-  Typography,
-  Container,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import React, { useState, useReducer } from "react";
+import { TextField, Button, Stack, Typography, Container } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../hooks/useLoginMutation.jsx";
-import { yupResolver } from "@hookform/resolvers/yup";
-import schema from "../../utils/yupSchemas.js";
 import { useAuth } from "../../store/AuthContext.jsx";
+import schema from "../../utils/yupSchemas.js";
 import { rolesDictionary } from "../../utils/rolesDictionary.js";
+import SnackbarAlert from "../../components/Login/SnackBarAlert.jsx";
+import onLoginSubmit from "../../utils/onLoginSubmit.js";
+import snackbarReducer from "../../store/snackBarReducer.js";
+import getFieldErrorProps from "../../utils/getFieldErrorProps.js";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,9 +18,11 @@ const Login = () => {
   const { refetch } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [severity, setSeverity] = useState("success");
+  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const {
     register,
@@ -36,39 +34,7 @@ const Login = () => {
   });
 
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
-  const onSubmit = async (data) => {
-    setIsLoading(true);
-    try {
-      const response = await mutateAsync(data); // Esperamos la respuesta de mutateAsync
-      console.log("Response: ", response);
-      const mensajeSolo = response.data?.toString().split("|")[0].trim();
-      setSnackbarMessage(mensajeSolo || "¡Bienvenido!");
-      setSeverity("success");
-      setSnackbarOpen(true);
-      await refetch(); // Re-fetch user data after login
-      const user = response.data?.user;
-      const userRole = parseInt(user?.ID_ROL, 10);
-      setTimeout(() => {
-        if (userRole === parseInt(rolesDictionary.Cliente, 10)) {
-          navigate("/producto/catalogo/");
-        } else if (userRole === parseInt(rolesDictionary.Operador, 10)) {
-          navigate("/ordenes/historial/");
-        } else {
-          navigate("/");
-        }
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.log("Error en onError: ", error);
-      const errorMessage = error?.data || "Error desconocido";
-      setSnackbarMessage(errorMessage);
-      setSeverity("error");
-      setSnackbarOpen(true);
-      setIsLoading(false);
-    }
+    dispatchSnackbar({ type: "CLOSE" });
   };
 
   return (
@@ -84,7 +50,19 @@ const Login = () => {
       <Typography variant="h5" sx={{ mb: "1rem" }}>
         Iniciar sesión
       </Typography>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form
+        onSubmit={handleSubmit((data) =>
+          onLoginSubmit(
+            data,
+            setIsLoading,
+            dispatchSnackbar,
+            navigate,
+            mutateAsync,
+            refetch,
+            rolesDictionary
+          )
+        )}
+        noValidate>
         <Stack spacing={2}>
           <TextField
             id="email"
@@ -93,8 +71,7 @@ const Login = () => {
             type="email"
             variant="outlined"
             {...register("correo")}
-            error={!!errors.correo}
-            helperText={errors.correo?.message}
+            {...getFieldErrorProps("correo", errors)}
           />
           <TextField
             id="password"
@@ -103,8 +80,7 @@ const Login = () => {
             type="password"
             variant="outlined"
             {...register("password")}
-            error={!!errors.password}
-            helperText={errors.password?.message}
+            {...getFieldErrorProps("password", errors)}
           />
           <Button type="submit" variant="contained" disabled={isLoading}>
             {isLoading ? "Cargando..." : "Iniciar sesión"}
@@ -112,14 +88,10 @@ const Login = () => {
         </Stack>
       </form>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={severity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <SnackbarAlert
+        snackbarState={snackbarState}
+        onClose={handleSnackbarClose}
+      />
     </Container>
   );
 };
