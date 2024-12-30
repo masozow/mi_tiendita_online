@@ -92,8 +92,10 @@ const login = async (req, res) => {
 
     if (resultado) {
       const user = {
-        id: usuario[0]?.ID,
-        idRol: usuario[0]?.ID_ROL,
+        ID: usuario[0]?.ID,
+        ID_ROL: usuario[0]?.ID_ROL,
+        NOMBRE: usuario[0]?.NOMBRE,
+        NOMBRE_ROL: usuario[0]?.NOMBRE_ROL,
       };
       const tokenSession = await tokenSign(user);
 

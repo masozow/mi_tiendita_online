@@ -22,8 +22,8 @@ const checkAuth = async (req, res, next) => {
       );
     }
     const decodedToken = await verifyToken(token);
-    console.log(decodedToken);
-    if (!decodedToken.id) {
+    console.log("decodedToken: ", decodedToken);
+    if (!decodedToken.ID) {
       return res.status(409).json(
         await errorAndLogHandler({
           level: errorLevels.warn,
@@ -35,7 +35,7 @@ const checkAuth = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    return res.status(500).json(
+    return res.status(403).json(
       await errorAndLogHandler({
         level: errorLevels.error,
         message: "Error al verificar el token: " + error.message,

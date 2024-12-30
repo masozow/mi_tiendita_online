@@ -2,6 +2,8 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
+import { fileURLToPath } from "url";
+import path from "path";
 
 import productosRoutes from "./routes/productos.route.js";
 import categoriasRoutes from "./routes/categorias_productos.route.js";
@@ -33,22 +35,32 @@ app.use("/api/roles", rolesRoutes);
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/ordenes", ordenesRoutes);
 
-// Parse incoming request bodies
+//Más middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.static(process.env.UPLOAD_FOLDER));
 
-// Error-handling middleware
-app.use((err, req, res, next) => {
-  if (err) {
-    res.status(400).json({ error: err.message });
-  } else {
-    next();
-  }
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const last_index = __dirname.lastIndexOf("backend");
+const dirname = __dirname.substring(0, last_index);
+app.use(
+  "/static",
+  express.static(path.join(dirname, process.env.UPLOAD_FOLDER))
+);
+
+// app.use((err, req, res, next) => {
+//   if (err) {
+//     res.status(400).json({ error: err.message });
+//   } else {
+//     next();
+//   }
+// });
 
 //Iniciar el servidor
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT} \n`);
+  console.log(path.join(dirname, process.env.UPLOAD_FOLDER));
 });
 
 export default app;
