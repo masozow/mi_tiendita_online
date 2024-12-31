@@ -95,7 +95,7 @@ const update = async (req, res) => {
   console.log("body: ", req.body);
   try {
     if (req.file) {
-      filePath = `${process.env.UPLOAD_FOLDER}/${req.file.filename}`;
+      filePath = `${req.file.filename}`;
       console.log("File uploaded to:", filePath);
     } else {
       console.log("No file uploaded");
@@ -127,7 +127,7 @@ const update = async (req, res) => {
           JSON.stringify({ ...productoBody, fotoProducto: filePath }) +
           "/ Actualizar Producto",
         genericId: id,
-        userId: req.user.id,
+        userId: req.user?.id,
         shouldSaveLog: true,
       })
     );

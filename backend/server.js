@@ -14,6 +14,7 @@ import operadoresRoutes from "./routes/operadores.route.js";
 import rolesRoutes from "./routes/roles.route.js";
 import usuariosRoutes from "./routes/usuarios.route.js";
 import ordenesRoutes from "./routes/ordenes.route.js";
+import staticRoutes from "./routes/static.route.js";
 
 //Configuraciones
 const app = express();
@@ -34,33 +35,23 @@ app.use("/api/operadores", operadoresRoutes);
 app.use("/api/roles", rolesRoutes);
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/ordenes", ordenesRoutes);
+app.use("/api/static", staticRoutes);
 
 //Más middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.static(process.env.UPLOAD_FOLDER));
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const last_index = __dirname.lastIndexOf("backend");
-const dirname = __dirname.substring(0, last_index);
-app.use(
-  "/static",
-  express.static(path.join(dirname, process.env.UPLOAD_FOLDER))
-);
-
-// app.use((err, req, res, next) => {
-//   if (err) {
-//     res.status(400).json({ error: err.message });
-//   } else {
-//     next();
-//   }
-// });
+app.use((err, req, res, next) => {
+  if (err) {
+    res.status(400).json({ error: err.message });
+  } else {
+    next();
+  }
+});
 
 //Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT} \n`);
-  console.log(path.join(dirname, process.env.UPLOAD_FOLDER));
 });
 
 export default app;

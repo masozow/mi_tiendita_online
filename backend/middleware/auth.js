@@ -13,6 +13,7 @@ import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 const checkAuth = async (req, res, next) => {
   try {
     const token = req.signedCookies.authToken; // Obtener el token del encabezado de la solicitud
+    console.log("Token de auth.js: ", token);
     if (!token) {
       return res.status(401).json(
         await errorAndLogHandler({
