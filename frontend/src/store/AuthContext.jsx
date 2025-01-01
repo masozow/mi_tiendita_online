@@ -55,6 +55,8 @@ export const AuthProvider = ({ children }) => {
     return <div>Error loading user data: {error.message}</div>;
   }
 
+  console.log("User data in AuthContext:", tokenData?.data);
+
   return (
     <AuthContext.Provider
       value={{ user: tokenData?.data, isLoading, error, refetch }}>
