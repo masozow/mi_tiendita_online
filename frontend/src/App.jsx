@@ -7,6 +7,7 @@ import Container from "@mui/material/Paper";
 import NavBar from "./components/NavBar/NavBar.jsx";
 import CatalogoProductos from "./pages/productos/CatalogoProductos.jsx";
 import Carrito from "./pages/carrito/Carrito.jsx";
+import NuevaOrden from "./pages/ordenes/NuevaOrden.jsx";
 
 import { AuthProvider } from "./store/AuthContext.jsx";
 import { ShoppingCartProvider } from "./store/ShoppingCartContext.jsx";
@@ -52,6 +53,7 @@ const App = () => {
                   element={<HistorialOrdenes />}
                 />
               </Route>
+              <Route path="/ordenes/nueva" element={<NuevaOrden />} />
             </Routes>
           </Container>
         </ShoppingCartProvider>

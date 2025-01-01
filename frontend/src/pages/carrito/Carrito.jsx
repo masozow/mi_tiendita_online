@@ -9,6 +9,12 @@ import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { Link } from "react-router-dom";
 import ImageWithFallback from "../../components/ImageWithFallback";
 import { getAllItems } from "../../utils/indexeddb";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
@@ -25,6 +31,7 @@ const Carrito = () => {
   const [filas, setFilas] = useState([]);
   const { removeFromCart } = useShoppingCart();
   const { user } = useAuth();
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -42,6 +49,14 @@ const Carrito = () => {
     setFilas((prevFilas) =>
       prevFilas.filter((fila) => fila.idProducto !== idProducto)
     );
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   const subtotalFactura = calcularSubtotal(filas);
@@ -115,14 +130,50 @@ const Carrito = () => {
               sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>
               <b>{formatoMoneda(subtotalFactura)}</b>
             </TableCell>
+            <TableCell align="center"></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell colSpan={4} />
+            <TableCell align="right">
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleOpenDialog}>
+                Cancelar
+              </Button>
+            </TableCell>
             <TableCell align="center">
-              <Button variant="contained" color="primary">
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to="/ordenes/nueva">
                 Comprar
               </Button>
             </TableCell>
           </TableRow>
         </TableBody>
       </Table>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">{"Confirmación"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            ¿Está seguro que desea cancelar?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            No
+          </Button>
+          <Button onClick={handleCloseDialog} color="primary" autoFocus>
+            Sí
+          </Button>
+        </DialogActions>
+      </Dialog>
     </TableContainer>
   );
 };
