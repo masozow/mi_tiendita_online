@@ -9,66 +9,65 @@ import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ImageWithFallback from "../../components/ImageWithFallback";
-import { getAllItems } from "../../utils/indexeddb";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
 import { useAuth } from "../../store/AuthContext";
 import { Typography } from "@mui/material";
-
-const formatoMoneda = (num) =>
-  `Q${num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
-
-const calcularSubtotal = (items) =>
-  items.map(({ subtotal }) => subtotal).reduce((suma, i) => suma + i, 0);
+import Dialogo from "../../components/Dialogo/Dialogo";
+import SnackBarAlert from "../../components/SnackBarAlert";
+import {
+  formatoMoneda,
+  calcularTotal,
+  obtenerItemsCarrito,
+  handleRemoveItem,
+  deleteDatabase,
+} from "../../utils/carritoFunctions";
 
 const Carrito = () => {
   const [filas, setFilas] = useState([]);
-  const { removeFromCart } = useShoppingCart();
+  const { removeFromCart, dispatch } = useShoppingCart();
   const { user } = useAuth();
-  const [openDialog, setOpenDialog] = useState(false);
+  const navigate = useNavigate();
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   useEffect(() => {
     if (user) {
-      const obtenerItemsCarrito = async () => {
-        const items = await getAllItems(user.ID);
-        setFilas(items);
-      };
-
-      obtenerItemsCarrito();
+      obtenerItemsCarrito(user.ID, setFilas);
     }
   }, [user]);
 
-  const handleRemoveItem = (idProducto) => {
-    removeFromCart(idProducto);
-    setFilas((prevFilas) =>
-      prevFilas.filter((fila) => fila.idProducto !== idProducto)
-    );
+  const totalFactura = calcularTotal(filas);
+
+  const handleClearCartAndRedirect = async () => {
+    dispatch({ type: "CLEAR_CART" });
+    setFilas([]);
+    setOpenSnackbar(true);
+    setTimeout(() => {
+      navigate(-1);
+    }, 1000);
+    if (user) {
+      await deleteDatabase(user.ID); // Delete database asynchronously in the background
+    }
   };
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
   };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  const subtotalFactura = calcularSubtotal(filas);
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 300 }} aria-label="tabla de resumen">
+      <Table
+        sx={{ minWidth: "10rem" }}
+        aria-label="tabla de carrito de compras">
         <TableHead>
           <TableRow>
             <TableCell align="center" colSpan={6}>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                <b>Carrito</b>
+                Carrito
               </Typography>
             </TableCell>
           </TableRow>
@@ -111,7 +110,9 @@ const Carrito = () => {
               <TableCell align="center">
                 <IconButton
                   aria-label="delete"
-                  onClick={() => handleRemoveItem(fila.idProducto)}>
+                  onClick={() =>
+                    handleRemoveItem(fila.idProducto, removeFromCart, setFilas)
+                  }>
                   <DeleteIcon />
                 </IconButton>
               </TableCell>
@@ -128,19 +129,14 @@ const Carrito = () => {
             <TableCell
               align="right"
               sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>
-              <b>{formatoMoneda(subtotalFactura)}</b>
+              <b>{formatoMoneda(totalFactura)}</b>
             </TableCell>
             <TableCell align="center"></TableCell>
           </TableRow>
           <TableRow>
-            <TableCell colSpan={4} />
+            <TableCell colSpan={3} />
             <TableCell align="right">
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleOpenDialog}>
-                Cancelar
-              </Button>
+              <Dialogo onConfirm={handleClearCartAndRedirect} />
             </TableCell>
             <TableCell align="center">
               <Button
@@ -154,26 +150,12 @@ const Carrito = () => {
           </TableRow>
         </TableBody>
       </Table>
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{"Confirmación"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            ¿Está seguro que desea cancelar?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            No
-          </Button>
-          <Button onClick={handleCloseDialog} color="primary" autoFocus>
-            Sí
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <SnackBarAlert
+        open={openSnackbar}
+        onClose={handleCloseSnackbar}
+        severity="success"
+        message="Carrito borrado con éxito"
+      />
     </TableContainer>
   );
 };

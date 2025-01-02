@@ -92,3 +92,23 @@ export const deleteItem = async (userId, idProducto) => {
     console.error("Error in deleteItem:", error);
   }
 };
+
+export const deleteDatabase = async (userId) => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(`ShoppingCartDB_${userId}`);
+
+    request.onsuccess = () => {
+      console.log("Database deleted successfully");
+      resolve();
+    };
+
+    request.onerror = (event) => {
+      console.error("Error deleting database:", event.target.error);
+      reject(event.target.error);
+    };
+
+    request.onblocked = () => {
+      console.warn("Database deletion blocked");
+    };
+  });
+};

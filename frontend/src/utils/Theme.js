@@ -3,12 +3,12 @@ import { createTheme } from "@mui/material/styles";
 const workflowTheme = createTheme({
   palette: {
     primary: {
-      main: "#0F4C81",
-      contrastText: "#FFFFFF",
+      main: "#1a1a1a",
+      contrastText: "#f6f5f7",
     },
     secondary: {
       main: "#E8EAF6",
-      contrastText: "#0F4C81",
+      contrastText: "#1a1a1a",
     },
     background: {
       default: "rgb(249, 248, 250)",
@@ -29,11 +29,20 @@ const workflowTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          backgroundColor: "#000000",
-          color: "#FFFFFF",
           borderRadius: 8,
+        },
+        containedPrimary: {
+          backgroundColor: "#1a1a1a",
+          color: "#f6f5f7",
           "&:hover": {
             backgroundColor: "#333333",
+          },
+        },
+        containedSecondary: {
+          backgroundColor: "#E8EAF6",
+          color: "#1a1a1a",
+          "&:hover": {
+            backgroundColor: "#d1d9ff",
           },
         },
       },

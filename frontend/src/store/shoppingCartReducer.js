@@ -19,6 +19,8 @@ const shoppingCartReducer = (state, action) => {
       };
     case "RESET_CART":
       return initialState;
+    case "CLEAR_CART":
+      return initialState;
     default:
       return state;
   }
