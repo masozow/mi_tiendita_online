@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   ImageList,
@@ -7,7 +7,6 @@ import {
   Typography,
   IconButton,
   useTheme,
-  useMediaQuery,
   Popover,
   TextField,
   Box,
@@ -19,6 +18,9 @@ import AddIcon from "@mui/icons-material/Add";
 import ImageWithFallback from "../../components/ImageWithFallback";
 import getColumns from "../../utils/getColumns";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
+import { formatoMoneda } from "../../utils/carritoFunctions";
+import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
+import ResponsiveDrawer from "../../components/ResponsiveDrawer/ResponsiveDrawer";
 
 const CatalogoProductos = () => {
   const { data, isLoading, error } = useQueryHook(
@@ -27,9 +29,8 @@ const CatalogoProductos = () => {
   );
 
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const { isSmallScreen, isMediumScreen, isLargeScreen } =
+    breakPointsFromTheme(theme);
 
   const { cartState, addToCart, removeFromCart } = useShoppingCart();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -74,8 +75,7 @@ const CatalogoProductos = () => {
   const id = open ? "simple-popover" : undefined;
 
   return (
-    <div>
-      {/* <pre>{JSON.stringify(data)}</pre> */}
+    <ResponsiveDrawer>
       <ImageList
         sx={{ width: "100%", height: "70vh" }}
         cols={getColumns(isSmallScreen, isMediumScreen, isLargeScreen)}>
@@ -90,7 +90,7 @@ const CatalogoProductos = () => {
             />
             <ImageListItemBar
               title={item.NOMBRE}
-              subtitle={item.PRECIO}
+              subtitle={formatoMoneda(item.PRECIO)}
               actionIcon={
                 <IconButton
                   sx={{
@@ -147,18 +147,8 @@ const CatalogoProductos = () => {
           </Stack>
         </Box>
       </Popover>
-    </div>
+    </ResponsiveDrawer>
   );
 };
 
 export default CatalogoProductos;
-
-// "ID": 2,
-//       "NOMBRE": "iPhone",
-//       "CODIGO": "48795409886",
-//       "STOCK": 12,
-//       "COSTO": 5000,
-//       "PRECIO": 6000,
-//       "FOTO": "",
-//       "ID_CATEGORIA": 2,
-//       "ID_MARCA": 1
