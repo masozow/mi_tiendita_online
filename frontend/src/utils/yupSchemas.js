@@ -22,14 +22,6 @@ const ordenSchema = yup.object().shape({
   total: yup.number().required(),
   idEstado: yup.number().required(),
   idCliente: yup.number().required(),
-  detalle: yup.array().of(
-    yup.object().shape({
-      cantidad: yup.number().required(),
-      precio: yup.number().required(),
-      subtotal: yup.number().required(),
-      idProducto: yup.number().required(),
-    })
-  ),
 });
 
 const schemas = {

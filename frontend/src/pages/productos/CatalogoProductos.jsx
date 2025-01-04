@@ -47,7 +47,9 @@ const CatalogoProductos = () => {
   };
 
   const handleIconClick = (event, item) => {
-    if (cartState[item.ID]) {
+    console.log("Icon clicked:", item);
+    if (cartState.some((cartItem) => cartItem.idProducto === item.ID)) {
+      console.log("Removing item from cart:", item.ID);
       removeFromCart(item.ID);
     } else {
       setAnchorEl(event.currentTarget);
@@ -67,6 +69,7 @@ const CatalogoProductos = () => {
       marca: item.ID_MARCA,
       categoria: item.ID_CATEGORIA,
     };
+    console.log("Adding item to cart:", newItem);
     addToCart(newItem);
     handlePopoverClose();
   };
@@ -91,6 +94,10 @@ const CatalogoProductos = () => {
       setFilteredData(filtered);
     }
   }, [data, marca, categoria]);
+
+  useEffect(() => {
+    console.log("Cart state updated:", cartState);
+  }, [cartState]);
 
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
@@ -122,11 +129,17 @@ const CatalogoProductos = () => {
                 <IconButton
                   sx={{
                     color: "rgba(255, 255, 255, 0.9)",
-                    opacity: cartState[item.ID] ? 0.3 : 1,
+                    opacity: cartState.some(
+                      (cartItem) => cartItem.idProducto === item.ID
+                    )
+                      ? 0.3
+                      : 1,
                   }}
                   aria-label={`info about ${item.NOMBRE}`}
                   onClick={(event) => handleIconClick(event, item)}>
-                  {cartState[item.ID] ? (
+                  {cartState.some(
+                    (cartItem) => cartItem.idProducto === item.ID
+                  ) ? (
                     <RemoveShoppingCartIcon />
                   ) : (
                     <AddShoppingCartIcon />

@@ -35,6 +35,7 @@ export const addItem = async (userId, item) => {
 
       request.onerror = (event) => {
         console.error("Error adding item to the cart:", event.target.error);
+        console.error("Item that caused the error:", item);
         reject(event.target.error);
       };
     });

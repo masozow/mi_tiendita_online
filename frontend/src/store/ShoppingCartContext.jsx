@@ -21,13 +21,14 @@ export const ShoppingCartProvider = ({ children }) => {
 
       fetchCartItems();
     } else {
-      console.log("User is not defined in ShoppingCartProvider");
+      console.log("El usuario no está definido en ShoppingCartProvider");
     }
   }, [user]);
 
   const addToCart = async (item) => {
     if (user) {
       await addItem(user.ID, item);
+      console.log("Dispatching ADD_ITEM:", item);
       dispatch({ type: "ADD_ITEM", payload: item });
     } else {
       console.log("El usuario no esta definidio en addToCart");
@@ -37,6 +38,7 @@ export const ShoppingCartProvider = ({ children }) => {
   const removeFromCart = async (idProducto) => {
     if (user) {
       await deleteItem(user.ID, idProducto);
+      console.log("Dispatching REMOVE_ITEM:", idProducto);
       dispatch({ type: "REMOVE_ITEM", payload: { idProducto } });
     } else {
       console.log("El usuario no está definido en removeFromCart");
