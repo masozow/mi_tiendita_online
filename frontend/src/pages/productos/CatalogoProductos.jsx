@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   ImageList,
@@ -23,9 +23,12 @@ import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import ResponsiveDrawer from "../../components/ResponsiveDrawer/ResponsiveDrawer";
 
 const CatalogoProductos = () => {
+  const [marca, setMarca] = useState(0);
+  const [categoria, setCategoria] = useState(0);
+  const [filteredData, setFilteredData] = useState([]);
   const { data, isLoading, error } = useQueryHook(
     "catalogoProductos",
-    "/api/productos/"
+    "/api/productos/catalogo/"
   );
 
   const theme = useTheme();
@@ -68,6 +71,27 @@ const CatalogoProductos = () => {
     handlePopoverClose();
   };
 
+  const handleSelectionChange = (type, value) => {
+    if (type === "marca") {
+      setMarca(value);
+    } else if (type === "categoria") {
+      setCategoria(value);
+    }
+  };
+
+  useEffect(() => {
+    if (data?.data) {
+      let filtered = data.data;
+      if (marca) {
+        filtered = filtered.filter((item) => item.ID_MARCA === marca);
+      }
+      if (categoria) {
+        filtered = filtered.filter((item) => item.ID_CATEGORIA === categoria);
+      }
+      setFilteredData(filtered);
+    }
+  }, [data, marca, categoria]);
+
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
@@ -75,11 +99,14 @@ const CatalogoProductos = () => {
   const id = open ? "simple-popover" : undefined;
 
   return (
-    <ResponsiveDrawer>
+    <ResponsiveDrawer
+      marca={marca}
+      categoria={categoria}
+      handleSelectionChange={handleSelectionChange}>
       <ImageList
-        sx={{ width: "100%", height: "70vh" }}
+        sx={{ width: "100%", height: "100%" }}
         cols={getColumns(isSmallScreen, isMediumScreen, isLargeScreen)}>
-        {data.data.map((item) => (
+        {filteredData.map((item) => (
           <ImageListItem key={item.ID}>
             <ImageWithFallback
               src={`${import.meta.env.VITE_STATIC_URI + item.FOTO}`}
@@ -128,7 +155,6 @@ const CatalogoProductos = () => {
           <Stack direction="row" spacing={1} alignItems="center">
             <TextField
               type="number"
-              inputProps={{ min: 1 }}
               value={quantity}
               onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
               margin="normal"

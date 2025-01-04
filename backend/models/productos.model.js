@@ -157,12 +157,18 @@ const actualizar = async ({
 
 const obtenerTodo = async () => {
   try {
-    const productos = await sequelize.query("EXEC sp_obtenerTodosProductos", {
-      type: QueryTypes.SELECT,
-    });
-    return productos;
+    const datos = await sequelize.query(
+      "SELECT * FROM vw_obtenerTodosProductos",
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
   } catch (err) {
-    errorAndLogHandler({ level: errorLevels.error, message: err });
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al consultar la vista:" + err,
+    });
     throw err;
   }
 };
@@ -178,6 +184,41 @@ const obtenerTodosProductosActivosStockMayorCero = async () => {
     const datos = await sequelize.query(
       "SELECT * FROM vw_Total_productos_activos_stock_mayor_cero",
       {
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al consultar la vista:" + err,
+    });
+    throw err;
+  }
+};
+
+/**
+ * Obtiene todos los productos activos filtrados por marca y/o categoría.
+ *
+ * @param {number} [idMarca=0] - El ID de la marca para filtrar los productos. Valor por defecto es 0.
+ * @param {number} [idCategoria=0] - El ID de la categoría para filtrar los productos. Valor por defecto es 0.
+ * @returns {Promise<Array>} - Una promesa que resuelve a un array de productos activos.
+ * @throws {Error} - Lanza un error si ocurre un problema al consultar la vista.
+ */
+const obtenerTodosProductosActivos = async (idMarca = 0, idCategoria = 0) => {
+  console.log("Model");
+  console.log("Marca: ", idMarca);
+  console.log("Categoria: ", idCategoria);
+  try {
+    const datos = await sequelize.query(
+      `SELECT * FROM vw_obtenerTodosProductosActivos 
+      WHERE (:idMarca = 0 OR ID_MARCA = :idMarca)
+      AND (:idCategoria = 0 OR ID_CATEGORIA = :idCategoria)`,
+      {
+        replacements: {
+          idMarca,
+          idCategoria,
+        },
         type: QueryTypes.SELECT,
       }
     );
@@ -234,6 +275,7 @@ const productos = {
   actualizar,
   obtenerTodo,
   obtenerTodoPorID,
+  obtenerTodosProductosActivos,
   obtenerTodosProductosActivosStockMayorCero,
 };
 

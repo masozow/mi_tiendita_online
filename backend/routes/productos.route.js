@@ -9,13 +9,14 @@ import { rolesDictionary } from "../utilities/rolesDictionary.js";
 
 const router = express.Router();
 
-router.get("/", checkAuth, Producto.get);
+router.get("/catalogo/:idMarca?/:idCategoria?", checkAuth, Producto.getActivos);
 router.get(
-  "/:id",
+  "/activosStock/",
   checkAuth,
-  productoValidator.getProductoByIDValidationRules,
-  Producto.getByID
+  checkRole([rolesDictionary.Operador]),
+  Producto.getActivosConStock
 );
+router.get("/", checkAuth, checkRole([rolesDictionary.Operador]), Producto.get);
 router.post(
   "/",
   checkAuth,
@@ -23,6 +24,12 @@ router.post(
   upload.single(SchemaFields.FOTO_PRODUCTO),
   productoValidator.createProductoValidationRules,
   Producto.create
+);
+router.get(
+  "/:id",
+  checkAuth,
+  productoValidator.getProductoByIDValidationRules,
+  Producto.getByID
 );
 router.put(
   "/:id",
