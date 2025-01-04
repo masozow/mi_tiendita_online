@@ -37,7 +37,7 @@ export const ShoppingCartProvider = ({ children }) => {
   const removeFromCart = async (idProducto) => {
     if (user) {
       await deleteItem(user.ID, idProducto);
-      dispatch({ type: "TOGGLE_CART", payload: { idProducto } });
+      dispatch({ type: "REMOVE_ITEM", payload: { idProducto } });
     } else {
       console.log("El usuario no está definido en removeFromCart");
     }
