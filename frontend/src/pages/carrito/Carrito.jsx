@@ -47,7 +47,7 @@ const Carrito = () => {
       navigate(-1);
     }, 1000);
     if (user) {
-      await deleteDatabase(user.ID); // Delete database asynchronously in the background
+      await deleteDatabase(user.ID);
     }
   };
 

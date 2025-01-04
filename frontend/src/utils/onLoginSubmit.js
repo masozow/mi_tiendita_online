@@ -1,3 +1,5 @@
+import onSubmit from "./onSubmit";
+
 const onLoginSubmit = async (
   data,
   setIsLoading,
@@ -7,17 +9,8 @@ const onLoginSubmit = async (
   refetch,
   rolesDictionary
 ) => {
-  setIsLoading(true);
-  try {
-    const response = await mutateAsync(data); // Esperamos la respuesta de mutateAsync
-    console.log("Response: ", response);
-    const mensajeSolo = response.data?.toString().split("|")[0].trim();
-    dispatchSnackbar({
-      type: "OPEN",
-      message: mensajeSolo || "Éxito",
-      severity: "success",
-    });
-    await refetch(); // Re-fetch user data after login
+  const handleSuccess = async (response) => {
+    await refetch();
     const user = response.data?.user;
     const userRole = parseInt(user?.ID_ROL, 10);
     setTimeout(() => {
@@ -28,18 +21,17 @@ const onLoginSubmit = async (
       } else {
         navigate("/");
       }
-      setIsLoading(false);
     }, 1000);
-  } catch (error) {
-    console.log("Error en onError: ", error);
-    const errorMessage = error?.data || "Error desconocido";
-    dispatchSnackbar({
-      type: "OPEN",
-      message: errorMessage,
-      severity: "error",
-    });
-    setIsLoading(false);
-  }
+  };
+
+  await onSubmit(
+    data,
+    setIsLoading,
+    dispatchSnackbar,
+    mutateAsync,
+    handleSuccess,
+    refetch // Pass refetch to onSubmit
+  );
 };
 
 export default onLoginSubmit;
