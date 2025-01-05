@@ -7,7 +7,7 @@ import {
   Container,
   useTheme,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, set } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../store/AuthContext.jsx";
@@ -31,6 +31,7 @@ const NuevaOrden = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [filas, setFilas] = useState([]);
+  const [total, setTotal] = useState(0);
 
   const { mutateAsync } = useCustomMutation("/api/ordenes", "POST");
 
@@ -53,10 +54,21 @@ const NuevaOrden = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      obtenerItemsCarrito(user.ID, setFilas);
-    }
+    const fetchItems = async () => {
+      if (user) {
+        await obtenerItemsCarrito(user.ID, setFilas);
+      }
+    };
+    fetchItems();
   }, [user]);
+
+  useEffect(() => {
+    if (filas && filas.length > 0) {
+      setTotal(calcularTotal(filas));
+    } else {
+      setTotal(0);
+    }
+  }, [filas]);
 
   const theme = useTheme();
   const { isSmallScreen } = breakPointsFromTheme(theme);
@@ -79,9 +91,9 @@ const NuevaOrden = () => {
       nombre: "",
     },
   });
-  const total = useMemo(() => calcularTotal(filas), [filas]);
+
   const handleClearCartAndRedirect = async () => {
-    handleClearCart(user?.ID, dispatch, setFilas);
+    handleClearCart(user?.ID, setFilas);
     setTimeout(() => {
       navigate(-1);
     }, 1000);
@@ -101,7 +113,7 @@ const NuevaOrden = () => {
       };
       reset(datosCliente);
     }
-  }, [data]);
+  }, [data, total]);
 
   const handleFormSubmit = (formData) => {
     console.log("Form data: ", formData);
@@ -126,10 +138,16 @@ const NuevaOrden = () => {
       })),
     };
     console.log("Orden data: ", ordenData);
-    onSubmit(ordenData, setIsLoading, dispatchSnackbar, mutateAsync, () => {
-      console.log("Orden data: ", ordenData);
-      // navigate(-1);
-    });
+    onSubmit(
+      ordenData,
+      setIsLoading,
+      dispatchSnackbar,
+      mutateAsync,
+      async () => {
+        console.log("Orden data: ", ordenData);
+        await handleClearCartAndRedirect();
+      }
+    );
   };
 
   return isDataLoading ? (
