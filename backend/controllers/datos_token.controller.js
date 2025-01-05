@@ -16,11 +16,11 @@ const getDatosToken = async (req, res) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET); // Reemplaza con tu clave secreta
     console.log("Payload: ", payload);
-    const { NOMBRE, NOMBRE_ROL, ID_ROL } = payload; // Extrae los datos necesarios
+    const { NOMBRE, NOMBRE_ROL, ID_ROL, ID } = payload; // Extrae los datos necesarios
     return res.status(200).json(
       await errorAndLogHandler({
         level: errorLevels.info,
-        message: { NOMBRE, NOMBRE_ROL, ID_ROL },
+        message: { NOMBRE, NOMBRE_ROL, ID_ROL, ID },
       })
     );
   } catch (error) {

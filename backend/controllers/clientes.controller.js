@@ -53,6 +53,23 @@ const getByID = async (req, res) => {
   }
 };
 
+const getByIDUsuario = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const Cliente = await clientes.obtenerTodoPorID(id);
+    res.status(200).json({ success: true, data: Cliente });
+  } catch (error) {
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo el cliente: ${id} ` + error.message,
+        userId: req.user.id,
+        genericId: id,
+      })
+    );
+  }
+};
+
 /**
  * Crea un nuevo cliente.
  *
@@ -153,6 +170,7 @@ const delete_ = async (req, res) => {
 const Cliente = {
   get,
   getByID,
+  getByIDUsuario,
   create,
   update,
   delete_,

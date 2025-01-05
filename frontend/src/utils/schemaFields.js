@@ -1,0 +1,27 @@
+const SchemaFields = Object.freeze({
+  ID: "id",
+  CORREO: "correo",
+  NOMBRE: "nombre",
+  PASSWORD: "password",
+  TELEFONO: "telefono",
+  FECHA_NACIMIENTO: "fechaNacimiento",
+  ID_ESTADO: "idEstado",
+  ID_ROL: "idRol",
+  RAZON_SOCIAL: "razonSocial",
+  DIRECCION: "direccion",
+  ID_USUARIO: "idUsuario",
+  ID_CATEGORIA: "idCategoria",
+  ID_MARCA: "idMarca",
+  CODIGO_PRODUCTO: "codigoProducto",
+  NOMBRE_PRODUCTO: "nombreProducto",
+  STOCK_PRODUCTO: "stockProducto",
+  COSTO_PRODUCTO: "costoProducto",
+  PRECIO_PRODUCTO: "precioProducto",
+  FOTO_PRODUCTO: "fotoProducto",
+  DETALLE: "detalle",
+  FECHA_ENTREGA: "fechaEntrega",
+  TOTAL: "total",
+  USABLE: "usable",
+});
+
+export default SchemaFields;

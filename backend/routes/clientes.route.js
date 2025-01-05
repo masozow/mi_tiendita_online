@@ -3,10 +3,11 @@ import { checkAuth } from "../middleware/auth.js";
 import { checkRole } from "../middleware/roleAuth.js";
 import { Cliente } from "../controllers/clientes.controller.js";
 import clienteValidator from "../middleware/validators/clientesValidator.js";
-
+import { rolesDictionary } from "../utilities/rolesDictionary.js";
 const router = express.Router();
 
-router.get("/", checkAuth, checkRole(["Super usuario"]), Cliente.get);
+router.get("/idUsuario/:id", checkAuth, Cliente.getByIDUsuario);
+router.get("/", checkAuth, checkRole([rolesDictionary.Operador]), Cliente.get);
 router.get(
   "/:id",
   checkAuth,
@@ -16,21 +17,21 @@ router.get(
 router.post(
   "/",
   checkAuth,
-  checkRole(["Super usuario"]),
+  checkRole([rolesDictionary.Operador]),
   clienteValidator.createClienteValidationRules,
   Cliente.create
 );
 router.put(
   "/:id",
   checkAuth,
-  checkRole(["Super usuario"]),
+  checkRole([rolesDictionary.Operador]),
   clienteValidator.updateClienteValidationRules,
   Cliente.update
 );
 router.delete(
   "/:id",
   checkAuth,
-  checkRole(["Super usuario"]),
+  checkRole([rolesDictionary.Operador]),
   clienteValidator.deleteClienteValidationRules,
   Cliente.delete_
 );

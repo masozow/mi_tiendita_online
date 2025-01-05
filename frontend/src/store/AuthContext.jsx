@@ -1,26 +1,44 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useTokenData } from "../hooks/useTokenData.jsx";
+import { useQueryHook } from "../hooks/useQueryHook.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [tokenData, setTokenData] = useState(null);
-  const { data, isLoading, error, refetch } = useTokenData();
+  const [isWaiting, setIsWaiting] = useState(true);
+  const { data, isLoading, error, refetch } = useQueryHook(
+    "tokenData",
+    "/api/usuarios/datos-token"
+  );
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (data) {
       setTokenData(data);
+      setIsWaiting(false);
     }
   }, [data]);
 
   useEffect(() => {
-    if (!isLoading && !tokenData && location.pathname !== "/login") {
+    const timeout = setTimeout(() => {
+      setIsWaiting(false);
+    }, 5000); // Maximum wait time of 5 seconds
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    if (
+      !isLoading &&
+      tokenData === null &&
+      location.pathname !== "/login" &&
+      !isWaiting
+    ) {
       navigate("/login");
     }
-  }, [isLoading, tokenData, error, navigate, location.pathname]);
+  }, [isLoading, tokenData, error, navigate, location.pathname, isWaiting]);
 
   useEffect(() => {
     if (error && error.status === 401) {
@@ -28,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [error, navigate]);
 
-  if (isLoading && location.pathname !== "/login") {
+  if ((isLoading || isWaiting) && location.pathname !== "/login") {
     return <p>Cargando...</p>;
   }
 
@@ -36,6 +54,8 @@ export const AuthProvider = ({ children }) => {
     console.error("Error fetching token data:", error.message, error);
     return <div>Error loading user data: {error.message}</div>;
   }
+
+  console.log("User data in AuthContext:", tokenData?.data);
 
   return (
     <AuthContext.Provider

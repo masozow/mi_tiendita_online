@@ -165,6 +165,27 @@ const obtenerTodoPorID = async (ID) => {
     throw err;
   }
 };
+
+const obtenerTodoPorIDUsuario = async (ID) => {
+  try {
+    const datos = await sequelize.query(
+      "SELECT * FROM vw_ObtenerTodosClientes WHERE ID_USUARIO= :ID",
+      {
+        replacements: {
+          ID,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
+  }
+};
 /**
  * Objeto que contiene los metodos para interactuar con la tabla de clientes.
  *
@@ -179,5 +200,6 @@ const clientes = {
   actualizar,
   obtenerTodo,
   obtenerTodoPorID,
+  obtenerTodoPorIDUsuario,
 };
 export { clientes };

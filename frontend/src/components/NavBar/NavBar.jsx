@@ -8,6 +8,7 @@ import {
   Menu,
   MenuItem,
   MenuList,
+  Badge,
 } from "@mui/material";
 import React from "react";
 import "./NavBar.module.css";
@@ -21,13 +22,26 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
+import { useShoppingCart } from "../../store/ShoppingCartContext";
 
-// import { AccountMenu } from "./AccountMenu.jsx";
 const NavBar = () => {
   const theme = useTheme();
+  const { cartState } = useShoppingCart();
+  const cartItemCount = Object.keys(cartState).length;
+
   const menuItems = [
     <IconButton component={NavLink} to="/carrito" aria-label="ver su carrito">
-      <ShoppingCartIcon aria-label="ver su carrito" />
+      <Badge
+        badgeContent={cartItemCount}
+        color="primary"
+        sx={{
+          "& .MuiBadge-badge": {
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+          },
+        }}>
+        <ShoppingCartIcon aria-label="ver su carrito" />
+      </Badge>
     </IconButton>,
     <IconButton component={NavLink} to="/login">
       <PersonIcon aria-label="iniciar sesión" />
@@ -36,13 +50,15 @@ const NavBar = () => {
       <PowerSettingsNewIcon aria-label="cerrar sesión" />
     </IconButton>,
   ];
+
   const [anchorNav, setAnchorNav] = useState(null);
   const openMenu = (event) => {
-    setAnchorNav(Boolean(event.currentTarget));
+    setAnchorNav(event.currentTarget);
   };
   const closeMenu = () => {
     setAnchorNav(null);
   };
+
   return (
     <AppBar
       elevation={0}
@@ -66,7 +82,6 @@ const NavBar = () => {
             Mi tiendita
           </Typography>
         </Container>
-        {/* <AccountMenu /> */}
         <Stack
           direction={"row"}
           spacing={1}
@@ -78,7 +93,6 @@ const NavBar = () => {
         <Box sx={{ display: { xs: "flex", md: "none" } }}>
           <IconButton size="large" edge="start" onClick={openMenu}>
             {anchorNav ? <CloseIcon /> : <MenuIcon />}
-            {/* <MenuIcon /> */}
           </IconButton>
           <Menu
             open={Boolean(anchorNav)}
@@ -101,12 +115,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
-// <IconButton
-//   component={NavLink}
-//   to="/carrito"
-//   color="primary"
-//   aria-label="ver su carrito"
-// >
-//   <AddShoppingCartIcon />
-// </IconButton>;

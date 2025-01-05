@@ -22,8 +22,14 @@ const Home = () => {
   }, [user, isLoading, navigate]);
 
   return (
-    <div>
-      <h1>Welcome to Home</h1>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}>
+      <h1>Bienvenid@</h1>
     </div>
   );
 };

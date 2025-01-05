@@ -3,6 +3,7 @@ import { checkAuth } from "../middleware/auth.js";
 import { checkRole } from "../middleware/roleAuth.js";
 import { Marca } from "../controllers/marcas_productos.controller.js";
 import marcaValidator from "../middleware/validators/marcas_productosValidator.js";
+import { rolesDictionary } from "../utilities/rolesDictionary.js";
 
 const router = express.Router();
 
@@ -16,21 +17,21 @@ router.get(
 router.post(
   "/",
   checkAuth,
-  checkRole(["Super usuario"]),
+  checkRole([rolesDictionary.Operador]),
   marcaValidator.createMarcaValidationRules,
   Marca.create
 );
 router.put(
   "/:id",
   checkAuth,
-  checkRole(["Super usuario"]),
+  checkRole([rolesDictionary.Operador]),
   marcaValidator.updateMarcaValidationRules,
   Marca.update
 );
 router.delete(
   "/:id",
   checkAuth,
-  checkRole(["Super usuario"]),
+  checkRole([rolesDictionary.Operador]),
   marcaValidator.deleteMarcaValidationRules,
   Marca.delete_
 );

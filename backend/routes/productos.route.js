@@ -5,28 +5,36 @@ import { Producto } from "../controllers/productos.controller.js";
 import { upload } from "../middleware/upload.js";
 import productoValidator from "../middleware/validators/productosValidator.js";
 import SchemaFields from "../middleware/validators/schemaFields.js";
+import { rolesDictionary } from "../utilities/rolesDictionary.js";
 
 const router = express.Router();
 
-router.get("/", checkAuth, Producto.get);
+router.get("/catalogo/:idMarca?/:idCategoria?", checkAuth, Producto.getActivos);
+router.get(
+  "/activosStock/",
+  checkAuth,
+  checkRole([rolesDictionary.Operador]),
+  Producto.getActivosConStock
+);
+router.get("/", checkAuth, checkRole([rolesDictionary.Operador]), Producto.get);
+router.post(
+  "/",
+  checkAuth,
+  checkRole([rolesDictionary.Operador]),
+  upload.single(SchemaFields.FOTO_PRODUCTO),
+  productoValidator.createProductoValidationRules,
+  Producto.create
+);
 router.get(
   "/:id",
   checkAuth,
   productoValidator.getProductoByIDValidationRules,
   Producto.getByID
 );
-router.post(
-  "/",
-  checkAuth,
-  checkRole(["Super usuario"]),
-  upload.single(SchemaFields.FOTO_PRODUCTO),
-  productoValidator.createProductoValidationRules,
-  Producto.create
-);
 router.put(
   "/:id",
   checkAuth,
-  checkRole(["Super usuario"]),
+  checkRole([rolesDictionary.Operador]),
   upload.single(SchemaFields.FOTO_PRODUCTO),
   productoValidator.updateProductoValidationRules,
   Producto.update
@@ -34,7 +42,7 @@ router.put(
 router.delete(
   "/:id",
   checkAuth,
-  checkRole(["Super usuario"]),
+  checkRole([rolesDictionary.Operador]),
   productoValidator.deleteProductoValidationRules,
   Producto.delete_
 );

@@ -11,6 +11,40 @@ import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 const get = async (req, res) => {
   try {
+    const Productos = await productos.obtenerTodo();
+    res.status(200).json({ success: true, data: Productos });
+  } catch (error) {
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo los productos: ` + error.message,
+        userId: req.user.id,
+      })
+    );
+  }
+};
+
+const getActivos = async (req, res) => {
+  const { idMarca, idCategoria } = req.params;
+  try {
+    const Productos = await productos.obtenerTodosProductosActivos(
+      idMarca,
+      idCategoria
+    );
+    res.status(200).json({ success: true, data: Productos });
+  } catch (error) {
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo los productos: ` + error.message,
+        userId: req.user.id,
+      })
+    );
+  }
+};
+
+const getActivosConStock = async (req, res) => {
+  try {
     const Productos =
       await productos.obtenerTodosProductosActivosStockMayorCero();
     res.status(200).json({ success: true, data: Productos });
@@ -95,7 +129,7 @@ const update = async (req, res) => {
   console.log("body: ", req.body);
   try {
     if (req.file) {
-      filePath = `${process.env.UPLOAD_FOLDER}/${req.file.filename}`;
+      filePath = `${req.file.filename}`;
       console.log("File uploaded to:", filePath);
     } else {
       console.log("No file uploaded");
@@ -127,7 +161,7 @@ const update = async (req, res) => {
           JSON.stringify({ ...productoBody, fotoProducto: filePath }) +
           "/ Actualizar Producto",
         genericId: id,
-        userId: req.user.id,
+        userId: req.user?.id,
         shouldSaveLog: true,
       })
     );
@@ -175,6 +209,8 @@ const delete_ = async (req, res) => {
 
 const Producto = {
   get,
+  getActivos,
+  getActivosConStock,
   getByID,
   create,
   update,
