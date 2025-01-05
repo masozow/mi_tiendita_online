@@ -6,14 +6,17 @@ import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import Toolbar from "@mui/material/Toolbar";
 import { useTheme } from "@mui/material/styles";
 import DrawerFormControls from "./DrawerFormControls.jsx";
 
 const drawerWidth = 240;
 
-function ResponsiveDrawer(props) {
-  const { children, marca, categoria, handleSelectionChange } = props;
+function ResponsiveDrawer({
+  children,
+  marca,
+  categoria,
+  handleSelectionChange,
+}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const theme = useTheme();

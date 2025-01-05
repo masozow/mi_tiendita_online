@@ -18,12 +18,22 @@ import snackbarReducer from "../../store/snackBarReducer.js";
 import getFieldErrorProps from "../../utils/getFieldErrorProps.js";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
+import { useQueryHook } from "../../hooks/useQueryHook";
 
 const NuevaOrden = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { cartState } = useShoppingCart();
   const [isLoading, setIsLoading] = useState(false);
+  const {
+    data,
+    isLoading: isDataLoading,
+    error,
+  } = useQueryHook(
+    "obtenerClientePorIDUsuario",
+    `/api/clientes/idUsuario/${user?.ID}`
+  );
+
   const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
     open: false,
     message: "",
@@ -36,48 +46,50 @@ const NuevaOrden = () => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema.ordenSchema),
     mode: "onChange",
-    defaultValues: {
-      nombre: "Maria Gómez",
-      direccion: "5 AVENIDA 3-45 ZONA 1, GUATEMALA, GUATEMALA",
-      telefono: "584930128",
-      correo: "MARIA.GOMEZ@EXAMPLE.COM",
-      fechaEntrega: "2024-12-21",
-      total: 20310.0,
-      idEstado: 3,
-      idCliente: user?.ID || 2,
-      detalle: Array.isArray(cartState)
-        ? cartState.map((item) => ({
-            cantidad: item.cantidad,
-            precio: item.precio,
-            subtotal: item.subtotal,
-            idProducto: item.idProducto,
-          }))
-        : [],
-    },
   });
+
+  if (isDataLoading) return <Typography>Cargando...</Typography>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  if (data?.data && data.data.length > 0) {
+    const cliente = data.data[0];
+    setValue("nombre", cliente.RAZON_SOCIAL);
+    setValue("direccion", cliente.DIRECCION_ENTREGA);
+    setValue("telefono", ""); // Assuming you have a way to get the phone number
+    setValue("correo", ""); // Assuming you have a way to get the email
+    setValue("fechaEntrega", ""); // Assuming you have a way to get the delivery date
+    setValue("total", 0); // Assuming you have a way to calculate the total
+    setValue("idEstado", cliente.ID_ESTADO);
+    setValue("idCliente", cliente.ID);
+  }
 
   const handleSnackbarClose = () => {
     dispatchSnackbar({ type: "CLOSE" });
   };
 
-  const handleFormSubmit = (data) => {
+  const handleFormSubmit = (formData) => {
+    const orderData = {
+      ...formData,
+      detalle: cartState.map((item) => ({
+        cantidad: item.cantidad,
+        precio: item.precio,
+        subtotal: item.subtotal,
+        idProducto: item.idProducto,
+      })),
+    };
+
     onSubmit(
-      data,
+      orderData,
       setIsLoading,
       dispatchSnackbar,
       async (data) => {
-        const response = await fetch("/api/ordenes", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-        return response.json();
+        const response = await axios.post("/api/ordenes", data);
+        return response.data;
       },
       () => {
         navigate("/ordenes/historial");

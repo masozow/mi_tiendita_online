@@ -6,6 +6,7 @@ import clienteValidator from "../middleware/validators/clientesValidator.js";
 import { rolesDictionary } from "../utilities/rolesDictionary.js";
 const router = express.Router();
 
+router.get("/idUsuario/:id", checkAuth, Cliente.getByIDUsuario);
 router.get("/", checkAuth, checkRole([rolesDictionary.Operador]), Cliente.get);
 router.get(
   "/:id",

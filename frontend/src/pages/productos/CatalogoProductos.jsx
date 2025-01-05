@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   ImageList,
@@ -22,9 +22,24 @@ import { formatoMoneda } from "../../utils/carritoFunctions";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import ResponsiveDrawer from "../../components/ResponsiveDrawer/ResponsiveDrawer";
 
+const initialState = {
+  marca: 0,
+  categoria: 0,
+};
+
+const reducerMarcaCatalogo = (state, action) => {
+  switch (action.type) {
+    case "SET_MARCA":
+      return { ...state, marca: action.payload };
+    case "SET_CATEGORIA":
+      return { ...state, categoria: action.payload };
+    default:
+      return state;
+  }
+};
+
 const CatalogoProductos = () => {
-  const [marca, setMarca] = useState(0);
-  const [categoria, setCategoria] = useState(0);
+  const [state, dispatch] = useReducer(reducerMarcaCatalogo, initialState);
   const [filteredData, setFilteredData] = useState([]);
   const { data, isLoading, error } = useQueryHook(
     "catalogoProductos",
@@ -74,26 +89,34 @@ const CatalogoProductos = () => {
     handlePopoverClose();
   };
 
-  const handleSelectionChange = (type, value) => {
-    if (type === "marca") {
-      setMarca(value);
-    } else if (type === "categoria") {
-      setCategoria(value);
-    }
+  // const handleSelectionChange = (value, type) => {
+  //   dispatch({ type, payload: value });
+  // };
+  const handleSelectionChangeWrapper = (value, type) => {
+    dispatch({ type, payload: value });
   };
 
+  const handleSelectionChange = (value, type) => {
+    if (type) {
+      dispatch({ type, payload: value });
+    } else {
+      console.log("Valor seleccionado:", value);
+    }
+  };
   useEffect(() => {
     if (data?.data) {
       let filtered = data.data;
-      if (marca) {
-        filtered = filtered.filter((item) => item.ID_MARCA === marca);
+      if (state.marca) {
+        filtered = filtered.filter((item) => item.ID_MARCA === state.marca);
       }
-      if (categoria) {
-        filtered = filtered.filter((item) => item.ID_CATEGORIA === categoria);
+      if (state.categoria) {
+        filtered = filtered.filter(
+          (item) => item.ID_CATEGORIA === state.categoria
+        );
       }
       setFilteredData(filtered);
     }
-  }, [data, marca, categoria]);
+  }, [data, state.marca, state.categoria]);
 
   useEffect(() => {
     console.log("Cart state updated:", cartState);
@@ -107,8 +130,8 @@ const CatalogoProductos = () => {
 
   return (
     <ResponsiveDrawer
-      marca={marca}
-      categoria={categoria}
+      marca={state.marca}
+      categoria={state.categoria}
       handleSelectionChange={handleSelectionChange}>
       <ImageList
         sx={{ width: "100%", height: "100%" }}
