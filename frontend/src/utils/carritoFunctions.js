@@ -25,7 +25,7 @@ export const handleRemoveItem = (idProducto, removeFromCart, setFilas) => {
   );
 };
 
-export const handleClearCart = async (userId, dispatch, setFilas) => {
+export const handleClearCart = async ({ userId, dispatch, setFilas }) => {
   if (dispatch) dispatch({ type: "CLEAR_CART" });
   setFilas([]);
   if (userId) await deleteDB(userId);

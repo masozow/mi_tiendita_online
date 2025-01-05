@@ -40,7 +40,11 @@ const Carrito = () => {
   const totalFactura = calcularTotal(filas);
 
   const handleClearCartAndRedirect = async () => {
-    handleClearCart(user?.ID, dispatch, setFilas);
+    await handleClearCart({
+      userId: user?.ID,
+      dispatch: dispatch,
+      setFilas: setFilas,
+    });
     setOpenSnackbar(true);
     setTimeout(() => {
       navigate(-1);

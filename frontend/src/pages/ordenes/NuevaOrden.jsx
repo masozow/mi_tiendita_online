@@ -93,7 +93,7 @@ const NuevaOrden = () => {
   });
 
   const handleClearCartAndRedirect = async () => {
-    handleClearCart(user?.ID, setFilas);
+    await handleClearCart({ userId: user?.ID, setFilas: setFilas });
     setTimeout(() => {
       navigate(-1);
     }, 1000);
