@@ -20,10 +20,10 @@ import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   calcularTotal,
+  handleClearCart,
   obtenerItemsCarrito,
 } from "../../utils/carritoFunctions.js";
 import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
-import { isError } from "joi";
 
 const NuevaOrden = () => {
   const navigate = useNavigate();
@@ -65,7 +65,6 @@ const NuevaOrden = () => {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema.ordenSchema),
@@ -81,6 +80,12 @@ const NuevaOrden = () => {
     },
   });
   const total = useMemo(() => calcularTotal(filas), [filas]);
+  const handleClearCartAndRedirect = async () => {
+    handleClearCart(user?.ID, dispatch, setFilas);
+    setTimeout(() => {
+      navigate(-1);
+    }, 1000);
+  };
   useEffect(() => {
     if (data?.data && data.data.length > 0) {
       const cliente = data.data[0];
