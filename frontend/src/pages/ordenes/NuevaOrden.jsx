@@ -1,4 +1,4 @@
-import { useState, useReducer, useEffect } from "react";
+import { useState, useReducer, useEffect, useMemo } from "react";
 import {
   TextField,
   Button,
@@ -23,6 +23,7 @@ import {
   obtenerItemsCarrito,
 } from "../../utils/carritoFunctions.js";
 import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
+import { isError } from "joi";
 
 const NuevaOrden = () => {
   const navigate = useNavigate();
@@ -63,30 +64,39 @@ const NuevaOrden = () => {
   const {
     control,
     handleSubmit,
+    reset,
     setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema.ordenSchema),
     mode: "onChange",
+    defaultValues: {
+      total: "",
+      fechaEntrega: "",
+      idCliente: "",
+      correo: "",
+      telefono: "",
+      direccion: "",
+      nombre: "",
+    },
   });
-
-  if (isDataLoading) return <Typography>Cargando...</Typography>;
-  if (error) return <div>Error: {error.message}</div>;
-
-  if (data?.data && data.data.length > 0) {
-    const cliente = data.data[0];
-    setValue("nombre", cliente.RAZON_SOCIAL);
-    setValue("direccion", cliente.DIRECCION_ENTREGA);
-    setValue("telefono", cliente.TELEFONO);
-    setValue("correo", cliente.CORREO);
-    setValue(
-      "fechaEntrega",
-      new Date().toISOString().split("T")[0].split(" ")[0]
-    );
-    setValue("total", calcularTotal(filas));
-    setValue("idEstado", 3);
-    setValue("idCliente", cliente.ID);
-  }
+  const total = useMemo(() => calcularTotal(filas), [filas]);
+  useEffect(() => {
+    if (data?.data && data.data.length > 0) {
+      const cliente = data.data[0];
+      const datosCliente = {
+        nombre: cliente.RAZON_SOCIAL,
+        direccion: cliente.DIRECCION_ENTREGA,
+        telefono: cliente.TELEFONO,
+        correo: cliente.CORREO,
+        fechaEntrega: new Date().toISOString().split("T")[0].split(" ")[0],
+        total: total,
+        idEstado: 3,
+        idCliente: cliente.ID,
+      };
+      reset(datosCliente);
+    }
+  }, [data]);
 
   const handleFormSubmit = (formData) => {
     console.log("Form data: ", formData);
@@ -117,7 +127,11 @@ const NuevaOrden = () => {
     });
   };
 
-  return (
+  return isDataLoading ? (
+    <Typography>Cargando...</Typography>
+  ) : error ? (
+    <div>Error: {error.message}</div>
+  ) : (
     <Container
       sx={{
         display: "flex",
