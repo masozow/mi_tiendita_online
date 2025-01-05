@@ -14,7 +14,9 @@ const onSubmit = async (
     dispatchSnackbar({
       type: "OPEN",
       message: mensajeSolo || "Éxito",
-      severity: "success",
+      severity: mensajeSolo?.toLowerCase().includes("error")
+        ? "error"
+        : "success",
     });
     if (refetch) {
       await refetch();
@@ -22,7 +24,7 @@ const onSubmit = async (
     onSuccessCallback(response);
     setIsLoading(false);
   } catch (error) {
-    console.log("Error en onError: ", error);
+    console.log("Error en onSubmit: ", error);
     const errorMessage = error?.data || "Error desconocido";
     dispatchSnackbar({
       type: "OPEN",

@@ -3,6 +3,7 @@ import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
 
 const validate = (rules) => {
   return async (req, res, next) => {
+    console.log("req body in validate middleware: ", req.body);
     await Promise.all(rules.map((rule) => rule.run(req)));
 
     const errors = validationResult(req);

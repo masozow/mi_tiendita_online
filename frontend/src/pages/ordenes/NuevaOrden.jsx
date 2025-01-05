@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import { useState, useReducer, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -16,15 +16,23 @@ import SnackbarAlert from "../../components/Login/SnackBarAlert.jsx";
 import onSubmit from "../../utils/onSubmit.js";
 import snackbarReducer from "../../store/snackBarReducer.js";
 import getFieldErrorProps from "../../utils/getFieldErrorProps.js";
-import { useShoppingCart } from "../../store/ShoppingCartContext";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import { useQueryHook } from "../../hooks/useQueryHook";
+import {
+  calcularTotal,
+  obtenerItemsCarrito,
+} from "../../utils/carritoFunctions.js";
+import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
 
 const NuevaOrden = () => {
   const navigate = useNavigate();
+
   const { user } = useAuth();
-  const { cartState } = useShoppingCart();
   const [isLoading, setIsLoading] = useState(false);
+  const [filas, setFilas] = useState([]);
+
+  const { mutateAsync } = useCustomMutation("/api/ordenes", "POST");
+
   const {
     data,
     isLoading: isDataLoading,
@@ -39,6 +47,15 @@ const NuevaOrden = () => {
     message: "",
     severity: "success",
   });
+  const handleSnackbarClose = () => {
+    dispatchSnackbar({ type: "CLOSE" });
+  };
+
+  useEffect(() => {
+    if (user) {
+      obtenerItemsCarrito(user.ID, setFilas);
+    }
+  }, [user]);
 
   const theme = useTheme();
   const { isSmallScreen } = breakPointsFromTheme(theme);
@@ -60,41 +77,44 @@ const NuevaOrden = () => {
     const cliente = data.data[0];
     setValue("nombre", cliente.RAZON_SOCIAL);
     setValue("direccion", cliente.DIRECCION_ENTREGA);
-    setValue("telefono", ""); // Assuming you have a way to get the phone number
-    setValue("correo", ""); // Assuming you have a way to get the email
-    setValue("fechaEntrega", ""); // Assuming you have a way to get the delivery date
-    setValue("total", 0); // Assuming you have a way to calculate the total
-    setValue("idEstado", cliente.ID_ESTADO);
+    setValue("telefono", cliente.TELEFONO);
+    setValue("correo", cliente.CORREO);
+    setValue(
+      "fechaEntrega",
+      new Date().toISOString().split("T")[0].split(" ")[0]
+    );
+    setValue("total", calcularTotal(filas));
+    setValue("idEstado", 3);
     setValue("idCliente", cliente.ID);
   }
 
-  const handleSnackbarClose = () => {
-    dispatchSnackbar({ type: "CLOSE" });
-  };
-
   const handleFormSubmit = (formData) => {
-    const orderData = {
-      ...formData,
-      detalle: cartState.map((item) => ({
+    console.log("Form data: ", formData);
+    console.log(
+      "Fecha: ",
+      new Date().toISOString().split("T")[0].split(" ")[0]
+    );
+    const ordenData = {
+      idCliente: parseInt(formData.idCliente, 10),
+      idEstado: formData.idEstado,
+      total: formData.total,
+      fechaEntrega: new Date(formData.fechaEntrega).toISOString(),
+      correo: formData.correo,
+      telefono: formData.telefono,
+      direccion: formData.direccion,
+      nombre: formData.nombre,
+      detalle: filas.map((item) => ({
         cantidad: item.cantidad,
         precio: item.precio,
         subtotal: item.subtotal,
         idProducto: item.idProducto,
       })),
     };
-
-    onSubmit(
-      orderData,
-      setIsLoading,
-      dispatchSnackbar,
-      async (data) => {
-        const response = await axios.post("/api/ordenes", data);
-        return response.data;
-      },
-      () => {
-        navigate("/ordenes/historial");
-      }
-    );
+    console.log("Orden data: ", ordenData);
+    onSubmit(ordenData, setIsLoading, dispatchSnackbar, mutateAsync, () => {
+      console.log("Orden data: ", ordenData);
+      // navigate(-1);
+    });
   };
 
   return (
@@ -112,6 +132,24 @@ const NuevaOrden = () => {
       </Typography>
       <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
         <Stack spacing={2} width="100%">
+          <Controller
+            name="idCliente"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="ID Cliente"
+                variant="outlined"
+                fullWidth
+                {...getFieldErrorProps("idCliente", errors)}
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+            )}
+          />
           <Controller
             name="nombre"
             control={control}
@@ -166,6 +204,8 @@ const NuevaOrden = () => {
                 />
               )}
             />
+          </Stack>
+          <Stack direction={isSmallScreen ? "column" : "row"} spacing={2}>
             <Controller
               name="fechaEntrega"
               control={control}
@@ -177,6 +217,25 @@ const NuevaOrden = () => {
                   variant="outlined"
                   fullWidth
                   {...getFieldErrorProps("fechaEntrega", errors)}
+                />
+              )}
+            />
+            <Controller
+              name="total"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Total"
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  {...getFieldErrorProps("total", errors)}
+                  slotProps={{
+                    input: {
+                      readOnly: true,
+                    },
+                  }}
                 />
               )}
             />

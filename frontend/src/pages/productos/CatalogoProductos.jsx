@@ -92,9 +92,6 @@ const CatalogoProductos = () => {
   // const handleSelectionChange = (value, type) => {
   //   dispatch({ type, payload: value });
   // };
-  const handleSelectionChangeWrapper = (value, type) => {
-    dispatch({ type, payload: value });
-  };
 
   const handleSelectionChange = (value, type) => {
     if (type) {
@@ -117,10 +114,6 @@ const CatalogoProductos = () => {
       setFilteredData(filtered);
     }
   }, [data, state.marca, state.categoria]);
-
-  useEffect(() => {
-    console.log("Cart state updated:", cartState);
-  }, [cartState]);
 
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
