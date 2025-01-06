@@ -8,6 +8,8 @@ import NavBar from "./components/NavBar/NavBar.jsx";
 import CatalogoProductos from "./pages/productos/CatalogoProductos.jsx";
 import Carrito from "./pages/carrito/Carrito.jsx";
 import NuevaOrden from "./pages/ordenes/NuevaOrden.jsx";
+import TodasCategorias from "./pages/categorias/TodasCategorias.jsx";
+import TodasMarcas from "./pages/marcas/TodasMarcas.jsx";
 
 import { AuthProvider } from "./store/AuthContext.jsx";
 import { ShoppingCartProvider } from "./store/ShoppingCartContext.jsx";
@@ -20,6 +22,13 @@ const App = () => {
   return (
     <Box sx={{ minHeight: "100vh" }}>
       <AuthProvider>
+        <Container
+          sx={{
+            m: { xs: "2rem", md: "3rem", lg: "2rem" },
+            p: { xs: "1rem", md: "2rem" },
+            backgroundColor: "background.default",
+          }}
+          elevation={0}></Container>
         <ShoppingCartProvider>
           <NavBar />
           <Container
@@ -54,6 +63,9 @@ const App = () => {
                 />
               </Route>
               <Route path="/ordenes/nueva" element={<NuevaOrden />} />
+              <Route path="/categoria" element={<TodasCategorias />} />
+              <Route path="/marca" element={<TodasMarcas />} />
+              <Route path="*" element={<div>404</div>} />
             </Routes>
           </Container>
         </ShoppingCartProvider>

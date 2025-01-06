@@ -23,6 +23,7 @@ import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
+import MenuComponent from "./MenuComponent";
 
 const NavBar = () => {
   const theme = useTheme();
@@ -58,7 +59,12 @@ const NavBar = () => {
   const closeMenu = () => {
     setAnchorNav(null);
   };
-
+  const menuProductos = [
+    { texto: "Listado", URL: "/producto" },
+    { texto: "Categorias", URL: "/categoria" },
+    { texto: "Marcas", URL: "/marca" },
+    { texto: "Crear", URL: "/producto/crear" },
+  ];
   return (
     <AppBar
       elevation={0}
@@ -86,13 +92,11 @@ const NavBar = () => {
           direction={"row"}
           spacing={1}
           sx={{ display: { xs: "none", md: "flex" } }}>
+          <MenuComponent titulo="Productos" elementos={menuProductos} />
           {menuItems.map((item, key) => (
             <React.Fragment key={key}>{item}</React.Fragment>
           ))}
         </Stack>
-        <Menu>
-          <MenuList></MenuList>
-        </Menu>
         <Box sx={{ display: { xs: "flex", md: "none" } }}>
           <IconButton size="large" edge="start" onClick={openMenu}>
             {anchorNav ? <CloseIcon /> : <MenuIcon />}
