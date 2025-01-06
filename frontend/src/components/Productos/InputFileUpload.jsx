@@ -2,6 +2,7 @@ import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CloudDoneIcon from "@mui/icons-material/CloudDone";
 import { useReducer } from "react";
 import snackbarReducer from "../../store/snackBarReducer";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
@@ -60,11 +61,11 @@ const InputFileUpload = React.forwardRef(
 
       // Si todos los archivos son válidos
       console.log("Archivos seleccionados:", files);
-      dispatchSnackbar({
-        type: "OPEN",
-        message: "El archivo es válido.",
-        severity: "success",
-      });
+      // dispatchSnackbar({
+      //   type: "OPEN",
+      //   message: "El archivo es válido.",
+      //   severity: "success",
+      // });
 
       // Reenviar el evento al controlador externo
       if (onChange) {
@@ -78,10 +79,11 @@ const InputFileUpload = React.forwardRef(
           component="label"
           role={undefined}
           variant="contained"
+          color="secondary"
           tabIndex={-1}
           startIcon={<CloudUploadIcon />}
           sx={{ textTransform: "none" }}>
-          Subir archivos
+          Subir imagen
           <VisuallyHiddenInput
             type="file"
             onChange={handleFileChange}

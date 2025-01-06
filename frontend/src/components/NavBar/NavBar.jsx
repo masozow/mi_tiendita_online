@@ -61,9 +61,23 @@ const NavBar = () => {
   };
   const menuProductos = [
     { texto: "Listado", URL: "/producto" },
-    { texto: "Categorias", URL: "/categoria" },
-    { texto: "Marcas", URL: "/marca" },
     { texto: "Crear", URL: "/producto/crear" },
+  ];
+  const menuCategorias = [
+    { texto: "Listado", URL: "/categoria" },
+    { texto: "Crear", URL: "/categoria/crear" },
+  ];
+  const menuMarcas = [
+    { texto: "Listado", URL: "/marca" },
+    { texto: "Crear", URL: "/marca/crear" },
+  ];
+  const menuUsuarios = [
+    { texto: "Listado", URL: "/usuario" },
+    { texto: "Crear", URL: "/usuario/crear" },
+  ];
+  const menuOrdenes = [
+    { texto: "Listado", URL: "/orden" },
+    { texto: "Crear", URL: "/orden/crear" },
   ];
   return (
     <AppBar
@@ -93,6 +107,10 @@ const NavBar = () => {
           spacing={1}
           sx={{ display: { xs: "none", md: "flex" } }}>
           <MenuComponent titulo="Productos" elementos={menuProductos} />
+          <MenuComponent titulo="Categorias" elementos={menuCategorias} />
+          <MenuComponent titulo="Marcas" elementos={menuMarcas} />
+          <MenuComponent titulo="Usuarios" elementos={menuUsuarios} />
+          <MenuComponent titulo="Ordenes" elementos={menuOrdenes} />
           {menuItems.map((item, key) => (
             <React.Fragment key={key}>{item}</React.Fragment>
           ))}

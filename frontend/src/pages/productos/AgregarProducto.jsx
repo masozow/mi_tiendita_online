@@ -41,7 +41,8 @@ const AgregarProducto = () => {
   };
 
   const theme = useTheme();
-  const { isSmallScreen } = breakPointsFromTheme(theme);
+  const { isSmallScreen, isMediumScreen, isLargeScreen } =
+    breakPointsFromTheme(theme);
 
   const {
     control,
@@ -99,176 +100,208 @@ const AgregarProducto = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        // alignItems: "center",
+        // justifyContent: "center",
         px: { xs: "1rem", md: "2rem" },
-        flexGrow: 1,
-        flexShrink: 0,
+        py: 0,
+        my: 0,
         minWidth: "100%",
       }}>
-      <Typography variant="h5" sx={{ mb: "1rem" }}>
+      <Typography variant="h5" sx={{ mb: "1rem" }} align="center">
         Crear nuevo producto
       </Typography>
       <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
-        <Stack spacing={2} width="100%">
-          <Controller
-            name="codigoProducto"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Código del Producto"
-                variant="outlined"
-                fullWidth
-                {...getFieldErrorProps("codigoProducto", errors)}
+        <Stack spacing={2} width="100%" direction={"column"}>
+          <Stack spacing={2} width="33%">
+            <Controller
+              name="codigoProducto"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  autoFocus
+                  label="Código del Producto"
+                  variant="outlined"
+                  fullWidth
+                  {...getFieldErrorProps("codigoProducto", errors)}
+                />
+              )}
+            />
+          </Stack>
+          <Stack spacing={2} width="100%">
+            <Controller
+              name="nombreProducto"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Nombre del Producto"
+                  variant="outlined"
+                  fullWidth
+                  {...getFieldErrorProps("nombreProducto", errors)}
+                />
+              )}
+            />
+          </Stack>
+          <Stack
+            spacing={2}
+            width="100%"
+            direction={isSmallScreen ? "column" : "row"}>
+            <Controller
+              name="stockProducto"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Stock del Producto"
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  {...getFieldErrorProps("stockProducto", errors)}
+                />
+              )}
+            />
+            <Controller
+              name="costoProducto"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Costo del Producto"
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  {...getFieldErrorProps("costoProducto", errors)}
+                />
+              )}
+            />
+            <Controller
+              name="precioProducto"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Precio del Producto"
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  {...getFieldErrorProps("precioProducto", errors)}
+                />
+              )}
+            />
+          </Stack>
+          <Stack
+            spacing={2}
+            width="100%"
+            direction={isSmallScreen ? "column" : "row"}>
+            <Controller
+              name="idMarca"
+              control={control}
+              render={({ field }) => (
+                <SelectCustomControlled
+                  {...field}
+                  label="Marca"
+                  handleSelectionChange={(value) => {
+                    setSelectedMarca(value);
+                    field.onChange(value);
+                  }}
+                  id="marca"
+                  incomingStateValue={selectedMarca}
+                  queryKey="listMarcas"
+                  URL="/api/marcas/"
+                  errors={errors}
+                  fieldName="idMarca"
+                />
+              )}
+            />
+            <Controller
+              name="idCategoria"
+              control={control}
+              render={({ field }) => (
+                <SelectCustomControlled
+                  {...field}
+                  label="Categoría"
+                  handleSelectionChange={(value) => {
+                    setSelectedCategoria(value);
+                    field.onChange(value);
+                  }}
+                  id="categoria"
+                  incomingStateValue={selectedCategoria}
+                  queryKey="listCategorias"
+                  URL="/api/categorias/"
+                  errors={errors}
+                  fieldName="idCategoria"
+                />
+              )}
+            />
+            <Controller
+              name="idEstado"
+              control={control}
+              render={({ field }) => (
+                <SelectCustomControlled
+                  {...field}
+                  label="Estado"
+                  handleSelectionChange={(value) => {
+                    setSelectedEstado(value);
+                    field.onChange(value);
+                  }}
+                  id="estado"
+                  incomingStateValue={selectedEstado}
+                  queryKey="listEstados"
+                  URL="/api/estados/"
+                  errors={errors}
+                  fieldName="idEstado"
+                />
+              )}
+            />
+          </Stack>
+          <Stack
+            spacing={2}
+            width="100%"
+            direction={isSmallScreen ? "column" : "row"}
+            alignItems={"right"}
+            alignContent={"right"}
+            alignSelf={"right"}>
+            <Stack
+              spacing={2}
+              width="100%"
+              alignSelf={"right"}
+              direction={"row"}>
+              <Box mt={2}>
+                <img
+                  src={imagePreview}
+                  alt="Vista previa"
+                  style={{ maxWidth: "15rem", height: "auto" }}
+                  border="1px solid black"
+                  borderRadius="5px"
+                />
+              </Box>
+              <Controller
+                name="fotoProducto"
+                control={control}
+                render={({ field }) => (
+                  <InputFileUpload
+                    {...field}
+                    onChange={(event) => {
+                      console.log(
+                        "Evento onChange disparado:",
+                        event.target.files
+                      );
+                      field.onChange(event.target.files[0]); // Update the form state with the selected file
+                      handleImageChange(event, setImagePreview);
+                    }}
+                  />
+                )}
               />
-            )}
-          />
-          <Controller
-            name="nombreProducto"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Nombre del Producto"
-                variant="outlined"
-                fullWidth
-                {...getFieldErrorProps("nombreProducto", errors)}
-              />
-            )}
-          />
-          <Controller
-            name="stockProducto"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Stock del Producto"
-                type="number"
-                variant="outlined"
-                fullWidth
-                {...getFieldErrorProps("stockProducto", errors)}
-              />
-            )}
-          />
-          <Controller
-            name="costoProducto"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Costo del Producto"
-                type="number"
-                variant="outlined"
-                fullWidth
-                {...getFieldErrorProps("costoProducto", errors)}
-              />
-            )}
-          />
-          <Controller
-            name="precioProducto"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Precio del Producto"
-                type="number"
-                variant="outlined"
-                fullWidth
-                {...getFieldErrorProps("precioProducto", errors)}
-              />
-            )}
-          />
-          <Controller
-            name="fotoProducto"
-            control={control}
-            render={({ field }) => (
-              <InputFileUpload
-                {...field}
-                onChange={(event) => {
-                  console.log("Evento onChange disparado:", event.target.files);
-                  field.onChange(event.target.files[0]); // Update the form state with the selected file
-                  handleImageChange(event, setImagePreview);
-                }}
-              />
-            )}
-          />
-          {imagePreview && (
-            <Box mt={2}>
-              <img
-                src={imagePreview}
-                alt="Vista previa"
-                style={{ maxWidth: "15rem", height: "auto" }}
-              />
-            </Box>
-          )}
-          <Controller
-            name="idMarca"
-            control={control}
-            render={({ field }) => (
-              <SelectCustomControlled
-                {...field}
-                label="Marca"
-                handleSelectionChange={(value) => {
-                  setSelectedMarca(value);
-                  field.onChange(value);
-                }}
-                id="marca"
-                incomingStateValue={selectedMarca}
-                queryKey="listMarcas"
-                URL="/api/marcas/"
-                errors={errors}
-                fieldName="idMarca"
-              />
-            )}
-          />
-          <Controller
-            name="idCategoria"
-            control={control}
-            render={({ field }) => (
-              <SelectCustomControlled
-                {...field}
-                label="Categoría"
-                handleSelectionChange={(value) => {
-                  setSelectedCategoria(value);
-                  field.onChange(value);
-                }}
-                id="categoria"
-                incomingStateValue={selectedCategoria}
-                queryKey="listCategorias"
-                URL="/api/categorias/"
-                errors={errors}
-                fieldName="idCategoria"
-              />
-            )}
-          />
-          <Controller
-            name="idEstado"
-            control={control}
-            render={({ field }) => (
-              <SelectCustomControlled
-                {...field}
-                label="Estado"
-                handleSelectionChange={(value) => {
-                  setSelectedEstado(value);
-                  field.onChange(value);
-                }}
-                id="estado"
-                incomingStateValue={selectedEstado}
-                queryKey="listEstados"
-                URL="/api/estados/"
-                errors={errors}
-                fieldName="idEstado"
-              />
-            )}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={isLoading}>
-            {isLoading ? "Cargando..." : "Crear Producto"}
-          </Button>
+            </Stack>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={isLoading}>
+              {isLoading ? "Cargando..." : "Crear Producto"}
+            </Button>
+          </Stack>
         </Stack>
       </form>
       <SnackbarAlert
