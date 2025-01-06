@@ -24,11 +24,13 @@ import {
   obtenerItemsCarrito,
 } from "../../utils/carritoFunctions.js";
 import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
+import { useShoppingCart } from "../../store/ShoppingCartContext.jsx";
 
 const NuevaOrden = () => {
   const navigate = useNavigate();
 
   const { user } = useAuth();
+  const { removeFromCart, dispatch } = useShoppingCart();
   const [isLoading, setIsLoading] = useState(false);
   const [filas, setFilas] = useState([]);
   const [total, setTotal] = useState(0);
@@ -93,10 +95,16 @@ const NuevaOrden = () => {
   });
 
   const handleClearCartAndRedirect = async () => {
-    await handleClearCart({ userId: user?.ID, setFilas: setFilas });
-    setTimeout(() => {
-      navigate(-1);
-    }, 1000);
+    await handleClearCart({
+      userId: user?.ID,
+      dispatch: dispatch,
+      setFilas: setFilas,
+      cb: () => {
+        setTimeout(() => {
+          navigate(-1);
+        }, 1000);
+      },
+    });
   };
   useEffect(() => {
     if (data?.data && data.data.length > 0) {

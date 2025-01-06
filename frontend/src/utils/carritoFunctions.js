@@ -3,6 +3,7 @@ import {
   addItem,
   deleteItem,
   deleteDatabase as deleteDB,
+  clearAllItems,
 } from "./indexeddb";
 
 export const formatoMoneda = (num) =>
@@ -25,10 +26,11 @@ export const handleRemoveItem = (idProducto, removeFromCart, setFilas) => {
   );
 };
 
-export const handleClearCart = async ({ userId, dispatch, setFilas }) => {
+export const handleClearCart = async ({ userId, dispatch, setFilas, cb }) => {
   if (dispatch) dispatch({ type: "CLEAR_CART" });
   setFilas([]);
-  if (userId) await deleteDB(userId);
+  cb();
+  if (userId) await clearAllItems(userId);
 };
 
 export const deleteDatabase = deleteDB;

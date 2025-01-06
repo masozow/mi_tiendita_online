@@ -44,11 +44,13 @@ const Carrito = () => {
       userId: user?.ID,
       dispatch: dispatch,
       setFilas: setFilas,
+      cb: () => {
+        setTimeout(() => {
+          navigate(-1);
+        }, 1000);
+      },
     });
     setOpenSnackbar(true);
-    setTimeout(() => {
-      navigate(-1);
-    }, 1000);
   };
 
   const handleCloseSnackbar = (event, reason) => {
