@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Container,
-  Input,
   Stack,
   TextField,
   Typography,
@@ -20,12 +19,17 @@ import onSubmit from "../../utils/onSubmit";
 import getFieldErrorProps from "../../utils/getFieldErrorProps";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import InputFileUpload from "../../components/Productos/InputFileUpload";
+import handleImageChange from "../../utils/showUploadedImage";
+import SelectCustomControlled from "../../components/ResponsiveDrawer/SelectCustomControlled"; // Updated import statement
 
 const AgregarProducto = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { mutateAsync } = useCustomMutation("/api/productos", "POST");
   const [imagePreview, setImagePreview] = useState(null);
+  const [selectedMarca, setSelectedMarca] = useState(""); // State for selected marca
+  const [selectedCategoria, setSelectedCategoria] = useState(""); // State for selected categoria
+  const [selectedEstado, setSelectedEstado] = useState(1); // State for selected estado, default to 1
 
   const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
     open: false,
@@ -43,42 +47,53 @@ const AgregarProducto = () => {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schemas.productoSchema),
     mode: "onChange",
+    defaultValues: {
+      codigoProducto: "",
+      nombreProducto: "",
+      stockProducto: 0.0,
+      costoProducto: 0.0,
+      precioProducto: 0.0,
+      idCategoria: "",
+      idMarca: "",
+      idEstado: 1, // Default value for idEstado
+      fotoProducto: null, // Default value for fotoProducto
+    },
   });
-  const handleImageChange = (e) => {
-    const file = e.target.files[0]; // Obtener el primer archivo
-    console.log("Archivo recibido en handleImageChange:", file);
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onloadend = () => {
-        console.log("Contenido leído por FileReader:", reader.result);
-        setImagePreview(reader.result); // Actualizar el estado con la vista previa
-      };
-
-      reader.onerror = (error) => {
-        console.error("Error al leer el archivo:", error);
-      };
-
-      reader.readAsDataURL(file); // Leer el archivo como una URL base64
-    } else {
-      console.warn("No se seleccionó ningún archivo.");
-    }
-  };
 
   const handleFormSubmit = (formData) => {
-    // Aquí puedes acceder al archivo subido desde `formData.fotoProducto`
-    console.log("Archivo subido: ", formData.fotoProducto);
-    console.log("Datos del formulario: ", formData);
+    const formDataToSend = new FormData();
+    formDataToSend.append("codigoProducto", formData.codigoProducto);
+    formDataToSend.append("nombreProducto", formData.nombreProducto);
+    formDataToSend.append("stockProducto", formData.stockProducto);
+    formDataToSend.append("costoProducto", formData.costoProducto);
+    formDataToSend.append("precioProducto", formData.precioProducto);
+    formDataToSend.append("idCategoria", formData.idCategoria);
+    formDataToSend.append("idMarca", formData.idMarca);
+    formDataToSend.append("idEstado", formData.idEstado);
+    if (formData.fotoProducto) {
+      formDataToSend.append("fotoProducto", formData.fotoProducto);
+    }
+
+    onSubmit(
+      formDataToSend,
+      setIsLoading,
+      dispatchSnackbar,
+      mutateAsync,
+      () => {
+        console.log("Producto data: ", formData);
+        reset();
+      }
+    );
   };
+
   useEffect(() => {
     console.log("imagePreview: ", imagePreview);
   }, [imagePreview]);
+
   return (
     <Container
       sx={{
@@ -97,6 +112,19 @@ const AgregarProducto = () => {
       <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
         <Stack spacing={2} width="100%">
           <Controller
+            name="codigoProducto"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Código del Producto"
+                variant="outlined"
+                fullWidth
+                {...getFieldErrorProps("codigoProducto", errors)}
+              />
+            )}
+          />
+          <Controller
             name="nombreProducto"
             control={control}
             render={({ field }) => (
@@ -110,17 +138,57 @@ const AgregarProducto = () => {
             )}
           />
           <Controller
+            name="stockProducto"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Stock del Producto"
+                type="number"
+                variant="outlined"
+                fullWidth
+                {...getFieldErrorProps("stockProducto", errors)}
+              />
+            )}
+          />
+          <Controller
+            name="costoProducto"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Costo del Producto"
+                type="number"
+                variant="outlined"
+                fullWidth
+                {...getFieldErrorProps("costoProducto", errors)}
+              />
+            )}
+          />
+          <Controller
+            name="precioProducto"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Precio del Producto"
+                type="number"
+                variant="outlined"
+                fullWidth
+                {...getFieldErrorProps("precioProducto", errors)}
+              />
+            )}
+          />
+          <Controller
             name="fotoProducto"
             control={control}
-            defaultValue={null} // Default value para el archivo
             render={({ field }) => (
               <InputFileUpload
                 {...field}
                 onChange={(event) => {
                   console.log("Evento onChange disparado:", event.target.files);
-                  // const files = event.target.files;
-                  // field.onChange(event.target.files[0]);
-                  handleImageChange(event);
+                  field.onChange(event.target.files[0]); // Update the form state with the selected file
+                  handleImageChange(event, setImagePreview);
                 }}
               />
             )}
@@ -134,12 +202,72 @@ const AgregarProducto = () => {
               />
             </Box>
           )}
+          <Controller
+            name="idMarca"
+            control={control}
+            render={({ field }) => (
+              <SelectCustomControlled
+                {...field}
+                label="Marca"
+                handleSelectionChange={(value) => {
+                  setSelectedMarca(value);
+                  field.onChange(value);
+                }}
+                id="marca"
+                incomingStateValue={selectedMarca}
+                queryKey="listMarcas"
+                URL="/api/marcas/"
+                errors={errors}
+                fieldName="idMarca"
+              />
+            )}
+          />
+          <Controller
+            name="idCategoria"
+            control={control}
+            render={({ field }) => (
+              <SelectCustomControlled
+                {...field}
+                label="Categoría"
+                handleSelectionChange={(value) => {
+                  setSelectedCategoria(value);
+                  field.onChange(value);
+                }}
+                id="categoria"
+                incomingStateValue={selectedCategoria}
+                queryKey="listCategorias"
+                URL="/api/categorias/"
+                errors={errors}
+                fieldName="idCategoria"
+              />
+            )}
+          />
+          <Controller
+            name="idEstado"
+            control={control}
+            render={({ field }) => (
+              <SelectCustomControlled
+                {...field}
+                label="Estado"
+                handleSelectionChange={(value) => {
+                  setSelectedEstado(value);
+                  field.onChange(value);
+                }}
+                id="estado"
+                incomingStateValue={selectedEstado}
+                queryKey="listEstados"
+                URL="/api/estados/"
+                errors={errors}
+                fieldName="idEstado"
+              />
+            )}
+          />
           <Button
             type="submit"
             variant="contained"
             fullWidth
             disabled={isLoading}>
-            {isLoading ? "Cargando..." : "Crear Orden"}
+            {isLoading ? "Cargando..." : "Crear Producto"}
           </Button>
         </Stack>
       </form>

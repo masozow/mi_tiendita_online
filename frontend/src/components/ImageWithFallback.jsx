@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ImageWithFallback = ({
   src,
@@ -7,7 +7,10 @@ const ImageWithFallback = ({
   width = "100%",
   objectFit = "cover",
 }) => {
-  const [imgSrc, setImgSrc] = useState(src);
+  const [imgSrc, setImgSrc] = useState(src.replaceAll(" ", "%20"));
+  useEffect(() => {
+    console.log("ImageWithFallback - imgSrc:", src);
+  }, []);
 
   return (
     <img

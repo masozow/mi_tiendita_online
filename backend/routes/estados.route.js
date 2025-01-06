@@ -6,7 +6,7 @@ import estadoValidator from "../middleware/validators/estadosValidator.js";
 import { rolesDictionary } from "../utilities/rolesDictionary.js";
 const router = express.Router();
 
-router.get("/", checkAuth, checkRole([rolesDictionary.Operador]), Estado.get);
+router.get("/", checkAuth, Estado.get);
 router.get(
   "/:id",
   checkAuth,

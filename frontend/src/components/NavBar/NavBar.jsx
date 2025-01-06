@@ -90,6 +90,9 @@ const NavBar = () => {
             <React.Fragment key={key}>{item}</React.Fragment>
           ))}
         </Stack>
+        <Menu>
+          <MenuList></MenuList>
+        </Menu>
         <Box sx={{ display: { xs: "flex", md: "none" } }}>
           <IconButton size="large" edge="start" onClick={openMenu}>
             {anchorNav ? <CloseIcon /> : <MenuIcon />}

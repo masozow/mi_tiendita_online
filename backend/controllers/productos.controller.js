@@ -94,9 +94,9 @@ const create = async (req, res) => {
 
   try {
     if (req.file) {
-      filePath = `${process.env.UPLOAD_FOLDER}/${req.file.filename}`;
+      filePath = `${req.file.filename}`;
     }
-
+    console.log("File uploaded to:", filePath);
     const resultado = await productos.insertar({
       ...productoBody,
       fotoProducto: filePath,
