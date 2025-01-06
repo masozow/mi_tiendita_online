@@ -93,8 +93,19 @@ const NuevaOrden = () => {
       nombre: "",
     },
   });
-
+  const handleClearFields = () => {
+    reset({
+      total: "",
+      fechaEntrega: "",
+      idCliente: "",
+      correo: "",
+      telefono: "",
+      direccion: "",
+      nombre: "",
+    });
+  };
   const handleClearCartAndRedirect = async () => {
+    handleClearFields();
     await handleClearCart({
       userId: user?.ID,
       dispatch: dispatch,
