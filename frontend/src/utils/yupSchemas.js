@@ -24,9 +24,42 @@ const ordenSchema = yup.object().shape({
   idCliente: yup.number().required(),
 });
 
+const productoSchema = yup.object().shape({
+  codigoProducto: yup.string().required(),
+  nombreProducto: yup.string().required(),
+  stockProducto: yup
+    .number()
+    .required()
+    .test(
+      "is-decimal",
+      "Debe tener dos decimales",
+      (value) => value % 1 === 0 && value.toString().split(".")[1].length <= 2
+    ),
+  costoProducto: yup
+    .number()
+    .required()
+    .test(
+      "is-decimal",
+      "Debe tener dos decimales",
+      (value) => value % 1 === 0 && value.toString().split(".")[1].length <= 2
+    ),
+  precioProducto: yup
+    .number()
+    .required()
+    .test(
+      "is-decimal",
+      "Debe tener dos decimales",
+      (value) => value % 1 === 0 && value.toString().split(".")[1].length <= 2
+    ),
+  idCategoria: yup.number().required(),
+  idMarca: yup.number().required(),
+  idEstado: yup.number().required(),
+  fotoProducto: yup.mixed().required(),
+});
 const schemas = {
   loginSchema,
   ordenSchema,
+  productoSchema,
 };
 
 export default schemas;

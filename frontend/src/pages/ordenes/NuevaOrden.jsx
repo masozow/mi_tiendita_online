@@ -182,6 +182,8 @@ const NuevaOrden = () => {
         justifyContent: "center",
         px: { xs: "1rem", md: "2rem" },
         flexGrow: 1,
+        flexShrink: 0,
+        minWidth: "100%",
       }}>
       <Typography variant="h5" sx={{ mb: "1rem" }}>
         Crear Nueva Orden
