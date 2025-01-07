@@ -20,6 +20,7 @@ import { ShoppingCartProvider } from "./store/ShoppingCartContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Home from "./pages/Home.jsx";
 import { rolesDictionary } from "./utils/rolesDictionary.js";
+import TodasOrdenes from "./pages/ordenes/TodasOrdenes.jsx";
 
 const App = () => {
   return (
@@ -72,6 +73,7 @@ const App = () => {
                 />
               </Route>
               <Route path="/ordenes/nueva" element={<NuevaOrden />} />
+              <Route path="/ordenes/" element={<TodasOrdenes />} />
 
               {/* -------- Usuarios ----- */}
               <Route

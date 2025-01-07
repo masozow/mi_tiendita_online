@@ -77,8 +77,9 @@ const NavBar = () => {
     { texto: "Crear", URL: "/usuario/crear" },
   ];
   const menuOrdenes = [
-    { texto: "Listado", URL: "/orden" },
-    { texto: "Crear", URL: "/orden/crear" },
+    { texto: "Listado", URL: "/ordenes" },
+    { texto: "Historial", URL: "/ordenes/historial" },
+    { texto: "Crear", URL: "/ordenes/crear" },
   ];
   return (
     <AppBar

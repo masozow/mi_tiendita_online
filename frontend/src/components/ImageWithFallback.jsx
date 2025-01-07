@@ -8,10 +8,7 @@ const ImageWithFallback = ({
   objectFit = "cover",
 }) => {
   const [imgSrc, setImgSrc] = useState(src.replaceAll(" ", "%20"));
-  useEffect(() => {
-    console.log("ImageWithFallback - imgSrc:", src);
-  }, []);
-
+  
   return (
     <img
       src={imgSrc}

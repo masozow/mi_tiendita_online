@@ -18,6 +18,7 @@ import ImageWithFallback from "../../components/ImageWithFallback";
 import { useAuth } from "../../store/AuthContext";
 import { formatoMoneda } from "../../utils/carritoFunctions";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
+import Dialogo from "../../components/Dialogo/Dialogo"; // Import the Dialogo component
 
 const TodosProductos = () => {
   const [filas, setFilas] = useState([]);
@@ -46,6 +47,7 @@ const TodosProductos = () => {
 
   const handleDelete = (productId) => {
     console.log("Delete product with ID:", productId);
+    // Implement your delete logic here
   };
 
   return (
@@ -92,7 +94,7 @@ const TodosProductos = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {filas?.map((fila) => (
+          {filas.map((fila) => (
             <TableRow key={fila.ID}>
               <TableCell>
                 <ImageWithFallback
@@ -119,11 +121,16 @@ const TodosProductos = () => {
                   onClick={() => handleEdit(fila.ID)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton
-                  aria-label="edit"
-                  onClick={() => handleDelete(fila.ID)}>
-                  <DeleteIcon />
-                </IconButton>
+                <Dialogo
+                  onConfirm={() => handleDelete(fila.ID)}
+                  triggerButton={
+                    <IconButton aria-label="delete">
+                      <DeleteIcon />
+                    </IconButton>
+                  }
+                  titulo="Eliminar producto"
+                  mensaje={`¿Desea eliminar el producto ${fila.NOMBRE}?`}
+                />
               </TableCell>
             </TableRow>
           ))}
