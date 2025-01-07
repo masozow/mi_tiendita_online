@@ -29,36 +29,6 @@ const NavBar = () => {
   const theme = useTheme();
   const { cartState } = useShoppingCart();
   const cartItemCount = Object.keys(cartState).length;
-
-  const menuItems = [
-    <IconButton component={NavLink} to="/carrito" aria-label="ver su carrito">
-      <Badge
-        badgeContent={cartItemCount}
-        color="primary"
-        sx={{
-          "& .MuiBadge-badge": {
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-          },
-        }}>
-        <ShoppingCartIcon aria-label="ver su carrito" />
-      </Badge>
-    </IconButton>,
-    <IconButton component={NavLink} to="/login">
-      <PersonIcon aria-label="iniciar sesión" />
-    </IconButton>,
-    <IconButton>
-      <PowerSettingsNewIcon aria-label="cerrar sesión" />
-    </IconButton>,
-  ];
-
-  const [anchorNav, setAnchorNav] = useState(null);
-  const openMenu = (event) => {
-    setAnchorNav(event.currentTarget);
-  };
-  const closeMenu = () => {
-    setAnchorNav(null);
-  };
   const menuProductos = [
     { texto: "Listado", URL: "/producto" },
     { texto: "Crear", URL: "/producto/crear" },
@@ -85,6 +55,44 @@ const NavBar = () => {
     { texto: "Listado", URL: "/estado" },
     { texto: "Crear", URL: "/estado/crear" },
   ];
+  const menuItems = [
+    <MenuComponent titulo="Productos" elementos={menuProductos} />,
+    <MenuComponent titulo="Categorias" elementos={menuCategorias} />,
+    <MenuComponent titulo="Marcas" elementos={menuMarcas} />,
+    <MenuComponent titulo="Usuarios" elementos={menuUsuarios} />,
+    <MenuComponent titulo="Ordenes" elementos={menuOrdenes} />,
+    <MenuComponent titulo="Estados" elementos={menuEstados} />,
+    <Stack direction="row">
+      <IconButton component={NavLink} to="/carrito" aria-label="ver su carrito">
+        <Badge
+          badgeContent={cartItemCount}
+          color="primary"
+          sx={{
+            "& .MuiBadge-badge": {
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+            },
+          }}>
+          <ShoppingCartIcon aria-label="ver su carrito" />
+        </Badge>
+      </IconButton>
+      <IconButton component={NavLink} to="/login">
+        <PersonIcon aria-label="iniciar sesión" />
+      </IconButton>
+      <IconButton>
+        <PowerSettingsNewIcon aria-label="cerrar sesión" />
+      </IconButton>
+    </Stack>,
+  ];
+
+  const [anchorNav, setAnchorNav] = useState(null);
+  const openMenu = (event) => {
+    setAnchorNav(event.currentTarget);
+  };
+  const closeMenu = () => {
+    setAnchorNav(null);
+  };
+
   return (
     <AppBar
       elevation={0}
@@ -112,12 +120,6 @@ const NavBar = () => {
           direction={"row"}
           spacing={1}
           sx={{ display: { xs: "none", md: "flex" } }}>
-          <MenuComponent titulo="Productos" elementos={menuProductos} />
-          <MenuComponent titulo="Categorias" elementos={menuCategorias} />
-          <MenuComponent titulo="Marcas" elementos={menuMarcas} />
-          <MenuComponent titulo="Usuarios" elementos={menuUsuarios} />
-          <MenuComponent titulo="Ordenes" elementos={menuOrdenes} />
-          <MenuComponent titulo="Estados" elementos={menuEstados} />
           {menuItems.map((item, key) => (
             <React.Fragment key={key}>{item}</React.Fragment>
           ))}
