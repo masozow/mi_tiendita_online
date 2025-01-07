@@ -138,7 +138,16 @@ const Carrito = () => {
           <TableRow>
             <TableCell colSpan={3} />
             <TableCell align="right">
-              <Dialogo onConfirm={handleClearCartAndRedirect} />
+              <Dialogo
+                onConfirm={handleClearCartAndRedirect}
+                triggerButton={
+                  <Button variant="contained" color="secondary">
+                    Cancelar
+                  </Button>
+                }
+                mensaje="¿Está segur@ de borrar su carrito?"
+                titulo="Borrar carrito"
+              />
             </TableCell>
             <TableCell align="center">
               <Button

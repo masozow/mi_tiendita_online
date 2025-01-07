@@ -18,6 +18,8 @@ import ImageWithFallback from "../../components/ImageWithFallback";
 import { useAuth } from "../../store/AuthContext";
 import { formatoMoneda } from "../../utils/carritoFunctions";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
+import Dialogo from "../../components/Dialogo/Dialogo"; // Import the Dialogo component
+import CustomChip from "../../components/CustomChip";
 
 const TodosProductos = () => {
   const [filas, setFilas] = useState([]);
@@ -46,6 +48,7 @@ const TodosProductos = () => {
 
   const handleDelete = (productId) => {
     console.log("Delete product with ID:", productId);
+    // Implement your delete logic here
   };
 
   return (
@@ -92,7 +95,7 @@ const TodosProductos = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {filas?.map((fila) => (
+          {filas.map((fila) => (
             <TableRow key={fila.ID}>
               <TableCell>
                 <ImageWithFallback
@@ -110,7 +113,9 @@ const TodosProductos = () => {
               <TableCell align="center">{fila.STOCK}</TableCell>
               <TableCell align="right">{formatoMoneda(fila.COSTO)}</TableCell>
               <TableCell align="right">{formatoMoneda(fila.PRECIO)}</TableCell>
-              <TableCell align="center">{fila.NOMBRE_ESTADO}</TableCell>
+              <TableCell align="center">
+                <CustomChip incomingLabel={fila.ID_ESTADO} />
+              </TableCell>
               <TableCell align="center">{fila.NOMBRE_MARCA}</TableCell>
               <TableCell align="center">{fila.NOMBRE_CATEGORIA}</TableCell>
               <TableCell align="center">
@@ -119,11 +124,16 @@ const TodosProductos = () => {
                   onClick={() => handleEdit(fila.ID)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton
-                  aria-label="edit"
-                  onClick={() => handleDelete(fila.ID)}>
-                  <DeleteIcon />
-                </IconButton>
+                <Dialogo
+                  onConfirm={() => handleDelete(fila.ID)}
+                  triggerButton={
+                    <IconButton aria-label="delete">
+                      <DeleteIcon />
+                    </IconButton>
+                  }
+                  titulo="Eliminar producto"
+                  mensaje={`¿Desea eliminar el producto ${fila.NOMBRE}?`}
+                />
               </TableCell>
             </TableRow>
           ))}

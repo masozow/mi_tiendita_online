@@ -6,7 +6,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 
-const Dialogo = ({ onConfirm }) => {
+const Dialogo = ({ onConfirm, triggerButton, mensaje, titulo }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpenDialog = () => {
@@ -24,18 +24,16 @@ const Dialogo = ({ onConfirm }) => {
 
   return (
     <>
-      <Button variant="contained" color="secondary" onClick={handleOpenDialog}>
-        Cancelar
-      </Button>
+      {React.cloneElement(triggerButton, { onClick: handleOpenDialog })}
       <Dialog
         open={open}
         onClose={handleCloseDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{"Borrar carrito"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{titulo}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            ¿Está segur@ de borrar su carrito ?
+            {mensaje}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

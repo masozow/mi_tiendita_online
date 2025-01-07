@@ -20,6 +20,9 @@ import { ShoppingCartProvider } from "./store/ShoppingCartContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Home from "./pages/Home.jsx";
 import { rolesDictionary } from "./utils/rolesDictionary.js";
+import TodasOrdenes from "./pages/ordenes/TodasOrdenes.jsx";
+import AgregarMarca from "./pages/marcas/AgregarMarca.jsx";
+import AgregarCategoria from "./pages/categorias/AgregarCategoria.jsx";
 
 const App = () => {
   return (
@@ -72,11 +75,12 @@ const App = () => {
                 />
               </Route>
               <Route path="/ordenes/nueva" element={<NuevaOrden />} />
+              <Route path="/ordenes/" element={<TodasOrdenes />} />
 
               {/* -------- Usuarios ----- */}
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
-                <Route path="/usuarios" element={<TodosUsuarios />} />
+                <Route path="/usuario" element={<TodosUsuarios />} />
               </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
@@ -85,8 +89,10 @@ const App = () => {
 
               {/* -------- Categorias ----- */}
               <Route path="/categoria" element={<TodasCategorias />} />
+              <Route path="/categoria/crear" element={<AgregarCategoria />} />
 
               {/* -------- Marcas ----- */}
+              <Route path="/marca/crear" element={<AgregarMarca />} />
               <Route path="/marca" element={<TodasMarcas />} />
 
               {/* -------- 404 ----- */}
