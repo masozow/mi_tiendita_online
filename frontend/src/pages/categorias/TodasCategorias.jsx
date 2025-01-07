@@ -17,6 +17,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../../store/AuthContext";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo";
+import CustomChip from "../../components/CustomChip";
 
 const TodasCategorias = () => {
   const [filas, setFilas] = useState([]);
@@ -65,7 +66,7 @@ const TodasCategorias = () => {
             <TableCell>
               <b>Nombre</b>
             </TableCell>
-            <TableCell>
+            <TableCell align="center">
               <b>Estado</b>
             </TableCell>
             <TableCell></TableCell>
@@ -76,7 +77,9 @@ const TodasCategorias = () => {
             <TableRow key={fila.ID}>
               <TableCell>{fila.ID}</TableCell>
               <TableCell>{fila.NOMBRE}</TableCell>
-              <TableCell>{fila.ESTADO === 1 ? "Activo" : "Inactivo"}</TableCell>
+              <TableCell align="center">
+                <CustomChip incomingLabel={fila.ESTADO} />
+              </TableCell>
               <TableCell align="center">
                 <IconButton
                   aria-label="edit"

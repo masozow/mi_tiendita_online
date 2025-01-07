@@ -19,6 +19,7 @@ import { useAuth } from "../../store/AuthContext";
 import { formatoMoneda } from "../../utils/carritoFunctions";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo"; // Import the Dialogo component
+import CustomChip from "../../components/CustomChip";
 
 const TodosProductos = () => {
   const [filas, setFilas] = useState([]);
@@ -112,7 +113,9 @@ const TodosProductos = () => {
               <TableCell align="center">{fila.STOCK}</TableCell>
               <TableCell align="right">{formatoMoneda(fila.COSTO)}</TableCell>
               <TableCell align="right">{formatoMoneda(fila.PRECIO)}</TableCell>
-              <TableCell align="center">{fila.NOMBRE_ESTADO}</TableCell>
+              <TableCell align="center">
+                <CustomChip incomingLabel={fila.ID_ESTADO} />
+              </TableCell>
               <TableCell align="center">{fila.NOMBRE_MARCA}</TableCell>
               <TableCell align="center">{fila.NOMBRE_CATEGORIA}</TableCell>
               <TableCell align="center">
