@@ -25,13 +25,6 @@ const App = () => {
   return (
     <Box sx={{ minHeight: "100vh" }}>
       <AuthProvider>
-        <Container
-          sx={{
-            m: { xs: "2rem", md: "3rem", lg: "2rem" },
-            p: { xs: "1rem", md: "2rem" },
-            backgroundColor: "background.default",
-          }}
-          elevation={0}></Container>
         <ShoppingCartProvider>
           <NavBar />
           <Container

@@ -62,6 +62,7 @@ const NavBar = () => {
   const menuProductos = [
     { texto: "Listado", URL: "/producto" },
     { texto: "Crear", URL: "/producto/crear" },
+    { texto: "Catalogo", URL: "/producto/catalogo" },
   ];
   const menuCategorias = [
     { texto: "Listado", URL: "/categoria" },

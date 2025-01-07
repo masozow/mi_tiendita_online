@@ -86,6 +86,10 @@ const AgregarProducto = () => {
       mutateAsync,
       () => {
         console.log("Producto data: ", formData);
+        setImagePreview(null);
+        setSelectedMarca("");
+        setSelectedCategoria("");
+        setSelectedEstado(1);
         reset();
       }
     );
@@ -112,7 +116,7 @@ const AgregarProducto = () => {
       </Typography>
       <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
         <Stack spacing={2} width="100%" direction={"column"}>
-          <Stack spacing={2} width="33%">
+          <Stack spacing={2} width={{ xs: "100%", md: "33%" }}>
             <Controller
               name="codigoProducto"
               control={control}
@@ -267,40 +271,57 @@ const AgregarProducto = () => {
               width="100%"
               alignSelf={"right"}
               direction={"row"}>
-              <Box mt={2}>
+              <Stack spacing={2} width="43%">
+                <Controller
+                  name="fotoProducto"
+                  control={control}
+                  render={({ field }) => (
+                    <InputFileUpload
+                      {...field}
+                      onChange={(event) => {
+                        console.log(
+                          "Evento onChange disparado:",
+                          event.target.files
+                        );
+                        field.onChange(event.target.files[0]); // Update the form state with the selected file
+                        handleImageChange(event, setImagePreview);
+                      }}
+                    />
+                  )}
+                />
+              </Stack>
+              <Box
+                mt={2}
+                sx={{
+                  width: "15rem",
+                  height: "15rem",
+                  border: "1px solid black",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}>
                 <img
                   src={imagePreview}
                   alt="Vista previa"
-                  style={{ maxWidth: "15rem", height: "auto" }}
-                  border="1px solid black"
-                  borderRadius="5px"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                  }}
                 />
               </Box>
-              <Controller
-                name="fotoProducto"
-                control={control}
-                render={({ field }) => (
-                  <InputFileUpload
-                    {...field}
-                    onChange={(event) => {
-                      console.log(
-                        "Evento onChange disparado:",
-                        event.target.files
-                      );
-                      field.onChange(event.target.files[0]); // Update the form state with the selected file
-                      handleImageChange(event, setImagePreview);
-                    }}
-                  />
-                )}
-              />
             </Stack>
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              disabled={isLoading}>
-              {isLoading ? "Cargando..." : "Crear Producto"}
-            </Button>
+            <Stack spacing={2} width={{ xs: "100%", md: "30%" }}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={isLoading}>
+                {isLoading ? "Cargando..." : "Crear Producto"}
+              </Button>
+            </Stack>
           </Stack>
         </Stack>
       </form>
