@@ -3,7 +3,7 @@ import { TextField, Button, Stack, Typography, Container } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../../hooks/useLoginMutation.jsx";
+import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
 import { useAuth } from "../../store/AuthContext.jsx";
 import schema from "../../utils/yupSchemas.js";
 import { rolesDictionary } from "../../utils/rolesDictionary.js";
@@ -14,7 +14,7 @@ import getFieldErrorProps from "../../utils/getFieldErrorProps.js";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { mutateAsync } = useLoginMutation();
+  const { mutateAsync } = useCustomMutation("/api/usuarios/login", "POST");
   const { refetch } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);

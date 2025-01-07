@@ -10,7 +10,8 @@ const __dirname = path.dirname(__filename);
 const last_index = __dirname.lastIndexOf("backend");
 const dirname = __dirname.substring(0, last_index);
 
-router.use("/", checkAuth, (req, res, next) => {
+//router.use("/", checkAuth, (req, res, next) => { //original, quitando checkAuth
+router.use("/", (req, res, next) => {
   const filePath = path.join(
     dirname,
     process.env.UPLOAD_FOLDER,

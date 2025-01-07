@@ -126,6 +126,12 @@ const create = async (req, res) => {
   const ordenBody = req.body;
   const { detalle } = ordenBody;
   const detalleJSON = JSON.stringify(detalle);
+  console.log("Request body controlador orden:", ordenBody);
+  console.log("Detalle JSON controlador orden:", detalleJSON);
+  console.log(
+    "Fecha entrega: ",
+    ordenBody.fechaEntrega.toString().split("T")[0]
+  );
   if (
     !ordenBody.nombre ||
     !ordenBody.direccion ||
@@ -144,10 +150,12 @@ const create = async (req, res) => {
     const operador = idUsuario
       ? await operadores.obtenerTodoPorIDUsuario(idUsuario)
       : null;
+    console.log("Operador:", operador);
     const resultado = await ordenes.insertar({
       ...ordenBody,
+      // fechaEntrega: ordenBody.fechaEntrega.toString().split("T")[0],
       detalle: detalleJSON,
-      idOperador: operador[0].ID,
+      idOperador: operador ? operador[0]?.ID : null,
     });
     res.status(200).json(
       await errorAndLogHandler({

@@ -73,6 +73,7 @@ const insertar = async ({
         type: QueryTypes.SELECT,
       }
     );
+    console.log("Respuesta del procedimiento almacenado:", resultado);
     return resultado;
   } catch (err) {
     errorAndLogHandler({

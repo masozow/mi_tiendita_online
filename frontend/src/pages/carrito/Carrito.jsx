@@ -21,7 +21,7 @@ import {
   calcularTotal,
   obtenerItemsCarrito,
   handleRemoveItem,
-  deleteDatabase,
+  handleClearCart,
 } from "../../utils/carritoFunctions";
 
 const Carrito = () => {
@@ -40,15 +40,17 @@ const Carrito = () => {
   const totalFactura = calcularTotal(filas);
 
   const handleClearCartAndRedirect = async () => {
-    dispatch({ type: "CLEAR_CART" });
-    setFilas([]);
+    await handleClearCart({
+      userId: user?.ID,
+      dispatch: dispatch,
+      setFilas: setFilas,
+      cb: () => {
+        setTimeout(() => {
+          navigate(-1);
+        }, 1000);
+      },
+    });
     setOpenSnackbar(true);
-    setTimeout(() => {
-      navigate(-1);
-    }, 1000);
-    if (user) {
-      await deleteDatabase(user.ID);
-    }
   };
 
   const handleCloseSnackbar = (event, reason) => {

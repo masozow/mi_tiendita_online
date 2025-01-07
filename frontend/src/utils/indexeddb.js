@@ -113,3 +113,30 @@ export const deleteDatabase = async (userId) => {
     };
   });
 };
+
+export const clearAllItems = async (userId) => {
+  try {
+    const db = await openDatabase(userId); // Abre la base de datos
+    const transaction = db.transaction("cartItems", "readwrite");
+    const store = transaction.objectStore("cartItems");
+
+    await new Promise((resolve, reject) => {
+      const request = store.clear(); // Limpia todos los elementos
+
+      request.onsuccess = () => {
+        console.log("All items cleared from the cart.");
+        resolve();
+      };
+
+      request.onerror = (event) => {
+        console.error(
+          "Error clearing items from the cart:",
+          event.target.error
+        );
+        reject(event.target.error);
+      };
+    });
+  } catch (error) {
+    console.error("Error in clearAllItems:", error);
+  }
+};

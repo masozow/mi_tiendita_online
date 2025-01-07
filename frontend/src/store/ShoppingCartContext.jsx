@@ -14,7 +14,7 @@ export const ShoppingCartProvider = ({ children }) => {
       const fetchCartItems = async () => {
         const items = await getAllItems(user.ID);
         dispatch({ type: "RESET_CART" });
-        items.forEach((item) => {
+        items?.forEach((item) => {
           dispatch({ type: "ADD_ITEM", payload: item });
         });
       };

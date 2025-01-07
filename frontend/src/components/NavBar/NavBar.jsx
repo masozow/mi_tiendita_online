@@ -23,6 +23,7 @@ import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
+import MenuComponent from "./MenuComponent";
 
 const NavBar = () => {
   const theme = useTheme();
@@ -58,7 +59,27 @@ const NavBar = () => {
   const closeMenu = () => {
     setAnchorNav(null);
   };
-
+  const menuProductos = [
+    { texto: "Listado", URL: "/producto" },
+    { texto: "Crear", URL: "/producto/crear" },
+    { texto: "Catalogo", URL: "/producto/catalogo" },
+  ];
+  const menuCategorias = [
+    { texto: "Listado", URL: "/categoria" },
+    { texto: "Crear", URL: "/categoria/crear" },
+  ];
+  const menuMarcas = [
+    { texto: "Listado", URL: "/marca" },
+    { texto: "Crear", URL: "/marca/crear" },
+  ];
+  const menuUsuarios = [
+    { texto: "Listado", URL: "/usuario" },
+    { texto: "Crear", URL: "/usuario/crear" },
+  ];
+  const menuOrdenes = [
+    { texto: "Listado", URL: "/orden" },
+    { texto: "Crear", URL: "/orden/crear" },
+  ];
   return (
     <AppBar
       elevation={0}
@@ -86,6 +107,11 @@ const NavBar = () => {
           direction={"row"}
           spacing={1}
           sx={{ display: { xs: "none", md: "flex" } }}>
+          <MenuComponent titulo="Productos" elementos={menuProductos} />
+          <MenuComponent titulo="Categorias" elementos={menuCategorias} />
+          <MenuComponent titulo="Marcas" elementos={menuMarcas} />
+          <MenuComponent titulo="Usuarios" elementos={menuUsuarios} />
+          <MenuComponent titulo="Ordenes" elementos={menuOrdenes} />
           {menuItems.map((item, key) => (
             <React.Fragment key={key}>{item}</React.Fragment>
           ))}

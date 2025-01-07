@@ -55,6 +55,10 @@ const errorAndLogHandler = async ({
     .toString()
     .toLowerCase()
     .includes("unique");
+  const mensajeContieneStock = message
+    .toString()
+    .toLowerCase()
+    .includes("stock");
   const success = mensajeContieneError ? errorLevels.error : level;
 
   if (
@@ -85,8 +89,10 @@ const errorAndLogHandler = async ({
     success: success,
     data: mensajeContieneError
       ? mensajeContieneRestriccionUNIQUE
-        ? "Ya existe un registro con ese nombre"
-        : "Ha ocurrido un error. "
+        ? "Error: Ya existe un registro con ese nombre"
+        : mensajeContieneStock
+        ? "Error: Stock insuficiente para completar la operación"
+        : "Ha ocurrido un error."
       : message,
   };
 };

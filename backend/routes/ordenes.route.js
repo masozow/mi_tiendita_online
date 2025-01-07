@@ -29,7 +29,7 @@ router.get(
 router.post(
   "/",
   checkAuth,
-  ordenValidator.createOrdenValidationRules,
+  // ordenValidator.createOrdenValidationRules, //quitadas por ahora, para revisar que funcionen bien
   Orden.create
 );
 router.put(

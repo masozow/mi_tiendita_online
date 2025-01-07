@@ -55,8 +55,10 @@ const getByID = async (req, res) => {
 
 const getByIDUsuario = async (req, res) => {
   const { id } = req.params;
+  console.log("ID USUARIO: ", id);
   try {
-    const Cliente = await clientes.obtenerTodoPorID(id);
+    const Cliente = await clientes.obtenerTodoPorIDUsuario(id);
+    console.log("Cliente: ", Cliente);
     res.status(200).json({ success: true, data: Cliente });
   } catch (error) {
     res.status(500).json(
