@@ -6,7 +6,8 @@ const SnackbarAlert = ({ snackbarState, onClose }) => {
     <Snackbar
       open={snackbarState.open}
       autoHideDuration={6000}
-      onClose={onClose}>
+      onClose={onClose}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}>
       <Alert onClose={onClose} severity={snackbarState.severity}>
         {snackbarState.message}
       </Alert>

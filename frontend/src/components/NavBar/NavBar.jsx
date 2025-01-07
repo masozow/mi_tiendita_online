@@ -10,7 +10,7 @@ import {
   MenuList,
   Badge,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import "./NavBar.module.css";
 import Typography from "@mui/material/Typography";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -19,16 +19,33 @@ import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from "@mui/icons-material/Person";
 import CloseIcon from "@mui/icons-material/Close";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
-import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
 import MenuComponent from "./MenuComponent";
+import { useCustomMutation } from "../../hooks/useLoginMutation";
+import snackbarReducer from "../../store/snackBarReducer";
+import { useReducer } from "react";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
+import Dialogo from "../Dialogo/Dialogo";
 
 const NavBar = () => {
   const theme = useTheme();
   const { cartState } = useShoppingCart();
   const cartItemCount = Object.keys(cartState).length;
+  const navigate = useNavigate();
+  const { mutateAsync } = useCustomMutation("/api/usuarios/logout", "POST");
+
+  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    dispatchSnackbar({ type: "CLOSE" });
+  };
+
   const menuProductos = [
     { texto: "Listado", URL: "/producto" },
     { texto: "Crear", URL: "/producto/crear" },
@@ -55,6 +72,33 @@ const NavBar = () => {
     { texto: "Listado", URL: "/estado" },
     { texto: "Crear", URL: "/estado/crear" },
   ];
+
+  const handleLogoutClick = async () => {
+    try {
+      const response = await mutateAsync({});
+      if (response.success) {
+        dispatchSnackbar({
+          type: "OPEN",
+          message: "Sesión cerrada exitosamente",
+          severity: "success",
+        });
+        navigate("/login");
+      } else {
+        dispatchSnackbar({
+          type: "OPEN",
+          message: "Error al cerrar sesión",
+          severity: "error",
+        });
+      }
+    } catch (error) {
+      dispatchSnackbar({
+        type: "OPEN",
+        message: "Error al cerrar sesión",
+        severity: "error",
+      });
+    }
+  };
+
   const menuItems = [
     <MenuComponent titulo="Productos" elementos={menuProductos} />,
     <MenuComponent titulo="Categorias" elementos={menuCategorias} />,
@@ -79,9 +123,16 @@ const NavBar = () => {
       <IconButton component={NavLink} to="/login">
         <PersonIcon aria-label="iniciar sesión" />
       </IconButton>
-      <IconButton>
-        <PowerSettingsNewIcon aria-label="cerrar sesión" />
-      </IconButton>
+      <Dialogo
+        onConfirm={handleLogoutClick}
+        triggerButton={
+          <IconButton>
+            <PowerSettingsNewIcon aria-label="cerrar sesión" />
+          </IconButton>
+        }
+        titulo="Cerrar sesión"
+        mensaje={`¿Desea cerrar sesión?`}
+      />
     </Stack>,
   ];
 
@@ -144,6 +195,10 @@ const NavBar = () => {
           </Menu>
         </Box>
       </Toolbar>
+      <SnackbarAlert
+        snackbarState={snackbarState}
+        onClose={handleSnackbarClose}
+      />
     </AppBar>
   );
 };
