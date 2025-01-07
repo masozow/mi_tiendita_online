@@ -42,15 +42,22 @@ const marcaSchema = yup.object().shape({
 });
 
 const categoriaSchema = yup.object().shape({
-  nombre: yup.string().required("El nombre de la marca es requerido"),
+  nombre: yup.string().required("El nombre de la categoría es requerido"),
   idEstado: yup.number().required("El estado es requerido"),
 });
+
+const estadoSchema = yup.object().shape({
+  nombre: yup.string().required("El nombre del estado es requerido"),
+  estadoUsable: yup.boolean().required("El estado usable es requerido"),
+});
+
 const schemas = {
   loginSchema,
   ordenSchema,
   productoSchema,
   marcaSchema,
   categoriaSchema,
+  estadoSchema,
 };
 
 export default schemas;

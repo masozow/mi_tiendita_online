@@ -20,16 +20,16 @@ import getFieldErrorProps from "../../utils/getFieldErrorProps";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import InputFileUpload from "../../components/Productos/InputFileUpload";
 import handleImageChange from "../../utils/showUploadedImage";
-import SelectCustomControlled from "../../components/ResponsiveDrawer/SelectCustomControlled"; // Updated import statement
+import SelectCustomControlled from "../../components/ResponsiveDrawer/SelectCustomControlled";
 
 const AgregarProducto = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { mutateAsync } = useCustomMutation("/api/productos", "POST");
   const [imagePreview, setImagePreview] = useState(null);
-  const [selectedMarca, setSelectedMarca] = useState(""); // State for selected marca
-  const [selectedCategoria, setSelectedCategoria] = useState(""); // State for selected categoria
-  const [selectedEstado, setSelectedEstado] = useState(1); // State for selected estado, default to 1
+  const [selectedMarca, setSelectedMarca] = useState("");
+  const [selectedCategoria, setSelectedCategoria] = useState("");
+  const [selectedEstado, setSelectedEstado] = useState(1);
 
   const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
     open: false,
@@ -48,6 +48,7 @@ const AgregarProducto = () => {
     control,
     handleSubmit,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schemas.productoSchema),
@@ -60,8 +61,8 @@ const AgregarProducto = () => {
       precioProducto: 0.0,
       idCategoria: "",
       idMarca: "",
-      idEstado: 1, // Default value for idEstado
-      fotoProducto: null, // Default value for fotoProducto
+      idEstado: 1,
+      fotoProducto: null,
     },
   });
 
@@ -91,13 +92,10 @@ const AgregarProducto = () => {
         setSelectedCategoria("");
         setSelectedEstado(1);
         reset();
+        setFocus("codigoProducto");
       }
     );
   };
-
-  useEffect(() => {
-    console.log("imagePreview: ", imagePreview);
-  }, [imagePreview]);
 
   return (
     <Container
@@ -283,7 +281,7 @@ const AgregarProducto = () => {
                           "Evento onChange disparado:",
                           event.target.files
                         );
-                        field.onChange(event.target.files[0]); // Update the form state with the selected file
+                        field.onChange(event.target.files[0]);
                         handleImageChange(event, setImagePreview);
                       }}
                     />

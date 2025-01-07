@@ -81,6 +81,10 @@ const NavBar = () => {
     { texto: "Historial", URL: "/ordenes/historial" },
     { texto: "Crear", URL: "/ordenes/crear" },
   ];
+  const menuEstados = [
+    { texto: "Listado", URL: "/estado" },
+    { texto: "Crear", URL: "/estado/crear" },
+  ];
   return (
     <AppBar
       elevation={0}
@@ -113,6 +117,7 @@ const NavBar = () => {
           <MenuComponent titulo="Marcas" elementos={menuMarcas} />
           <MenuComponent titulo="Usuarios" elementos={menuUsuarios} />
           <MenuComponent titulo="Ordenes" elementos={menuOrdenes} />
+          <MenuComponent titulo="Estados" elementos={menuEstados} />
           {menuItems.map((item, key) => (
             <React.Fragment key={key}>{item}</React.Fragment>
           ))}
