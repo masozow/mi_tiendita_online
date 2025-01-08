@@ -36,7 +36,7 @@ router.put(
   "/:id",
   checkAuth,
   checkRole([rolesDictionary.Operador]),
-  ordenValidator.updateOrdenValidationRules,
+  // ordenValidator.updateOrdenValidationRules,
   Orden.update
 );
 router.delete(

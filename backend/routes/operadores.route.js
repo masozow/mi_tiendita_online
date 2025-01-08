@@ -7,6 +7,12 @@ import { rolesDictionary } from "../utilities/rolesDictionary.js";
 
 const router = express.Router();
 
+router.get(
+  "/usuario/:id",
+  checkAuth,
+  checkRole([rolesDictionary.Operador]),
+  Operador.getByUsuarioID
+);
 router.get("/", checkAuth, checkRole([rolesDictionary.Operador]), Operador.get);
 router.get(
   "/:id",
