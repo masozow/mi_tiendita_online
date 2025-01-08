@@ -8,6 +8,8 @@ import { usuarios } from "../models/usuarios.model.js";
 import { encription } from "../utilities/encrypt.js";
 import { tokenSign } from "../utilities/generateToken.js";
 import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
+import { clientes } from "../models/clientes.model.js";
+import { operadores } from "../models/operadores.model.js";
 
 /**
  * Obtiene todos los usuarios.
@@ -198,7 +200,8 @@ const create = async (req, res) => {
     res.status(200).json(
       await errorAndLogHandler({
         level: errorLevels.info,
-        message: resultado[0].mensaje + "/ Insertar Usuario",
+        message:
+          resultado[0].mensaje + "/ Insertar Usuario /" + resultado[0].id,
         genericId: resultado[0].id,
         userId: req.user.id,
         shouldSaveLog: true,
@@ -209,6 +212,142 @@ const create = async (req, res) => {
       await errorAndLogHandler({
         level: errorLevels.error,
         message: `Error insertando el usuario: ` + error.message,
+        userId: req.user.id,
+      })
+    );
+  }
+};
+
+/**
+ * Crea un nuevo usuario y cliente.
+ *
+ * @async
+ * @function createUsuarioCliente
+ * @param {Object} req - Objeto de solicitud que contiene la información del usuario y cliente en el cuerpo.
+ * @param {Object} res - Objeto de respuesta utilizado para enviar la respuesta HTTP.
+ * @returns {Promise<void>} Promesa que resuelve cuando se crea el usuario y cliente.
+ * @throws {Error} Error si no se obtiene el ID del usuario tras la inserción.
+ * @description Este método primero inserta un nuevo usuario en la base de datos y, utilizando el ID del usuario recién creado,
+ * inserta un nuevo cliente. Devuelve una respuesta HTTP con los mensajes combinados de ambas operaciones.
+ */
+const createUsuarioCliente = async (req, res) => {
+  const {
+    password,
+    correo,
+    nombre,
+    telefono,
+    fechaNacimiento,
+    idEstado,
+    idRol,
+    razonSocial,
+    direccion,
+  } = req.body;
+  const hashedPassword = await encription.hashedPassword(password);
+
+  try {
+    const usuarioResultado = await usuarios.insertar({
+      correo,
+      nombre,
+      password: hashedPassword,
+      telefono,
+      fechaNacimiento,
+      idEstado,
+      idRol,
+    });
+
+    if (!usuarioResultado[0]?.id) {
+      throw new Error(
+        "Error al crear el usuario: No se obtuvo el ID del usuario."
+      );
+    }
+
+    const usuarioId = usuarioResultado[0].id;
+
+    const clienteResultado = await clientes.insertar({
+      razonSocial,
+      nombre,
+      direccion,
+      idUsuario: usuarioId,
+      idEstado,
+    });
+
+    // Combine messages for logging
+    const combinedMessage = `${usuarioResultado[0].mensaje} ; ${clienteResultado[0].mensaje}/ Insertar Usuario + Cliente`;
+
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: combinedMessage,
+        genericId: clienteResultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
+  } catch (error) {
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error insertando el usuario y cliente: ` + error.message,
+        userId: req.user.id,
+      })
+    );
+  }
+};
+
+const createUsuarioOperador = async (req, res) => {
+  const {
+    password,
+    correo,
+    nombre,
+    telefono,
+    fechaNacimiento,
+    idEstado,
+    idRol,
+  } = req.body;
+  const hashedPassword = await encription.hashedPassword(password);
+
+  try {
+    // Create Usuario
+    const usuarioResultado = await usuarios.insertar({
+      correo,
+      nombre,
+      password: hashedPassword,
+      telefono,
+      fechaNacimiento,
+      idEstado,
+      idRol,
+    });
+
+    // Check if usuarioResultado[0].id is present
+    if (!usuarioResultado[0]?.id) {
+      throw new Error(
+        "Error al crear el usuario: No se obtuvo el ID del usuario."
+      );
+    }
+
+    const usuarioId = usuarioResultado[0].id;
+
+    const operadorResultado = await operadores.insertar({
+      idUsuario: usuarioId,
+      idEstado,
+    });
+
+    const combinedMessage = `${usuarioResultado[0].mensaje} ; ${operadorResultado[0].mensaje} / Insertar Usuario + Operador`;
+
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message: combinedMessage,
+        genericId: operadorResultado[0].id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
+  } catch (error) {
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error insertando el usuario y operador: ` + error.message,
         userId: req.user.id,
       })
     );
@@ -308,6 +447,8 @@ const Usuario = {
   get,
   getByID,
   create,
+  createUsuarioCliente,
+  createUsuarioOperador,
   update,
   delete_,
   login,

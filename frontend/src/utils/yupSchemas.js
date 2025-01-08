@@ -16,7 +16,11 @@ const ordenSchema = yup.object().shape({
   telefono: yup
     .number()
     .required()
-    .max(99999999, "El teléfono debe tener como máximo 8 dígitos"),
+    .test(
+      "len",
+      "El teléfono debe tener exactamente 8 dígitos",
+      (val) => val.toString().length === 8
+    ),
   correo: yup.string().email().required(),
   fechaEntrega: yup.date().required(),
   total: yup.number().required(),
@@ -50,7 +54,49 @@ const estadoSchema = yup.object().shape({
   nombre: yup.string().required("El nombre del estado es requerido"),
   estadoUsable: yup.boolean().required("El estado usable es requerido"),
 });
+const usuarioClienteSchema = yup.object().shape({
+  correo: yup.string().email().required("El correo es requerido"),
+  nombre: yup.string().required("El nombre es requerido"),
+  password: yup.string().required("La contraseña es requerida"),
+  confirmarContrasena: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Las contraseñas deben coincidir")
+    .required("La confirmación de la contraseña es requerida"),
+  telefono: yup
+    .number()
+    .required("El teléfono es requerido")
+    .test(
+      "len",
+      "El teléfono debe tener exactamente 8 dígitos",
+      (val) => val.toString().length === 8
+    ),
+  fechaNacimiento: yup.date().required("La fecha de nacimiento es requerida"),
+  idEstado: yup.number().required("El estado es requerido"),
+  idRol: yup.number().required("El rol es requerido"),
+  razonSocial: yup.string().required("La razón social es requerida"),
+  direccion: yup.string().required("La dirección es requerida"),
+});
 
+const usuarioOperadorSchema = yup.object().shape({
+  correo: yup.string().email().required("El correo es requerido"),
+  nombre: yup.string().required("El nombre es requerido"),
+  password: yup.string().required("La contraseña es requerida"),
+  confirmarContrasena: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Las contraseñas deben coincidir")
+    .required("La confirmación de la contraseña es requerida"),
+  telefono: yup
+    .number()
+    .required("El teléfono es requerido")
+    .test(
+      "len",
+      "El teléfono debe tener exactamente 8 dígitos",
+      (val) => val.toString().length === 8
+    ),
+  fechaNacimiento: yup.date().required("La fecha de nacimiento es requerida"),
+  idEstado: yup.number().required("El estado es requerido"),
+  idRol: yup.number().required("El rol es requerido"),
+});
 const schemas = {
   loginSchema,
   ordenSchema,
@@ -58,6 +104,8 @@ const schemas = {
   marcaSchema,
   categoriaSchema,
   estadoSchema,
+  usuarioClienteSchema,
+  usuarioOperadorSchema,
 };
 
 export default schemas;

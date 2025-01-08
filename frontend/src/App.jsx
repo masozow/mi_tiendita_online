@@ -76,7 +76,7 @@ const App = () => {
                   element={<HistorialOrdenes />}
                 />
               </Route>
-              <Route path="/ordenes/nueva" element={<NuevaOrden />} />
+              <Route path="/ordenes/crear" element={<NuevaOrden />} />
               <Route path="/ordenes/" element={<TodasOrdenes />} />
 
               {/* -------- Usuarios ----- */}
@@ -86,7 +86,7 @@ const App = () => {
               </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
-                <Route path="/usuarios/agregar" element={<AgregarUsuario />} />
+                <Route path="/usuario/crear" element={<AgregarUsuario />} />
               </Route>
 
               {/* -------- Categorias ----- */}
