@@ -95,7 +95,7 @@ const AgregarUsuario = () => {
           setSelectedEstado(1);
           setSelectedRol(1);
           reset();
-          setFocus("correo");
+          setFocus("nombre");
         }
       );
     } else {
@@ -108,7 +108,7 @@ const AgregarUsuario = () => {
           setSelectedEstado(1);
           setSelectedRol(1);
           reset();
-          setFocus("correo");
+          setFocus("nombre");
         }
       );
     }
@@ -148,6 +148,7 @@ const AgregarUsuario = () => {
                   label="Nombre"
                   variant="outlined"
                   fullWidth
+                  autoFocus
                   {...getFieldErrorProps("nombre", errors)}
                 />
               )}
@@ -173,7 +174,6 @@ const AgregarUsuario = () => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  autoFocus
                   label="Correo"
                   variant="outlined"
                   fullWidth
@@ -316,19 +316,11 @@ const AgregarUsuario = () => {
           <Stack
             spacing={2}
             width="100%"
-            direction={isSmallScreen ? "column" : "row"}
-            alignItems="right"
-            alignContent="right"
-            alignSelf="right">
-            <Stack spacing={2} width={{ xs: "100%", md: "30%" }}>
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                disabled={isLoading}>
-                {isLoading ? "Cargando..." : "Crear Usuario"}
-              </Button>
-            </Stack>
+            direction="row"
+            justifyContent="flex-end">
+            <Button type="submit" variant="contained" disabled={isLoading}>
+              {isLoading ? "Cargando..." : "Crear Usuario"}
+            </Button>
           </Stack>
         </Stack>
       </form>
