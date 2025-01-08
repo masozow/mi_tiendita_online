@@ -50,7 +50,7 @@ const TodasOrdenes = () => {
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes">
         <TableHead>
           <TableRow>

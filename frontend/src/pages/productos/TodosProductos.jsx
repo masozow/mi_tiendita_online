@@ -52,7 +52,7 @@ const TodosProductos = () => {
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table sx={{ minWidth: "100%" }} aria-label="tabla de productos">
         <TableHead>
           <TableRow>

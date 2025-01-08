@@ -8,14 +8,26 @@ import { rolesDictionary } from "../utilities/rolesDictionary.js";
 
 const router = express.Router();
 
-router.get("/datos-token", checkAuth, getDatosToken); // Specific route for datos-token
+router.get("/datos-token", checkAuth, getDatosToken);
 router.get("/", checkAuth, checkRole([rolesDictionary.Operador]), Usuario.get);
 router.get(
   "/:id",
   checkAuth,
   checkRole([rolesDictionary.Operador]),
   Usuario.getByID
-); // General route for id
+);
+router.post(
+  "/cliente",
+  checkAuth,
+  checkRole([rolesDictionary.Operador]),
+  Usuario.createUsuarioCliente
+);
+router.post(
+  "/operador",
+  checkAuth,
+  checkRole([rolesDictionary.Operador]),
+  Usuario.createUsuarioOperador
+);
 router.post(
   "/",
   checkAuth,

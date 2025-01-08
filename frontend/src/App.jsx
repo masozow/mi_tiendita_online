@@ -23,6 +23,8 @@ import { rolesDictionary } from "./utils/rolesDictionary.js";
 import TodasOrdenes from "./pages/ordenes/TodasOrdenes.jsx";
 import AgregarMarca from "./pages/marcas/AgregarMarca.jsx";
 import AgregarCategoria from "./pages/categorias/AgregarCategoria.jsx";
+import AgregarEstado from "./pages/estados/AgregarEstado.jsx";
+import TodosEstados from "./pages/estados/TodosEstados.jsx";
 
 const App = () => {
   return (
@@ -74,7 +76,7 @@ const App = () => {
                   element={<HistorialOrdenes />}
                 />
               </Route>
-              <Route path="/ordenes/nueva" element={<NuevaOrden />} />
+              <Route path="/ordenes/crear" element={<NuevaOrden />} />
               <Route path="/ordenes/" element={<TodasOrdenes />} />
 
               {/* -------- Usuarios ----- */}
@@ -84,7 +86,7 @@ const App = () => {
               </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
-                <Route path="/usuarios/agregar" element={<AgregarUsuario />} />
+                <Route path="/usuario/crear" element={<AgregarUsuario />} />
               </Route>
 
               {/* -------- Categorias ----- */}
@@ -94,6 +96,10 @@ const App = () => {
               {/* -------- Marcas ----- */}
               <Route path="/marca/crear" element={<AgregarMarca />} />
               <Route path="/marca" element={<TodasMarcas />} />
+
+              {/* -------- Estados ----- */}
+              <Route path="/estado/crear" element={<AgregarEstado />} />
+              <Route path="/estado" element={<TodosEstados />} />
 
               {/* -------- 404 ----- */}
               <Route path="*" element={<div>404</div>} />

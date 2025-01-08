@@ -33,6 +33,7 @@ const CustomChip = ({ incomingLabel }) => {
         break;
       default:
         label = incomingLabel.toString();
+        color = "secondary";
         break;
     }
   }

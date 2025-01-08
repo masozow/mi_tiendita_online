@@ -19,7 +19,7 @@ import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
 
-const TodosUsuarios = () => {
+const TodosEstados = () => {
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -27,8 +27,8 @@ const TodosUsuarios = () => {
     breakPointsFromTheme(theme);
 
   const { data, isLoading, error } = useQueryHook(
-    "todosUsuarios",
-    "/api/usuarios/"
+    "todosEstados",
+    "/api/estados/"
   );
 
   useEffect(() => {
@@ -40,22 +40,22 @@ const TodosUsuarios = () => {
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const handleEdit = (userId) => {
-    console.log("Edit user with ID:", userId);
+  const handleEdit = (estadoId) => {
+    console.log("Edit estado with ID:", estadoId);
   };
 
-  const handleDelete = (userId) => {
-    console.log("Delete user with ID:", userId);
+  const handleDelete = (estadoId) => {
+    console.log("Delete estado with ID:", estadoId);
   };
 
   return (
     <TableContainer>
-      <Table sx={{ minWidth: "100%" }} aria-label="tabla de usuarios">
+      <Table sx={{ minWidth: "100%" }} aria-label="tabla de estados">
         <TableHead>
           <TableRow>
-            <TableCell align="center" colSpan={10}>
+            <TableCell align="center" colSpan={4}>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                Usuarios
+                Estados
               </Typography>
             </TableCell>
           </TableRow>
@@ -64,21 +64,9 @@ const TodosUsuarios = () => {
               <b>ID</b>
             </TableCell>
             <TableCell>
-              <b>Correo</b>
-            </TableCell>
-            <TableCell>
               <b>Nombre</b>
             </TableCell>
-            <TableCell>
-              <b>Teléfono</b>
-            </TableCell>
-            <TableCell>
-              <b>Fecha de Nacimiento</b>
-            </TableCell>
-            <TableCell>
-              <b>Rol</b>
-            </TableCell>
-            <TableCell>
+            <TableCell align="center">
               <b>Estado</b>
             </TableCell>
             <TableCell></TableCell>
@@ -88,13 +76,11 @@ const TodosUsuarios = () => {
           {filas.map((fila) => (
             <TableRow key={fila.ID}>
               <TableCell>{fila.ID}</TableCell>
-              <TableCell>{fila.CORREO}</TableCell>
               <TableCell>{fila.NOMBRE}</TableCell>
-              <TableCell>{fila.TELEFONO}</TableCell>
-              <TableCell>{fila.FECHA_NACIMIENTO}</TableCell>
-              <TableCell>{fila.NOMBRE_ROL}</TableCell>
-              <TableCell>
-                <CustomChip incomingLabel={fila.ID_ESTADO} />
+              <TableCell align="center">
+                <CustomChip
+                  incomingLabel={fila.ACTIVO ? "Activo" : "Inactivo"}
+                />
               </TableCell>
               <TableCell align="center">
                 <IconButton
@@ -109,8 +95,8 @@ const TodosUsuarios = () => {
                       <DeleteIcon />
                     </IconButton>
                   }
-                  titulo="Eliminar usuario"
-                  mensaje={`¿Desea eliminar al usuario ${fila.NOMBRE}?`}
+                  titulo="Eliminar estado"
+                  mensaje={`¿Desea eliminar el estado ${fila.NOMBRE}?`}
                 />
               </TableCell>
             </TableRow>
@@ -121,4 +107,4 @@ const TodosUsuarios = () => {
   );
 };
 
-export default TodosUsuarios;
+export default TodosEstados;

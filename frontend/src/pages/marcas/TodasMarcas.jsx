@@ -49,7 +49,7 @@ const TodasMarcas = () => {
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table sx={{ minWidth: "100%" }} aria-label="tabla de marcas">
         <TableHead>
           <TableRow>
