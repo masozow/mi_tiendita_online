@@ -32,7 +32,7 @@ const CustomChip = ({ incomingLabel }) => {
         color = "primary";
         break;
       default:
-        label = incomingLabel.toString();
+        label = incomingLabel === 7 ? "Entregado" : incomingLabel.toString();
         color = "secondary";
         break;
     }

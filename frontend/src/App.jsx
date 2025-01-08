@@ -25,6 +25,7 @@ import AgregarMarca from "./pages/marcas/AgregarMarca.jsx";
 import AgregarCategoria from "./pages/categorias/AgregarCategoria.jsx";
 import AgregarEstado from "./pages/estados/AgregarEstado.jsx";
 import TodosEstados from "./pages/estados/TodosEstados.jsx";
+import OrdenesPendientes from "./pages/ordenes/OrdenesPendientes.jsx";
 
 const App = () => {
   return (
@@ -77,6 +78,10 @@ const App = () => {
                 />
               </Route>
               <Route path="/ordenes/crear" element={<NuevaOrden />} />
+              <Route
+                path="/ordenes/pendientes"
+                element={<OrdenesPendientes />}
+              />
               <Route path="/ordenes/" element={<TodasOrdenes />} />
 
               {/* -------- Usuarios ----- */}
