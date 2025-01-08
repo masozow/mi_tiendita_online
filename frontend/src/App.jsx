@@ -34,7 +34,7 @@ const App = () => {
           <NavBar />
           <Container
             sx={{
-              m: { xs: "2rem", md: "3rem", lg: "2rem" },
+              my: { xs: "3rem", md: "4rem", lg: "3rem" },
               p: { xs: "1rem", md: "2rem" },
               backgroundColor: "background.default",
             }}
