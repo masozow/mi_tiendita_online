@@ -19,11 +19,10 @@ import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
 import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
-import SnackbarAlert from "../../components/Login/SnackBarAlert";
+import SnackbarAlert from "../../components/Login/SnackbarAlert";
 
 const HistorialOrdenes = () => {
   const [filas, setFilas] = useState([]);
-  const [operador, setOperador] = useState(null);
   const { user } = useAuth();
   const theme = useTheme();
   const { isSmallScreen, isMediumScreen, isLargeScreen } =
@@ -33,12 +32,6 @@ const HistorialOrdenes = () => {
     "todasOrdenes",
     "/api/ordenes/"
   );
-
-  const {
-    data: operadorData,
-    isLoading: isOperadorLoading,
-    error: operadorError,
-  } = useQueryHook("operadorPorUsuario", `/api/operadores/usuario/${user?.ID}`);
 
   const { mutateAsync } = useDynamicMutation("PUT");
 
@@ -59,41 +52,28 @@ const HistorialOrdenes = () => {
     }
   }, [data]);
 
-  useEffect(() => {
-    console.log("operadorData", operadorData);
-    if (operadorData?.data) {
-      setOperador(operadorData.data);
-    }
-  }, [operadorData]);
-
-  if (isLoading || isOperadorLoading)
-    return <Typography>Cargando...</Typography>;
-  if (error || operadorError)
-    return <div>Error: {error?.message || operadorError?.message}</div>;
+  if (isLoading) return <Typography>Cargando...</Typography>;
+  if (error) return <div>Error: {error.message}</div>;
 
   const handleEntregar = async (ordenId) => {
     try {
       const nuevoEstado = {
         idEstado: 7,
-        idOperador: operador.ID,
       };
-      console.log("nuevoEstado", nuevoEstado);
-      console.log("Usuario: ", user);
-      console.log("Operador ID:", operadorData.ID);
-      await mutateAsync({ URL: `/api/ordenes/${ordenId}`, data: nuevoEstado });
+
+      await mutateAsync({
+        URL: `/api/ordenes/${ordenId}`,
+        data: nuevoEstado,
+      });
+
       dispatchSnackbar({
         type: "OPEN",
         message: "Orden entregada exitosamente",
         severity: "success",
       });
-      const { data: newData } = await useQueryHook(
-        "todasOrdenes",
-        "/api/ordenes/"
-      );
-      const filteredData = newData.data.filter(
-        (order) => order.ID_ESTADO === 4
-      );
-      setFilas(filteredData);
+
+      // Update the frontend state directly
+      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== ordenId));
     } catch (error) {
       dispatchSnackbar({
         type: "OPEN",

@@ -189,18 +189,18 @@ const create = async (req, res) => {
  */
 const update = async (req, res) => {
   const { id } = req.params;
-  const idUsuario = req.user.id;
+  const idUsuario = req.user.ID;
   const ordenBody = req.body;
+  console.log("Usuario en controller: ", req.user);
+  console.log("Body en controller: ", ordenBody);
+  console.log("Id usuario en controller: ", idUsuario);
   try {
-    const operador = idUsuario
-      ? await operadores.obtenerTodoPorIDUsuario(idUsuario)
-      : null;
-
-    console.log("Operador: ", operador);
+    const operador = await operadores.obtenerTodoPorIDUsuario(idUsuario);
+    console.log("Operador en controller: ", operador);
     const resultado = await ordenes.actualizar({
       idOrden: id,
       ...ordenBody,
-      idOperador: operador[0].ID,
+      idOperador: operador[0]?.ID,
     });
 
     res.status(200).json(
