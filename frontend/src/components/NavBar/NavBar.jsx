@@ -66,6 +66,7 @@ const NavBar = () => {
   const menuOrdenes = [
     { texto: "Listado", URL: "/ordenes" },
     { texto: "Historial", URL: "/ordenes/historial" },
+    { texto: "Pendientes", URL: "/ordenes/pendientes" },
     { texto: "Crear", URL: "/ordenes/crear" },
   ];
   const menuEstados = [

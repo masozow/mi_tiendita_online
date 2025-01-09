@@ -21,7 +21,7 @@ import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
 import SnackbarAlert from "../../components/Login/SnackbarAlert";
 
-const HistorialOrdenes = () => {
+const OrdenesPendientes = () => {
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -47,7 +47,7 @@ const HistorialOrdenes = () => {
 
   useEffect(() => {
     if (data?.data) {
-      const filteredData = data.data.filter((order) => order.ID_ESTADO === 4);
+      const filteredData = data.data.filter((order) => order.ID_ESTADO === 3);
       setFilas(filteredData);
     }
   }, [data]);
@@ -55,10 +55,10 @@ const HistorialOrdenes = () => {
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const handleEntregar = async (ordenId) => {
+  const handleConfirmar = async (ordenId) => {
     try {
       const nuevoEstado = {
-        idEstado: 7,
+        idEstado: 4,
       };
 
       await mutateAsync({
@@ -68,7 +68,7 @@ const HistorialOrdenes = () => {
 
       dispatchSnackbar({
         type: "OPEN",
-        message: "Orden entregada exitosamente",
+        message: "Orden confirmada exitosamente",
         severity: "success",
       });
 
@@ -77,24 +77,24 @@ const HistorialOrdenes = () => {
     } catch (error) {
       dispatchSnackbar({
         type: "OPEN",
-        message: "Error al entregar la orden",
+        message: "Error al confirmar la orden",
         severity: "error",
       });
     }
   };
 
   const handleRowClick = (ordenId) => {
-    console.log("Row clicked in HistorialOrdenes:", ordenId);
+    console.log("Row clicked in OrdenesPendientes:", ordenId);
   };
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes entregadas">
+      <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes pendientes">
         <TableHead>
           <TableRow>
             <TableCell align="center" colSpan={13}>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                Historial de Órdenes
+                Órdenes Pendientes
               </Typography>
             </TableCell>
           </TableRow>
@@ -153,18 +153,18 @@ const HistorialOrdenes = () => {
               <TableCell>{fila.ID_OPERADOR}</TableCell>
               <TableCell align="center">
                 <Dialogo
-                  onConfirm={() => handleEntregar(fila.ID)}
+                  onConfirm={() => handleConfirmar(fila.ID)}
                   triggerButton={
                     <Button
-                      aria-label="entregar"
+                      aria-label="confirmar"
                       variant="contained"
-                      color="success"
+                      color="primary"
                       onClick={(e) => e.stopPropagation()}>
-                      Entregar
+                      Confirmar
                     </Button>
                   }
-                  titulo="Entregar Orden"
-                  mensaje={`¿Desea entregar la orden ${fila.ID}?`}
+                  titulo="Confirmar Orden"
+                  mensaje={`¿Desea confirmar la orden ${fila.ID}?`}
                 />
               </TableCell>
             </TableRow>
@@ -179,4 +179,4 @@ const HistorialOrdenes = () => {
   );
 };
 
-export default HistorialOrdenes;
+export default OrdenesPendientes;

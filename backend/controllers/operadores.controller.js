@@ -59,6 +59,23 @@ const getByID = async (req, res) => {
   }
 };
 
+const getByUsuarioID = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const Operador = await operadores.obtenerTodoPorIDUsuario(id);
+    res.status(200).json({ success: true, data: Operador });
+  } catch (error) {
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo el operador: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
+  }
+};
+
 /**
  * Crea un nuevo operador.
  *
@@ -174,6 +191,7 @@ const delete_ = async (req, res) => {
 const Operador = {
   get,
   getByID,
+  getByUsuarioID,
   create,
   update,
   delete_,

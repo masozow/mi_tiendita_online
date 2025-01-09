@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import axios from "../utils/axiosInterceptors.js";
+import axios from "./axiosInterceptors.js";
 
 const customQuery = (queryKey, url) => {
   return useQuery(queryKey, async () => {

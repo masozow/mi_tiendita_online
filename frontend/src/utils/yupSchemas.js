@@ -71,7 +71,11 @@ const usuarioClienteSchema = yup.object().shape({
       (val) => val.toString().length === 8
     ),
   fechaNacimiento: yup.date().required("La fecha de nacimiento es requerida"),
-  idEstado: yup.number().required("El estado es requerido"),
+  idEstado: yup
+    .number()
+    .integer()
+    .positive()
+    .required("El estado es requerido"),
   idRol: yup.number().required("El rol es requerido"),
   razonSocial: yup.string().required("La razón social es requerida"),
   direccion: yup.string().required("La dirección es requerida"),
@@ -94,7 +98,7 @@ const usuarioOperadorSchema = yup.object().shape({
       (val) => val.toString().length === 8
     ),
   fechaNacimiento: yup.date().required("La fecha de nacimiento es requerida"),
-  idEstado: yup.number().required("El estado es requerido"),
+  idEstado: yup.number().positive().required("El estado es requerido"),
   idRol: yup.number().required("El rol es requerido"),
 });
 const schemas = {
