@@ -154,7 +154,7 @@ const Carrito = () => {
                 variant="contained"
                 color="primary"
                 component={Link}
-                to="/ordenes/nueva">
+                to="/ordenes/crear">
                 Comprar
               </Button>
             </TableCell>

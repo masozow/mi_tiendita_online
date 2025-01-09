@@ -162,9 +162,16 @@ const NuevaOrden = () => {
       setIsLoading,
       dispatchSnackbar,
       mutateAsync,
-      async () => {
+      async (response) => {
         console.log("Orden data: ", ordenData);
-        await handleClearCartAndRedirect();
+        console.log("Response: ", response);
+        if (response.success !== "error") {
+          await handleClearCartAndRedirect();
+        } else {
+          setTimeout(() => {
+            navigate("/producto/catalogo");
+          }, 1000);
+        }
       }
     );
   };
