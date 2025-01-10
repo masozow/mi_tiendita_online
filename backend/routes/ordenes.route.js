@@ -26,6 +26,12 @@ router.get(
   ordenValidator.getOrdenByIDValidationRules,
   Orden.getByIDCliente
 );
+router.get(
+  "/usuario/:id",
+  checkAuth,
+  ordenValidator.getOrdenByIDValidationRules,
+  Orden.getByIDUsuario
+);
 router.post(
   "/",
   checkAuth,

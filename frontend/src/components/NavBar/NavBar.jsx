@@ -28,6 +28,8 @@ import snackbarReducer from "../../store/snackBarReducer";
 import { useReducer } from "react";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import Dialogo from "../Dialogo/Dialogo";
+import { useAuth } from "../../store/AuthContext";
+import { rolesDictionary } from "../../utils/rolesDictionary";
 
 const NavBar = () => {
   const theme = useTheme();
@@ -35,6 +37,7 @@ const NavBar = () => {
   const cartItemCount = Object.keys(cartState).length;
   const navigate = useNavigate();
   const { mutateAsync } = useCustomMutation("/api/usuarios/logout", "POST");
+  const user = useAuth()?.user;
 
   const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
     open: false,
@@ -100,42 +103,22 @@ const NavBar = () => {
     }
   };
 
-  const menuItems = [
-    <MenuComponent titulo="Productos" elementos={menuProductos} />,
-    <MenuComponent titulo="Categorias" elementos={menuCategorias} />,
-    <MenuComponent titulo="Marcas" elementos={menuMarcas} />,
-    <MenuComponent titulo="Usuarios" elementos={menuUsuarios} />,
-    <MenuComponent titulo="Ordenes" elementos={menuOrdenes} />,
-    <MenuComponent titulo="Estados" elementos={menuEstados} />,
-    <Stack direction="row">
-      <IconButton component={NavLink} to="/carrito" aria-label="ver su carrito">
-        <Badge
-          badgeContent={cartItemCount}
-          color="primary"
-          sx={{
-            "& .MuiBadge-badge": {
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
-            },
-          }}>
-          <ShoppingCartIcon aria-label="ver su carrito" />
-        </Badge>
-      </IconButton>
-      <IconButton component={NavLink} to="/login">
-        <PersonIcon aria-label="iniciar sesión" />
-      </IconButton>
-      <Dialogo
-        onConfirm={handleLogoutClick}
-        triggerButton={
-          <IconButton>
-            <PowerSettingsNewIcon aria-label="cerrar sesión" />
-          </IconButton>
-        }
-        titulo="Cerrar sesión"
-        mensaje={`¿Desea cerrar sesión?`}
-      />
-    </Stack>,
-  ];
+  const menuItems =
+    user.ID_ROL === rolesDictionary.Operador
+      ? [
+          <MenuComponent titulo="Productos" elementos={menuProductos} />,
+          <MenuComponent titulo="Categorias" elementos={menuCategorias} />,
+          <MenuComponent titulo="Marcas" elementos={menuMarcas} />,
+          <MenuComponent titulo="Usuarios" elementos={menuUsuarios} />,
+          <MenuComponent titulo="Ordenes" elementos={menuOrdenes} />,
+          <MenuComponent titulo="Estados" elementos={menuEstados} />,
+        ]
+      : [
+          <MenuComponent
+            titulo="Ordenes"
+            elementos={[{ texto: "Ver sus ordenes", URL: "/ordenes/cliente" }]}
+          />,
+        ];
 
   const [anchorNav, setAnchorNav] = useState(null);
   const openMenu = (event) => {
@@ -195,6 +178,39 @@ const NavBar = () => {
             </MenuList>
           </Menu>
         </Box>
+        <Stack direction="row">
+          {user?.ID_ROL === rolesDictionary.Cliente && (
+            <IconButton
+              component={NavLink}
+              to="/carrito"
+              aria-label="ver su carrito">
+              <Badge
+                badgeContent={cartItemCount}
+                color="primary"
+                sx={{
+                  "& .MuiBadge-badge": {
+                    backgroundColor: theme.palette.primary.main,
+                    color: theme.palette.primary.contrastText,
+                  },
+                }}>
+                <ShoppingCartIcon aria-label="ver su carrito" />
+              </Badge>
+            </IconButton>
+          )}
+          {/* <IconButton component={NavLink} to="/login">
+            <PersonIcon aria-label="iniciar sesión" />
+          </IconButton> */}
+          <Dialogo
+            onConfirm={handleLogoutClick}
+            triggerButton={
+              <IconButton>
+                <PowerSettingsNewIcon aria-label="cerrar sesión" />
+              </IconButton>
+            }
+            titulo="Cerrar sesión"
+            mensaje={`¿Desea cerrar sesión?`}
+          />
+        </Stack>
       </Toolbar>
       <SnackbarAlert
         snackbarState={snackbarState}

@@ -26,6 +26,7 @@ import AgregarCategoria from "./pages/categorias/AgregarCategoria.jsx";
 import AgregarEstado from "./pages/estados/AgregarEstado.jsx";
 import TodosEstados from "./pages/estados/TodosEstados.jsx";
 import OrdenesPendientes from "./pages/ordenes/OrdenesPendientes.jsx";
+import OrdenesCliente from "./pages/ordenes/OrdenesCliente.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -82,6 +83,7 @@ const App = () => {
                 />
               </Route>
               <Route path="/ordenes/crear" element={<NuevaOrden />} />
+              <Route path="/ordenes/cliente" element={<OrdenesCliente />} />
               <Route
                 path="/ordenes/pendientes"
                 element={<OrdenesPendientes />}
