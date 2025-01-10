@@ -47,6 +47,16 @@ const Login = () => {
         px: { xs: "1rem", md: "2rem" },
         flexGrow: 1,
       }}>
+      <Typography
+        variant="h4"
+        sx={{
+          mb: "3rem",
+          fontWeight: 300,
+          fontFamily: "Roboto, sans-serif",
+          color: "primaary.main",
+        }}>
+        Mi Tiendita Online
+      </Typography>
       <Typography variant="h5" sx={{ mb: "1rem" }}>
         Iniciar sesión
       </Typography>

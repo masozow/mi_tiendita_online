@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/usuarios/Login.jsx";
 import AgregarProducto from "./pages/productos/AgregarProducto.jsx";
 import TodosProductos from "./pages/productos/TodosProductos.jsx";
@@ -28,16 +28,20 @@ import TodosEstados from "./pages/estados/TodosEstados.jsx";
 import OrdenesPendientes from "./pages/ordenes/OrdenesPendientes.jsx";
 
 const App = () => {
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+
   return (
     <Box sx={{ minHeight: "100vh" }}>
       <AuthProvider>
         <ShoppingCartProvider>
-          <NavBar />
+          {!isLoginPage && <NavBar />}
           <Container
             sx={{
               my: { xs: "3rem", md: "4rem", lg: "3rem" },
               p: { xs: "1rem", md: "2rem" },
               backgroundColor: "background.default",
+              height: "100%",
             }}
             elevation={0}>
             <Routes>
@@ -47,7 +51,7 @@ const App = () => {
               {/* -------- Login ----- */}
               <Route path="/login" element={<Login />} />
 
-              {/*------ Productos -------*/}
+              {/* -------- Productos ----- */}
               <Route
                 element={
                   <ProtectedRoute
@@ -69,7 +73,7 @@ const App = () => {
               {/* -------- Carrito ----- */}
               <Route path="/carrito" element={<Carrito />} />
 
-              {/* ---------- Ordenes ------------ */}
+              {/* -------- Ordenes ----- */}
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
                 <Route
