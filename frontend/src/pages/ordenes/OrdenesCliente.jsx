@@ -19,7 +19,7 @@ import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
 import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
-import SnackbarAlert from "../../components/Login/SnackbarAlert";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
 
 const OrdenesCliente = () => {
   const [filas, setFilas] = useState([]);

@@ -7,7 +7,7 @@ import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
 import { useAuth } from "../../store/AuthContext.jsx";
 import schema from "../../utils/yupSchemas.js";
 import { rolesDictionary } from "../../utils/rolesDictionary.js";
-import SnackbarAlert from "../../components/Login/SnackBarAlert.jsx";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import onLoginSubmit from "../../utils/onLoginSubmit.js";
 import snackbarReducer from "../../store/snackBarReducer.js";
 import getFieldErrorProps from "../../utils/getFieldErrorProps.js";
