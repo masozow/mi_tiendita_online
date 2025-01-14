@@ -71,10 +71,7 @@ const App = () => {
               </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
-                <Route
-                  path="/producto/modificar/:id"
-                  element={<ModificarProducto />}
-                />
+                <Route path="/producto/:id" element={<ModificarProducto />} />
               </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>

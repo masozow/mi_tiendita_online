@@ -56,50 +56,6 @@ const OrdenYDetalle = () => {
   const theme = useTheme();
   const { isSmallScreen } = breakPointsFromTheme(theme);
 
-  const estructuraData = [
-    {
-      ID: 1,
-      FECHA_CREACION: "2024-12-13T18:35:42.000Z",
-      NOMBRE: "Esteban López",
-      DIRECCION: "11 calle 4-55 zona 12, Quetzaltenango, Quetzaltenango",
-      TELEFONO: "487392018",
-      CORREO: "esteban.lopez@example.com",
-      FECHA_ENTREGA: "2024-12-19",
-      TOTAL: 19400,
-      ID_ESTADO: 7,
-      ID_CLIENTE: 1,
-      ID_OPERADOR: 8,
-      ID_USUARIO: 3,
-    },
-  ];
-
-  const estructuraDataDetalle = [
-    {
-      ID: 1,
-      CANTIDAD: 2,
-      PRECIO: 6000,
-      SUBTOTAL: 12000,
-      ID_ORDEN: 1,
-      ID_PRODUCTO: 2,
-      CODIGO_PRODUCTO: "48795409886",
-      PRODUCTO: "iPhone",
-      MARCA: "Apple",
-      CATEGORIA: "Electrónica",
-    },
-    {
-      ID: 2,
-      CANTIDAD: 4,
-      PRECIO: 1800,
-      SUBTOTAL: 7200,
-      ID_ORDEN: 1,
-      ID_PRODUCTO: 11,
-      CODIGO_PRODUCTO: "32759184756",
-      PRODUCTO: "IKEA Billy Shelf",
-      MARCA: "IKEA",
-      CATEGORIA: "Muebles",
-    },
-  ];
-
   useEffect(() => {
     if (
       data?.data &&

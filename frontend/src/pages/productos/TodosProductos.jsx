@@ -20,8 +20,10 @@ import { formatoMoneda } from "../../utils/carritoFunctions";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo"; // Import the Dialogo component
 import CustomChip from "../../components/CustomChip";
+import { useNavigate } from "react-router-dom";
 
 const TodosProductos = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -43,7 +45,7 @@ const TodosProductos = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   const handleEdit = (productId) => {
-    console.log("Edit product with ID:", productId);
+    navigate(`/producto/${productId}`);
   };
 
   const handleDelete = (productId) => {
