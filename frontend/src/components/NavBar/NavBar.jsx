@@ -16,7 +16,6 @@ import Typography from "@mui/material/Typography";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import MenuIcon from "@mui/icons-material/Menu";
-import PersonIcon from "@mui/icons-material/Person";
 import CloseIcon from "@mui/icons-material/Close";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { NavLink, useNavigate } from "react-router-dom";

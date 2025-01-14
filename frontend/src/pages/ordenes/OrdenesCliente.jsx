@@ -155,22 +155,24 @@ const OrdenesCliente = () => {
               <TableCell>{fila.ID_CLIENTE}</TableCell>
               <TableCell>{fila.ID_OPERADOR}</TableCell>
               <TableCell align="center">
-                {fila.ID_ESTADO !== 4 && (
-                  <Dialogo
-                    onConfirm={() => handleConfirmar(fila.ID)}
-                    triggerButton={
-                      <Button
-                        aria-label="cancelar"
-                        variant="contained"
-                        color="error"
-                        onClick={(e) => e.stopPropagation()}>
-                        Cancelar
-                      </Button>
-                    }
-                    titulo="Cancelar Orden"
-                    mensaje={`¿Desea cancelar la orden ${fila.ID}?`}
-                  />
-                )}
+                {fila.ID_ESTADO !== 4 &&
+                  fila.ID_ESTADO !== 2 &&
+                  fila.ID_ESTADO !== 7 && (
+                    <Dialogo
+                      onConfirm={() => handleConfirmar(fila.ID)}
+                      triggerButton={
+                        <Button
+                          aria-label="cancelar"
+                          variant="contained"
+                          color="error"
+                          onClick={(e) => e.stopPropagation()}>
+                          Cancelar
+                        </Button>
+                      }
+                      titulo="Cancelar Orden"
+                      mensaje={`¿Desea cancelar la orden ${fila.ID}?`}
+                    />
+                  )}
               </TableCell>
             </TableRow>
           ))}
