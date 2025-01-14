@@ -20,8 +20,10 @@ import CustomChip from "../../components/CustomChip";
 import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
+import { useNavigate } from "react-router-dom";
 
 const HistorialOrdenes = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -84,7 +86,7 @@ const HistorialOrdenes = () => {
   };
 
   const handleRowClick = (ordenId) => {
-    console.log("Row clicked in HistorialOrdenes:", ordenId);
+    navigate(`/ordenes/${ordenId}`);
   };
 
   return (

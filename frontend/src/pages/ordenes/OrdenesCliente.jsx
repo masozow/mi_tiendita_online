@@ -20,8 +20,10 @@ import CustomChip from "../../components/CustomChip";
 import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
+import { useNavigate } from "react-router-dom";
 
 const OrdenesCliente = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();

@@ -69,7 +69,7 @@ const NavBar = () => {
     { texto: "Listado", URL: "/ordenes" },
     { texto: "Historial", URL: "/ordenes/historial" },
     { texto: "Pendientes", URL: "/ordenes/pendientes" },
-    { texto: "Crear", URL: "/ordenes/crear" },
+    // { texto: "Crear", URL: "/ordenes/crear" },
   ];
   const menuEstados = [
     { texto: "Listado", URL: "/estado" },

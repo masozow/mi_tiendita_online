@@ -115,8 +115,10 @@ const OrdenYDetalle = () => {
 
   return isLoading && isLoadingDetalle ? (
     <Typography>Cargando...</Typography>
-  ) : error ? (
-    <div>Error: {error.message}</div>
+  ) : error || errorDetalle ? (
+    <div>
+      Error: {error.message} || {errorDetalle.message}
+    </div>
   ) : (
     <Container
       sx={{
