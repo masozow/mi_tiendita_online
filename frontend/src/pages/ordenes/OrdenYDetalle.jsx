@@ -6,10 +6,17 @@ import {
   Typography,
   Container,
   useTheme,
+  TableContainer,
+  TableRow,
+  TableHead,
+  Table,
+  Divider,
+  TableBody,
+  TableCell,
 } from "@mui/material";
 import { useForm, Controller, set } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../store/AuthContext.jsx";
 import schema from "../../utils/yupSchemas.js";
 import SnackbarAlert from "../../components/Login/SnackBarAlert.jsx";
@@ -20,332 +27,261 @@ import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   calcularTotal,
+  formatoMoneda,
   handleClearCart,
   obtenerItemsCarrito,
 } from "../../utils/carritoFunctions.js";
 import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
 import { useShoppingCart } from "../../store/ShoppingCartContext.jsx";
 
-const NuevaOrden = () => {
-  const navigate = useNavigate();
-
-  const { user } = useAuth();
-  const { removeFromCart, dispatch } = useShoppingCart();
-  const [isLoading, setIsLoading] = useState(false);
+const OrdenYDetalle = () => {
+  const [encabezado, setEncabezado] = useState([]);
   const [filas, setFilas] = useState([]);
-  const [total, setTotal] = useState(0);
 
-  const { mutateAsync } = useCustomMutation("/api/ordenes", "POST");
+  const params = useParams();
 
-  const {
-    data,
-    isLoading: isDataLoading,
-    error,
-  } = useQueryHook(
-    "obtenerClientePorIDUsuario",
-    `/api/clientes/idUsuario/${user?.ID}`
+  const { data, isLoading, error } = useQueryHook(
+    `ObtenerOrden_${params.ordenId}`,
+    `/api/ordenes/${params.ordenId}`
   );
-
-  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
-    open: false,
-    message: "",
-    severity: "success",
-  });
-  const handleSnackbarClose = () => {
-    dispatchSnackbar({ type: "CLOSE" });
-  };
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      if (user) {
-        await obtenerItemsCarrito(user.ID, setFilas);
-      }
-    };
-    fetchItems();
-  }, [user]);
-
-  useEffect(() => {
-    if (filas && filas.length > 0) {
-      setTotal(calcularTotal(filas));
-    } else {
-      setTotal(0);
-    }
-  }, [filas]);
+  const {
+    data: dataDetalle,
+    isLoading: isLoadingDetalle,
+    error: errorDetalle,
+  } = useQueryHook(
+    `ObtenerOrdenDetalle_${params.ordenId}`,
+    `/api/ordenes/detalle/${params.ordenId}`
+  );
 
   const theme = useTheme();
   const { isSmallScreen } = breakPointsFromTheme(theme);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema.ordenSchema),
-    mode: "onChange",
-    defaultValues: {
-      total: "",
-      fechaEntrega: "",
-      idCliente: "",
-      correo: "",
-      telefono: "",
-      direccion: "",
-      nombre: "",
+  const estructuraData = [
+    {
+      ID: 1,
+      FECHA_CREACION: "2024-12-13T18:35:42.000Z",
+      NOMBRE: "Esteban López",
+      DIRECCION: "11 calle 4-55 zona 12, Quetzaltenango, Quetzaltenango",
+      TELEFONO: "487392018",
+      CORREO: "esteban.lopez@example.com",
+      FECHA_ENTREGA: "2024-12-19",
+      TOTAL: 19400,
+      ID_ESTADO: 7,
+      ID_CLIENTE: 1,
+      ID_OPERADOR: 8,
+      ID_USUARIO: 3,
     },
-  });
-  const handleClearFields = () => {
-    reset({
-      total: "",
-      fechaEntrega: "",
-      idCliente: "",
-      correo: "",
-      telefono: "",
-      direccion: "",
-      nombre: "",
-    });
-  };
-  const handleClearCartAndRedirect = async () => {
-    handleClearFields();
-    await handleClearCart({
-      userId: user?.ID,
-      dispatch: dispatch,
-      setFilas: setFilas,
-      cb: () => {
-        setTimeout(() => {
-          navigate(-1);
-        }, 1000);
-      },
-    });
-  };
+  ];
+
+  const estructuraDataDetalle = [
+    {
+      ID: 1,
+      CANTIDAD: 2,
+      PRECIO: 6000,
+      SUBTOTAL: 12000,
+      ID_ORDEN: 1,
+      ID_PRODUCTO: 2,
+      CODIGO_PRODUCTO: "48795409886",
+      PRODUCTO: "iPhone",
+      MARCA: "Apple",
+      CATEGORIA: "Electrónica",
+    },
+    {
+      ID: 2,
+      CANTIDAD: 4,
+      PRECIO: 1800,
+      SUBTOTAL: 7200,
+      ID_ORDEN: 1,
+      ID_PRODUCTO: 11,
+      CODIGO_PRODUCTO: "32759184756",
+      PRODUCTO: "IKEA Billy Shelf",
+      MARCA: "IKEA",
+      CATEGORIA: "Muebles",
+    },
+  ];
+
   useEffect(() => {
-    if (data?.data && data.data.length > 0) {
-      const cliente = data.data[0];
-      const datosCliente = {
-        nombre: cliente.RAZON_SOCIAL,
-        direccion: cliente.DIRECCION_ENTREGA,
-        telefono: cliente.TELEFONO,
-        correo: cliente.CORREO,
-        fechaEntrega: new Date().toISOString().split("T")[0].split(" ")[0],
-        total: total,
-        idEstado: 3,
-        idCliente: cliente.ID,
-      };
-      reset(datosCliente);
+    if (
+      data?.data &&
+      data.data.length > 0 &&
+      dataDetalle?.data &&
+      dataDetalle.data.length > 0
+    ) {
+      setEncabezado(data.data[0]);
+      setFilas(dataDetalle.data);
+      console.log("Data: ", data.data);
     }
-  }, [data, total]);
+  }, [data, dataDetalle]);
 
-  const handleFormSubmit = (formData) => {
-    console.log("Form data: ", formData);
-    console.log(
-      "Fecha: ",
-      new Date().toISOString().split("T")[0].split(" ")[0]
-    );
-    const ordenData = {
-      idCliente: parseInt(formData.idCliente, 10),
-      idEstado: formData.idEstado,
-      total: formData.total,
-      fechaEntrega: new Date(formData.fechaEntrega).toISOString(),
-      correo: formData.correo,
-      telefono: formData.telefono,
-      direccion: formData.direccion,
-      nombre: formData.nombre,
-      detalle: filas.map((item) => ({
-        cantidad: item.cantidad,
-        precio: item.precio,
-        subtotal: item.subtotal,
-        idProducto: item.idProducto,
-      })),
-    };
-    console.log("Orden data: ", ordenData);
-    onSubmit(
-      ordenData,
-      setIsLoading,
-      dispatchSnackbar,
-      mutateAsync,
-      async (response) => {
-        console.log("Orden data: ", ordenData);
-        console.log("Response: ", response);
-        if (response.success !== "error") {
-          await handleClearCartAndRedirect();
-        } else {
-          setTimeout(() => {
-            navigate("/producto/catalogo");
-          }, 1000);
-        }
-      }
-    );
-  };
-
-  return isDataLoading ? (
+  return isLoading && isLoadingDetalle ? (
     <Typography>Cargando...</Typography>
   ) : error ? (
     <div>Error: {error.message}</div>
   ) : (
     <Container
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
         px: { xs: "1rem", md: "2rem" },
-        flexGrow: 1,
-        flexShrink: 0,
         minWidth: "100%",
       }}>
-      <Typography variant="h5" sx={{ mb: "1rem" }}>
-        Crear Nueva Orden
+      <Typography variant="h5" sx={{ mb: "1rem" }} align="center">
+        <b>Detalles de la Orden {params.ordenId}</b>
       </Typography>
-      <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
-        <Stack spacing={2} width="100%">
-          <Controller
-            name="idCliente"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="ID Cliente"
-                variant="outlined"
-                fullWidth
-                {...getFieldErrorProps("idCliente", errors)}
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="nombre"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Nombre"
-                variant="outlined"
-                fullWidth
-                {...getFieldErrorProps("nombre", errors)}
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="direccion"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Dirección"
-                variant="outlined"
-                fullWidth
-                {...getFieldErrorProps("direccion", errors)}
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-            )}
-          />
-          <Stack direction={isSmallScreen ? "column" : "row"} spacing={2}>
-            <Controller
-              name="telefono"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Teléfono"
-                  variant="outlined"
-                  fullWidth
-                  {...getFieldErrorProps("telefono", errors)}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                />
-              )}
-            />
-            <Controller
-              name="correo"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Correo"
-                  type="email"
-                  variant="outlined"
-                  fullWidth
-                  {...getFieldErrorProps("correo", errors)}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                />
-              )}
-            />
+      <Divider />
+      <Stack direction="column" justifyContent="space-between">
+        <Stack
+          direction={isSmallScreen ? "column" : "row"}
+          justifyContent="space-between">
+          <Stack
+            direction="row"
+            alignItems={"baseline"}
+            minWidth={isSmallScreen ? "100%" : "33.3333%"}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              ID Cliente:
+            </Typography>
+            <Typography variant="h5" sx={{ ml: "1rem", py: "0.5rem" }}>
+              {encabezado.ID_CLIENTE}
+            </Typography>
           </Stack>
-          <Stack direction={isSmallScreen ? "column" : "row"} spacing={2}>
-            <Controller
-              name="fechaEntrega"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Fecha de Entrega"
-                  type="date"
-                  variant="outlined"
-                  fullWidth
-                  {...getFieldErrorProps("fechaEntrega", errors)}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                />
-              )}
-            />
-            <Controller
-              name="total"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Total"
-                  type="number"
-                  variant="outlined"
-                  fullWidth
-                  {...getFieldErrorProps("total", errors)}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                />
-              )}
-            />
+          <Stack
+            direction="row"
+            alignItems={"baseline"}
+            minWidth={isSmallScreen ? "100%" : "33.3333%"}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              ID Operador:
+            </Typography>
+            <Typography variant="h5" sx={{ ml: "1rem", py: "0.5rem" }}>
+              {encabezado.ID_OPERADOR}
+            </Typography>
           </Stack>
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={isLoading}>
-            {isLoading ? "Cargando..." : "Crear Orden"}
-          </Button>
+          <Stack
+            direction="row"
+            alignItems={"baseline"}
+            minWidth={isSmallScreen ? "100%" : "33.3333%"}
+            my={"1rem"}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              TOTAL:
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{ ml: "1rem", p: "0.5rem", borderRadius: "0.5rem" }}
+              backgroundColor="primary.main"
+              color="primary.contrastText">
+              {formatoMoneda(encabezado.TOTAL)}
+            </Typography>
+          </Stack>
         </Stack>
-      </form>
-
-      <SnackbarAlert
-        snackbarState={snackbarState}
-        onClose={handleSnackbarClose}
-      />
+        <Stack
+          direction={isSmallScreen ? "column" : "row"}
+          justifyContent="space-between">
+          <Stack
+            direction="row"
+            alignItems={"baseline"}
+            minWidth={isSmallScreen ? "100%" : "33.3333%"}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              Fecha:
+            </Typography>
+            <Typography variant="subtitle1" sx={{ ml: "1rem" }}>
+              {encabezado.FECHA_CREACION}
+            </Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            alignItems={"baseline"}
+            minWidth={isSmallScreen ? "100%" : "33.3333%"}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              Teléfono:
+            </Typography>
+            <Typography variant="subtitle1" sx={{ ml: "1rem" }}>
+              {encabezado.TELEFONO}
+            </Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            alignItems={"baseline"}
+            minWidth={isSmallScreen ? "100%" : "33.3333%"}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              E-mail:
+            </Typography>
+            <Typography variant="subtitle1" sx={{ ml: "1rem" }}>
+              {encabezado.CORREO}
+            </Typography>
+          </Stack>
+        </Stack>
+        <Stack
+          direction={isSmallScreen ? "column" : "row"}
+          justifyContent="space-between">
+          <Stack
+            direction="row"
+            alignItems={"baseline"}
+            minWidth={isSmallScreen ? "100%" : "33.3333%"}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              Nombre:
+            </Typography>
+            <Typography variant="subtitle1" sx={{ ml: "1rem" }}>
+              {encabezado.NOMBRE}
+            </Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            alignItems={"baseline"}
+            minWidth={isSmallScreen ? "100%" : "66.6666%"}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              Dirección:
+            </Typography>
+            <Typography variant="subtitle1" sx={{ ml: "1rem" }}>
+              {encabezado.DIRECCION}
+            </Typography>
+          </Stack>
+        </Stack>
+        <Divider />
+      </Stack>
+      {/* <p>{JSON.stringify(encabezado, null, 2)}</p>
+      <p>{JSON.stringify(filas, null, 2)}</p> */}
+      <TableContainer sx={{ mt: "2rem" }}>
+        <Divider />
+        <Table>
+          <TableHead>
+            <TableRow colSpan={7}>
+              <TableCell>
+                <b>Cantidad</b>
+              </TableCell>
+              <TableCell>
+                <b>Código</b>
+              </TableCell>
+              <TableCell>
+                <b>Marca</b>
+              </TableCell>
+              <TableCell>
+                <b>Categoría</b>
+              </TableCell>
+              <TableCell>
+                <b>Descripción</b>
+              </TableCell>
+              <TableCell>
+                <b>Precio Unitario</b>
+              </TableCell>
+              <TableCell>
+                <b>Subtotal</b>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filas.map((fila) => (
+              <TableRow key={fila.ID}>
+                <TableCell>{fila.CANTIDAD}</TableCell>
+                <TableCell>{fila.CODIGO_PRODUCTO}</TableCell>
+                <TableCell>{fila.MARCA}</TableCell>
+                <TableCell>{fila.CATEGORIA}</TableCell>
+                <TableCell>{fila.PRODUCTO}</TableCell>
+                <TableCell>{formatoMoneda(fila.PRECIO)}</TableCell>
+                <TableCell>{formatoMoneda(fila.SUBTOTAL)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Container>
   );
 };
 
-export default NuevaOrden;
+export default OrdenYDetalle;

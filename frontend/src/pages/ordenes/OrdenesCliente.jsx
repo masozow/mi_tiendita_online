@@ -71,7 +71,6 @@ const OrdenesCliente = () => {
         severity: response.success,
       });
 
-      // Update the frontend state directly
       if (response.success !== "error") {
         setFilas((prevFilas) =>
           prevFilas.filter((fila) => fila.ID !== ordenId)
@@ -87,7 +86,7 @@ const OrdenesCliente = () => {
   };
 
   const handleRowClick = (ordenId) => {
-    console.log("Row clicked in OrdenesPendientes:", ordenId);
+    navigate(`/ordenes/${ordenId}`);
   };
 
   return (

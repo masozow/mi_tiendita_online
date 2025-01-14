@@ -7,7 +7,7 @@ import {
 } from "./indexeddb";
 
 export const formatoMoneda = (num) =>
-  `Q${num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+  `Q${num?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
 
 export const calcularTotal = (items) =>
   items && items.length > 0

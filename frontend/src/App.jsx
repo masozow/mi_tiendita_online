@@ -27,6 +27,7 @@ import AgregarEstado from "./pages/estados/AgregarEstado.jsx";
 import TodosEstados from "./pages/estados/TodosEstados.jsx";
 import OrdenesPendientes from "./pages/ordenes/OrdenesPendientes.jsx";
 import OrdenesCliente from "./pages/ordenes/OrdenesCliente.jsx";
+import OrdenYDetalle from "./pages/ordenes/OrdenYDetalle.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -100,6 +101,7 @@ const App = () => {
                   element={<OrdenesPendientes />}
                 />
               </Route>
+              <Route path="/ordenes/:ordenId" element={<OrdenYDetalle />} />
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
                 <Route path="/ordenes/" element={<TodasOrdenes />} />
