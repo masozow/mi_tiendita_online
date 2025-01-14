@@ -7,7 +7,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   IconButton,
   Typography,
   useTheme,
@@ -41,12 +40,12 @@ const TodasOrdenes = () => {
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const handleEdit = (orderId) => {
-    console.log("Edit order with ID:", orderId);
-  };
+  // const handleEdit = (orderId) => {
+  //   console.log("Editar orden con ID:", orderId);
+  // };
 
   const handleDelete = (orderId) => {
-    console.log("Delete order with ID:", orderId);
+    console.log("Eliminar orden con ID:", orderId);
   };
 
   return (
@@ -110,11 +109,11 @@ const TodasOrdenes = () => {
               <TableCell>{fila.ID_CLIENTE}</TableCell>
               <TableCell>{fila.ID_OPERADOR}</TableCell>
               <TableCell align="center">
-                <IconButton
+                {/* <IconButton
                   aria-label="edit"
                   onClick={() => handleEdit(fila.ID)}>
                   <EditIcon />
-                </IconButton>
+                </IconButton> */}
                 <Dialogo
                   onConfirm={() => handleDelete(fila.ID)}
                   triggerButton={

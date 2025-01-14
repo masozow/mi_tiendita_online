@@ -57,11 +57,15 @@ const estadoSchema = yup.object().shape({
 const usuarioClienteSchema = yup.object().shape({
   correo: yup.string().email().required("El correo es requerido"),
   nombre: yup.string().required("El nombre es requerido"),
-  password: yup.string().required("La contraseña es requerida"),
+  password: yup
+    .string()
+    .required()
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
   confirmarContrasena: yup
     .string()
     .oneOf([yup.ref("password"), null], "Las contraseñas deben coincidir")
-    .required("La confirmación de la contraseña es requerida"),
+    .required()
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
   telefono: yup
     .number()
     .required("El teléfono es requerido")

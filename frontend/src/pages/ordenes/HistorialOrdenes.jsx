@@ -61,15 +61,15 @@ const HistorialOrdenes = () => {
         idEstado: 7,
       };
 
-      await mutateAsync({
+      const response = await mutateAsync({
         URL: `/api/ordenes/${ordenId}`,
         data: nuevoEstado,
       });
 
       dispatchSnackbar({
         type: "OPEN",
-        message: "Orden entregada exitosamente",
-        severity: "success",
+        message: response.data,
+        severity: response.success,
       });
 
       // Update the frontend state directly
