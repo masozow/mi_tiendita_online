@@ -30,6 +30,7 @@ import OrdenesCliente from "./pages/ordenes/OrdenesCliente.jsx";
 import OrdenYDetalle from "./pages/ordenes/OrdenYDetalle.jsx";
 import ModificarUsuario from "./pages/usuarios/ModificarUsuario.jsx";
 import ModificarMarca from "./pages/marcas/ModificarMarca.jsx";
+import ModificarCategoria from "./pages/categorias/ModificarCategoria.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -120,12 +121,19 @@ const App = () => {
               </Route>
 
               {/* -------- Categorias ----- */}
-              <Route path="/categoria" element={<TodasCategorias />} />
               <Route path="/categoria/crear" element={<AgregarCategoria />} />
+              <Route
+                element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
+                <Route path="/categoria/:id" element={<ModificarCategoria />} />
+              </Route>
+              <Route path="/categoria" element={<TodasCategorias />} />
 
               {/* -------- Marcas ----- */}
               <Route path="/marca/crear" element={<AgregarMarca />} />
-              <Route path="/marca/:id" element={<ModificarMarca />} />
+              <Route
+                element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
+                <Route path="/marca/:id" element={<ModificarMarca />} />
+              </Route>
               <Route path="/marca" element={<TodasMarcas />} />
 
               {/* -------- Estados ----- */}

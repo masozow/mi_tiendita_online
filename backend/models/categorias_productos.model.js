@@ -90,15 +90,22 @@ const actualizar = async ({ id, nombre = null, idEstado = null } = {}) => {
  */
 const obtenerTodo = async (idEstado = 1) => {
   try {
-    const datos = await sequelize.query(
-      "SELECT * FROM vw_ObtenerTodasCategorias WHERE ESTADO= :idEstado",
-      {
-        replacements: {
-          idEstado,
-        },
+    let datos;
+    if (idEstado == 0) {
+      datos = await sequelize.query("SELECT * FROM vw_ObtenerTodasCategorias", {
         type: QueryTypes.SELECT,
-      }
-    );
+      });
+    } else {
+      datos = await sequelize.query(
+        "SELECT * FROM vw_ObtenerTodasCategorias WHERE ESTADO = :idEstado",
+        {
+          replacements: {
+            idEstado,
+          },
+          type: QueryTypes.SELECT,
+        }
+      );
+    }
     return datos;
   } catch (err) {
     errorAndLogHandler({
@@ -115,14 +122,13 @@ const obtenerTodo = async (idEstado = 1) => {
  * @param {number} [idEstado=1] ID del estado de la categoría a obtener.
  * @returns {Promise<Object[]>} Array de objetos con los datos de la categoría.
  */
-const obtenerTodoPorID = async (ID, idEstado = 1) => {
+const obtenerTodoPorID = async (ID) => {
   try {
     const datos = await sequelize.query(
-      "SELECT * FROM vw_ObtenerTodasCategorias WHERE ID= :ID AND ESTADO= :idEstado",
+      "SELECT * FROM vw_ObtenerTodasCategorias WHERE ID= :ID",
       {
         replacements: {
           ID,
-          idEstado,
         },
         type: QueryTypes.SELECT,
       }
