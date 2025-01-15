@@ -18,8 +18,10 @@ import { useAuth } from "../../store/AuthContext";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
+import { useNavigate } from "react-router-dom";
 
 const TodosUsuarios = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -40,8 +42,8 @@ const TodosUsuarios = () => {
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const handleEdit = (userId) => {
-    console.log("Edit user with ID:", userId);
+  const handleEdit = (id) => {
+    navigate(`/usuario/${id}`);
   };
 
   const handleDelete = (userId) => {

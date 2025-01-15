@@ -26,6 +26,7 @@ const SelectCustomControlled = forwardRef(
       URL,
       errors,
       fieldName,
+      slotProps: { ...slotProps } = {},
     },
     ref
   ) => {
@@ -55,9 +56,10 @@ const SelectCustomControlled = forwardRef(
           id={`${id}-select`}
           value={isDataLoaded ? incomingStateValue : ""}
           label={label}
+          slotProps={{ ...slotProps }}
           onChange={(event) => handleSelectionChange(event.target.value)}
           ref={selectRef}>
-          <MenuItem value={0}>
+          <MenuItem value={""}>
             <em>--Ninguna--</em>
           </MenuItem>
           {isLoading ? (

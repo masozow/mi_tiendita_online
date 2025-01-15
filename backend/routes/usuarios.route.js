@@ -35,11 +35,18 @@ router.post(
   Usuario.create
 );
 router.put(
+  "/cliente/:id",
+  checkAuth,
+  checkRole([rolesDictionary.Operador]),
+  Usuario.updateUsuarioCliente
+);
+router.put(
   "/:id",
   checkAuth,
   checkRole([rolesDictionary.Operador]),
   Usuario.update
 );
+
 router.delete(
   "/:id",
   checkAuth,
