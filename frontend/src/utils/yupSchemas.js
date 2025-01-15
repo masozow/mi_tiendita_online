@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import { es } from "yup-locales";
+import { diffYears } from "@formkit/tempo";
 yup.setLocale(es);
 
 const loginSchema = yup.object().shape({
@@ -74,7 +75,14 @@ const usuarioClienteSchema = yup.object().shape({
       "El teléfono debe tener exactamente 8 dígitos",
       (val) => val.toString().length === 8
     ),
-  fechaNacimiento: yup.date().required("La fecha de nacimiento es requerida"),
+  fechaNacimiento: yup
+    .date("Debe introducir una fecha válida.")
+    .required("La fecha de nacimiento es requerida")
+    .test(
+      "fdn",
+      "Debe ser mayor de 18 años",
+      (value) => diffYears(new Date(), new Date(value)) >= 18
+    ),
   idEstado: yup
     .number()
     .integer()
@@ -101,7 +109,14 @@ const usuarioOperadorSchema = yup.object().shape({
       "El teléfono debe tener exactamente 8 dígitos",
       (val) => val.toString().length === 8
     ),
-  fechaNacimiento: yup.date().required("La fecha de nacimiento es requerida"),
+  fechaNacimiento: yup
+    .date("Debe introducir una fecha válida.")
+    .required("La fecha de nacimiento es requerida")
+    .test(
+      "fdn",
+      "Debe ser mayor de 18 años",
+      (value) => diffYears(new Date(), new Date(value)) >= 18
+    ),
   idEstado: yup.number().positive().required("El estado es requerido"),
   idRol: yup.number().required("El rol es requerido"),
 });

@@ -48,7 +48,6 @@ const FormUsuarios = ({ data, URL, httpMethod, submitMessage }) => {
           correo: data?.correo || "",
           nombre: data?.nombre || "",
           password: "",
-          confirmarContrasena: "",
           telefono: data?.telefono || "",
           fechaNacimiento: data?.fechaNacimiento || "",
           idEstado: data?.idEstado || 1,
@@ -60,7 +59,6 @@ const FormUsuarios = ({ data, URL, httpMethod, submitMessage }) => {
           correo: data?.correo || "",
           nombre: data?.nombre || "",
           password: "",
-          confirmarContrasena: "",
           telefono: data?.telefono || "",
           fechaNacimiento: data?.fechaNacimiento || "",
           idEstado: data?.idEstado || 1,
@@ -93,11 +91,10 @@ const FormUsuarios = ({ data, URL, httpMethod, submitMessage }) => {
   );
 
   const handleFormSubmit = (formData) => {
-    console.log("Operador data: ", formData);
     if (selectedRol === 1) {
       const clienteData = {
         ...formData,
-        razonSocial: formData.nombre,
+        razonSocial: formData.razonSocial || formData.nombre,
       };
       console.log("Cliente data: ", clienteData);
       onSubmit(

@@ -68,7 +68,7 @@ const ModificarUsuario = () => {
     </div>
   ) : (
     <>
-      {usuario.correo && (
+      {(usuario.correo && usuario.idCliente) || usuario.correo ? (
         <FormUsuarios
           data={usuario}
           URL={
@@ -79,6 +79,8 @@ const ModificarUsuario = () => {
           httpMethod="PUT"
           submitMessage="Modificar Usuario"
         />
+      ) : (
+        <Typography>Cargando...</Typography>
       )}
     </>
   );
