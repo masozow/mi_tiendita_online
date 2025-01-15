@@ -169,9 +169,7 @@ const TodasOrdenes = () => {
                     <Dialogo
                       onConfirm={() => handleDelete(fila.ID)}
                       triggerButton={
-                        <IconButton
-                          aria-label="delete"
-                          onClick={(e) => e.stopPropagation()}>
+                        <IconButton aria-label="delete">
                           <DeleteIcon />
                         </IconButton>
                       }

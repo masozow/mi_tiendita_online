@@ -160,8 +160,7 @@ const HistorialOrdenes = () => {
                     <Button
                       aria-label="entregar"
                       variant="contained"
-                      color="success"
-                      onClick={(e) => e.stopPropagation()}>
+                      color="success">
                       Entregar
                     </Button>
                   }

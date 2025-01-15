@@ -159,8 +159,7 @@ const OrdenesPendientes = () => {
                     <Button
                       aria-label="confirmar"
                       variant="contained"
-                      color="primary"
-                      onClick={(e) => e.stopPropagation()}>
+                      color="primary">
                       Confirmar
                     </Button>
                   }

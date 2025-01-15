@@ -62,8 +62,6 @@ export const getAllItems = async (userId) => {
         reject(event.target.error);
       };
     });
-
-    console.log("All items in the cart:", items);
     return items;
   } catch (error) {
     console.error("Error in getAllItems:", error);
