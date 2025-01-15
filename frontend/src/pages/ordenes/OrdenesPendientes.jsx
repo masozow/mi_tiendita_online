@@ -63,18 +63,17 @@ const OrdenesPendientes = () => {
         idEstado: 4,
       };
 
-      await mutateAsync({
+      const resultado = await mutateAsync({
         URL: `/api/ordenes/${ordenId}`,
         data: nuevoEstado,
       });
 
       dispatchSnackbar({
         type: "OPEN",
-        message: "Orden confirmada exitosamente",
-        severity: "success",
+        message: resultado.data,
+        severity: resultado.success,
       });
 
-      // Update the frontend state directly
       setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== ordenId));
     } catch (error) {
       dispatchSnackbar({

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   Table,
@@ -19,6 +19,8 @@ import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
 import { useNavigate } from "react-router-dom";
+import { useDynamicMutation } from "../../hooks/useDynamicMutation";
+import snackbarReducer from "../../store/snackBarReducer";
 
 const TodosUsuarios = () => {
   const navigate = useNavigate();
@@ -32,6 +34,17 @@ const TodosUsuarios = () => {
     "todosUsuarios",
     "/api/usuarios/"
   );
+  const { mutateAsync } = useDynamicMutation("DELETE");
+
+  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    dispatchSnackbar({ type: "CLOSE" });
+  };
 
   useEffect(() => {
     if (data?.data) {
@@ -46,8 +59,26 @@ const TodosUsuarios = () => {
     navigate(`/usuario/${id}`);
   };
 
-  const handleDelete = (userId) => {
-    console.log("Delete user with ID:", userId);
+  const handleDelete = async (usuarioId) => {
+    try {
+      const resultado = await mutateAsync({
+        URL: `/api/usuarios/${usuarioId}`,
+      });
+      dispatchSnackbar({
+        type: "OPEN",
+        message: resultado.data,
+        severity: resultado.success,
+      });
+      setFilas((prevFilas) =>
+        prevFilas.filter((fila) => fila.ID !== usuarioId)
+      );
+    } catch (error) {
+      dispatchSnackbar({
+        type: "OPEN",
+        message: error.message,
+        severity: "error",
+      });
+    }
   };
 
   return (
