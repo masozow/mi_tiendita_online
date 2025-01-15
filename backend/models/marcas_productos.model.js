@@ -93,21 +93,29 @@ const actualizar = async ({ id, nombre = null, idEstado = null } = {}) => {
  */
 const obtenerTodo = async (idEstado = 1) => {
   try {
-    const datos = await sequelize.query(
-      "SELECT * FROM vw_ObtenerTodasMarcas WHERE ID_ESTADO = :idEstado",
-      {
-        replacements: {
-          idEstado,
-        },
+    let datos;
+    if (idEstado == 0) {
+      datos = await sequelize.query("SELECT * FROM vw_ObtenerTodasMarcas", {
         type: QueryTypes.SELECT,
-      }
-    );
+      });
+    } else {
+      datos = await sequelize.query(
+        "SELECT * FROM vw_ObtenerTodasMarcas WHERE ID_ESTADO = :idEstado",
+        {
+          replacements: {
+            idEstado,
+          },
+          type: QueryTypes.SELECT,
+        }
+      );
+    }
     return datos;
   } catch (err) {
     errorAndLogHandler({
       level: errorLevels.error,
       message: "Error al obtener la vista: " + err,
     });
+    throw err;
   }
 };
 
@@ -134,6 +142,7 @@ const obtenerTodoPorID = async (ID) => {
       level: errorLevels.error,
       message: "Error al obtener la vista: " + err,
     });
+    throw err;
   }
 };
 

@@ -29,6 +29,7 @@ import OrdenesPendientes from "./pages/ordenes/OrdenesPendientes.jsx";
 import OrdenesCliente from "./pages/ordenes/OrdenesCliente.jsx";
 import OrdenYDetalle from "./pages/ordenes/OrdenYDetalle.jsx";
 import ModificarUsuario from "./pages/usuarios/ModificarUsuario.jsx";
+import ModificarMarca from "./pages/marcas/ModificarMarca.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -124,6 +125,7 @@ const App = () => {
 
               {/* -------- Marcas ----- */}
               <Route path="/marca/crear" element={<AgregarMarca />} />
+              <Route path="/marca/:id" element={<ModificarMarca />} />
               <Route path="/marca" element={<TodasMarcas />} />
 
               {/* -------- Estados ----- */}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   Table,
@@ -18,8 +18,13 @@ import { useAuth } from "../../store/AuthContext";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
+import { useNavigate } from "react-router-dom";
+import { useDynamicMutation } from "../../hooks/useDynamicMutation";
+import snackbarReducer from "../../store/snackBarReducer";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
 
 const TodasMarcas = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -28,8 +33,19 @@ const TodasMarcas = () => {
 
   const { data, isLoading, error } = useQueryHook(
     "todasMarcas",
-    "/api/marcas/"
+    "/api/marcas/?ID_ESTADO=0"
   );
+  const { mutateAsync } = useDynamicMutation("DELETE");
+
+  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    dispatchSnackbar({ type: "CLOSE" });
+  };
 
   useEffect(() => {
     if (data?.data) {
@@ -40,12 +56,29 @@ const TodasMarcas = () => {
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const handleEdit = (marcaId) => {
-    console.log("Edit marca with ID:", marcaId);
+  const handleEdit = (id) => {
+    navigate(`/marca/${id}`);
   };
 
-  const handleDelete = (marcaId) => {
-    console.log("Delete marca with ID:", marcaId);
+  const handleDelete = async (id) => {
+    try {
+      const resultado = await mutateAsync({
+        URL: `/api/marcas/${id}`,
+      });
+      console.log("Response:", resultado);
+      dispatchSnackbar({
+        type: "OPEN",
+        message: resultado.data,
+        severity: resultado.success,
+      });
+      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+    } catch (error) {
+      dispatchSnackbar({
+        type: "OPEN",
+        message: error.message,
+        severity: "error",
+      });
+    }
   };
 
   return (
@@ -101,6 +134,10 @@ const TodasMarcas = () => {
           ))}
         </TableBody>
       </Table>
+      <SnackbarAlert
+        snackbarState={snackbarState}
+        onClose={handleSnackbarClose}
+      />
     </TableContainer>
   );
 };
