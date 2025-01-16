@@ -37,7 +37,7 @@ const TablaOrdenesAcciones = ({
   const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
 
-  const { data, isLoading, error } = useQueryHook(queryKey, queryURL);
+  const { data, isLoading, error, refetch } = useQueryHook(queryKey, queryURL);
   const { mutateAsync } = useDynamicMutation(mutateMethod);
 
   const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
@@ -73,9 +73,10 @@ const TablaOrdenesAcciones = ({
       });
 
       if (response.success !== "error") {
-        setFilas((prevFilas) =>
-          prevFilas.filter((fila) => fila.ID !== ordenId)
-        );
+        refetch();
+        // setFilas((prevFilas) =>
+        //   prevFilas.filter((fila) => fila.ID !== ordenId)
+        // );
       }
     } catch (error) {
       dispatchSnackbar({

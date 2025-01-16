@@ -33,7 +33,7 @@ const TodasCategorias = () => {
   const { isSmallScreen, isMediumScreen, isLargeScreen } =
     breakPointsFromTheme(theme);
 
-  const { data, isLoading, error } = useQueryHook(
+  const { data, isLoading, error, refetch } = useQueryHook(
     "todasCategorias",
     "/api/categorias/?ID_ESTADO=0"
   );
@@ -70,7 +70,7 @@ const TodasCategorias = () => {
         message: resultado.data,
         severity: resultado.success,
       });
-      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+      refetch();
     } catch (error) {
       dispatchSnackbar({
         type: "OPEN",

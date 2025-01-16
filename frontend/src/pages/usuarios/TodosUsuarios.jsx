@@ -25,7 +25,7 @@ const TodosUsuarios = () => {
   const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
 
-  const { data, isLoading, error } = useQueryHook(
+  const { data, isLoading, error, refetch } = useQueryHook(
     "todosUsuarios",
     "/api/usuarios/"
   );
@@ -62,9 +62,10 @@ const TodosUsuarios = () => {
         message: resultado.data,
         severity: resultado.success,
       });
-      setFilas((prevFilas) =>
-        prevFilas.filter((fila) => fila.ID !== usuarioId)
-      );
+      // setFilas((prevFilas) =>
+      //   prevFilas.filter((fila) => fila.ID !== usuarioId)
+      // );
+      refetch();
     } catch (error) {
       dispatchSnackbar({
         type: "OPEN",

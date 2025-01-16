@@ -35,7 +35,7 @@ const TodosProductos = () => {
   const { isSmallScreen, isMediumScreen, isLargeScreen } =
     breakPointsFromTheme(theme);
 
-  const { data, isLoading, error } = useQueryHook(
+  const { data, isLoading, error, refetch } = useQueryHook(
     "todosProductos",
     "/api/productos/"
   );
@@ -72,7 +72,8 @@ const TodosProductos = () => {
         message: resultado.data,
         severity: resultado.success,
       });
-      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+      // setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+      refetch();
     } catch (error) {
       dispatchSnackbar({
         type: "OPEN",

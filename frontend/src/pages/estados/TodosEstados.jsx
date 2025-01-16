@@ -25,7 +25,7 @@ const TodosEstados = () => {
   const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
 
-  const { data, isLoading, error } = useQueryHook(
+  const { data, isLoading, error, refetch } = useQueryHook(
     `todosEstados_`,
     "/api/estados//?ACTIVO=2"
   );
@@ -61,7 +61,8 @@ const TodosEstados = () => {
         message: resultado.data,
         severity: resultado.success,
       });
-      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+      // setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+      refetch();
     } catch (error) {
       dispatchSnackbar({
         type: "OPEN",
