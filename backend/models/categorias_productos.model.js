@@ -92,12 +92,15 @@ const obtenerTodo = async (idEstado = 1) => {
   try {
     let datos;
     if (idEstado == 0) {
-      datos = await sequelize.query("SELECT * FROM vw_ObtenerTodasCategorias", {
-        type: QueryTypes.SELECT,
-      });
+      datos = await sequelize.query(
+        "SELECT * FROM vw_ObtenerTodasCategorias ORDER BY NOMBRE",
+        {
+          type: QueryTypes.SELECT,
+        }
+      );
     } else {
       datos = await sequelize.query(
-        "SELECT * FROM vw_ObtenerTodasCategorias WHERE ESTADO = :idEstado",
+        "SELECT * FROM vw_ObtenerTodasCategorias WHERE ESTADO = :idEstado ORDER BY NOMBRE",
         {
           replacements: {
             idEstado,

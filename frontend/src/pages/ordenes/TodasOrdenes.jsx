@@ -7,28 +7,22 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
   Typography,
-  useTheme,
+  Button,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useAuth } from "../../store/AuthContext";
 import { formatoMoneda } from "../../utils/carritoFunctions";
-import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
 import snackbarReducer from "../../store/snackBarReducer";
 import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import { useNavigate } from "react-router-dom";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const TodasOrdenes = () => {
   const [filas, setFilas] = useState([]);
   const navigate = useNavigate();
-  const theme = useTheme();
-  const { isSmallScreen, isMediumScreen, isLargeScreen } =
-    breakPointsFromTheme(theme);
 
   const { data, isLoading, error } = useQueryHook(
     "todasOrdenes",
@@ -52,9 +46,6 @@ const TodasOrdenes = () => {
       setFilas(data.data);
     }
   }, [data]);
-
-  if (isLoading) return <Typography>Cargando...</Typography>;
-  if (error) return <div>Error: {error.message}</div>;
 
   // const handleEdit = (orderId) => {
   //   console.log("Editar orden con ID:", orderId);
@@ -85,7 +76,7 @@ const TodasOrdenes = () => {
     } catch (error) {
       dispatchSnackbar({
         type: "OPEN",
-        message: "Error al eliminar la orden: " + error.message,
+        message: "Error al cancelar la orden: " + error.message,
         severity: "error",
       });
     }
@@ -93,7 +84,11 @@ const TodasOrdenes = () => {
   const handleRowClick = (ordenId) => {
     navigate(`/ordenes/${ordenId}`);
   };
-  return (
+  return isLoading ? (
+    <SkeletonComponent />
+  ) : error ? (
+    <ErrorComponent error={error} />
+  ) : (
     <TableContainer>
       <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes">
         <TableHead>
@@ -169,9 +164,12 @@ const TodasOrdenes = () => {
                     <Dialogo
                       onConfirm={() => handleDelete(fila.ID)}
                       triggerButton={
-                        <IconButton aria-label="delete">
-                          <DeleteIcon />
-                        </IconButton>
+                        <Button
+                          aria-label="eliminar"
+                          variant="contained"
+                          color="error">
+                          Eliminar
+                        </Button>
                       }
                       titulo="Eliminar Orden"
                       mensaje={`¿Desea eliminar la orden ${fila.ID}?`}

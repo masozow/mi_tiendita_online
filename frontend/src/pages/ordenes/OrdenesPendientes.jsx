@@ -21,6 +21,8 @@ import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import { useNavigate } from "react-router-dom";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const OrdenesPendientes = () => {
   const navigate = useNavigate();
@@ -54,9 +56,6 @@ const OrdenesPendientes = () => {
     }
   }, [data]);
 
-  if (isLoading) return <Typography>Cargando...</Typography>;
-  if (error) return <div>Error: {error.message}</div>;
-
   const handleConfirmar = async (ordenId) => {
     try {
       const nuevoEstado = {
@@ -88,7 +87,11 @@ const OrdenesPendientes = () => {
     navigate(`/ordenes/${ordenId}`);
   };
 
-  return (
+  return isLoading ? (
+    <SkeletonComponent />
+  ) : error ? (
+    <ErrorComponent error={error} />
+  ) : (
     <TableContainer>
       <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes pendientes">
         <TableHead>

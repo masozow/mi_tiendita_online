@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import {
   Table,
   TableBody,
@@ -6,27 +6,102 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
-  useTheme,
+  Button,
 } from "@mui/material";
-import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
-import CustomChip from "../../components/CustomChip";
+import { useQueryHook } from "../../hooks/useQueryHook";
+import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import { formatoMoneda } from "../../utils/carritoFunctions";
+import Dialogo from "../../components/Dialogo/Dialogo";
+import CustomChip from "../../components/CustomChip";
+import snackbarReducer from "../../store/snackBarReducer";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
+import { useNavigate } from "react-router-dom";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
-const TablaOrdenesAcciones = ({ titulo, filas, acciones, handleRowClick }) => {
-  const theme = useTheme();
-  const { isSmallScreen, isMediumScreen, isLargeScreen } =
-    breakPointsFromTheme(theme);
+const TablaOrdenesAcciones = ({
+  queryKey,
+  queryURL,
+  mutateMethod,
+  mutateURL,
+  accionBoton,
+  etiquetaBoton,
+  colorBoton,
+  tituloDialogo,
+  mensajeDialogo,
+  navigateURL,
+  tituloTabla,
+  funcionFiltro,
+}) => {
+  const navigate = useNavigate();
+  const [filas, setFilas] = useState([]);
 
-  return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: "100%" }} aria-label={`tabla de ${titulo}`}>
+  const { data, isLoading, error } = useQueryHook(queryKey, queryURL);
+  const { mutateAsync } = useDynamicMutation(mutateMethod);
+
+  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    dispatchSnackbar({ type: "CLOSE" });
+  };
+
+  useEffect(() => {
+    if (data?.data) {
+      const datosFiltrados = funcionFiltro
+        ? funcionFiltro(data.data)
+        : data.data;
+      setFilas(datosFiltrados);
+    }
+  }, [data, funcionFiltro]);
+
+  const handleAction = async (ordenId) => {
+    try {
+      const response = await mutateAsync({
+        URL: mutateURL(ordenId),
+        data: { idEstado: accionBoton.idEstado },
+      });
+
+      dispatchSnackbar({
+        type: "OPEN",
+        message: response.data,
+        severity: response.success,
+      });
+
+      if (response.success !== "error") {
+        setFilas((prevFilas) =>
+          prevFilas.filter((fila) => fila.ID !== ordenId)
+        );
+      }
+    } catch (error) {
+      dispatchSnackbar({
+        type: "OPEN",
+        message: `Error al realizar la acción: ${error.message}`,
+        severity: "error",
+      });
+    }
+  };
+
+  const handleRowClick = (ordenId) => {
+    navigate(navigateURL(ordenId));
+  };
+
+  return isLoading ? (
+    <SkeletonComponent />
+  ) : error ? (
+    <ErrorComponent error={error} />
+  ) : (
+    <TableContainer>
+      <Table sx={{ minWidth: "100%" }} aria-label={tituloTabla}>
         <TableHead>
           <TableRow>
             <TableCell align="center" colSpan={13}>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                {titulo}
+                {tituloTabla}
               </Typography>
             </TableCell>
           </TableRow>
@@ -84,21 +159,31 @@ const TablaOrdenesAcciones = ({ titulo, filas, acciones, handleRowClick }) => {
               <TableCell>{fila.ID_CLIENTE}</TableCell>
               <TableCell>{fila.ID_OPERADOR}</TableCell>
               <TableCell align="center">
-                {acciones.map((accion, index) => (
-                  <React.Fragment key={index}>
-                    {React.cloneElement(accion, {
-                      onClick: (e) => {
-                        e.stopPropagation();
-                        accion.props.onClick(fila.ID);
-                      },
-                    })}
-                  </React.Fragment>
-                ))}
+                {accionBoton.condicion(fila.ID_ESTADO) && (
+                  <Dialogo
+                    onConfirm={() => handleAction(fila.ID)}
+                    triggerButton={
+                      <Button
+                        aria-label={etiquetaBoton}
+                        variant="contained"
+                        color={colorBoton}
+                        onClick={(e) => e.stopPropagation()}>
+                        {etiquetaBoton}
+                      </Button>
+                    }
+                    titulo={tituloDialogo}
+                    mensaje={mensajeDialogo(fila.ID)}
+                  />
+                )}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <SnackbarAlert
+        snackbarState={snackbarState}
+        onClose={handleSnackbarClose}
+      />
     </TableContainer>
   );
 };

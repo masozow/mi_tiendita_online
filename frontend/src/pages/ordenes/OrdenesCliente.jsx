@@ -21,6 +21,8 @@ import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import { useNavigate } from "react-router-dom";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const OrdenesCliente = () => {
   const navigate = useNavigate();
@@ -53,10 +55,7 @@ const OrdenesCliente = () => {
     }
   }, [data]);
 
-  if (isLoading) return <Typography>Cargando...</Typography>;
-  if (error) return <div>Error: {error.message}</div>;
-
-  const handleConfirmar = async (ordenId) => {
+  const handleCancelar = async (ordenId) => {
     try {
       const nuevoEstado = {
         idEstado: 4,
@@ -64,7 +63,6 @@ const OrdenesCliente = () => {
 
       const response = await mutateAsync({
         URL: `/api/ordenes/cancel/${ordenId}`,
-        data: nuevoEstado,
       });
       console.log("Response:", response);
       dispatchSnackbar({
@@ -91,7 +89,11 @@ const OrdenesCliente = () => {
     navigate(`/ordenes/${ordenId}`);
   };
 
-  return (
+  return isLoading ? (
+    <SkeletonComponent />
+  ) : error ? (
+    <ErrorComponent error={error} />
+  ) : (
     <TableContainer>
       <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes pendientes">
         <TableHead>
@@ -160,7 +162,7 @@ const OrdenesCliente = () => {
                   fila.ID_ESTADO !== 2 &&
                   fila.ID_ESTADO !== 7 && (
                     <Dialogo
-                      onConfirm={() => handleConfirmar(fila.ID)}
+                      onConfirm={() => handleCancelar(fila.ID)}
                       triggerButton={
                         <Button
                           aria-label="cancelar"

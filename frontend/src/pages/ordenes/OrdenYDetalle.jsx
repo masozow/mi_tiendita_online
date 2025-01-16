@@ -33,6 +33,8 @@ import {
 } from "../../utils/carritoFunctions.js";
 import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
 import { useShoppingCart } from "../../store/ShoppingCartContext.jsx";
+import SkeletonComponent from "../../components/SkeletonComponent.jsx";
+import ErrorComponent from "../../components/ErrorComponent.jsx";
 
 const OrdenYDetalle = () => {
   const [encabezado, setEncabezado] = useState([]);
@@ -69,12 +71,10 @@ const OrdenYDetalle = () => {
     }
   }, [data, dataDetalle]);
 
-  return isLoading && isLoadingDetalle ? (
-    <Typography>Cargando...</Typography>
-  ) : error || errorDetalle ? (
-    <div>
-      Error: {error.message} || {errorDetalle.message}
-    </div>
+  return isLoading ? (
+    <SkeletonComponent />
+  ) : error ? (
+    <ErrorComponent error={error} />
   ) : (
     <Container
       sx={{
