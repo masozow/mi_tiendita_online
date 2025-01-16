@@ -31,6 +31,7 @@ import OrdenYDetalle from "./pages/ordenes/OrdenYDetalle.jsx";
 import ModificarUsuario from "./pages/usuarios/ModificarUsuario.jsx";
 import ModificarMarca from "./pages/marcas/ModificarMarca.jsx";
 import ModificarCategoria from "./pages/categorias/ModificarCategoria.jsx";
+import ModificarEstado from "./pages/estados/ModificarEstado.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -140,6 +141,10 @@ const App = () => {
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
                 <Route path="/estado/crear" element={<AgregarEstado />} />
+              </Route>
+              <Route
+                element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
+                <Route path="/estado/:id" element={<ModificarEstado />} />
               </Route>
               <Route path="/estado" element={<TodosEstados />} />
 

@@ -53,7 +53,7 @@ const categoriaSchema = yup.object().shape({
 
 const estadoSchema = yup.object().shape({
   nombre: yup.string().required("El nombre del estado es requerido"),
-  estadoUsable: yup.boolean().required("El estado usable es requerido"),
+  usable: yup.boolean().required("El estado usable es requerido"),
 });
 const usuarioClienteSchema = yup.object().shape({
   correo: yup.string().email().required("El correo es requerido"),

@@ -86,14 +86,24 @@ const actualizar = async ({ id, nombre = null, usable = null } = {}) => {
  *
  * @returns {Promise<Object[]>} Array de objetos con los datos de los estados.
  */
-const obtenerTodo = async () => {
+const obtenerTodo = async (activo = 1) => {
   try {
-    const datos = await sequelize.query(
-      "SELECT * FROM vw_obtenerTodosEstados where ACTIVO=1",
-      {
+    let datos;
+    if (activo == 2) {
+      datos = await sequelize.query("SELECT * FROM vw_obtenerTodosEstados", {
         type: QueryTypes.SELECT,
-      }
-    );
+      });
+    } else {
+      datos = await sequelize.query(
+        "SELECT * FROM vw_obtenerTodosEstados where ACTIVO=:activo",
+        {
+          replacements: {
+            activo,
+          },
+          type: QueryTypes.SELECT,
+        }
+      );
+    }
     return datos;
   } catch (err) {
     errorAndLogHandler({
