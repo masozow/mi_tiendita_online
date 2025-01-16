@@ -22,6 +22,7 @@ import {
   handleRemoveItem,
   handleClearCart,
 } from "../../utils/carritoFunctions";
+import SkeletonComponent from "../../components/SkeletonComponent";
 
 const Carrito = () => {
   const [filas, setFilas] = useState([]);
@@ -29,10 +30,12 @@ const Carrito = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
       obtenerItemsCarrito(user.ID, setFilas);
+      setIsLoading(false);
     }
   }, [user]);
 
@@ -59,7 +62,9 @@ const Carrito = () => {
     setOpenSnackbar(false);
   };
 
-  return (
+  return isLoading ? (
+    <SkeletonComponent />
+  ) : (
     <TableContainer>
       <Table
         sx={{ minWidth: "10rem" }}

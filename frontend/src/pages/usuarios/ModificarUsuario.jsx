@@ -3,6 +3,8 @@ import FormUsuarios from "./FormUsuarios";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const ModificarUsuario = () => {
   const { id } = useParams();
@@ -61,11 +63,9 @@ const ModificarUsuario = () => {
   }, [data, dataCliente]);
 
   return isLoading || isLoadingCliente ? (
-    <Typography>Cargando...</Typography>
+    <SkeletonComponent />
   ) : error || errorCliente ? (
-    <div>
-      Error: {error.message} || {errorCliente.message}
-    </div>
+    <ErrorComponent error={`${error.message} || ${errorCliente.message}`} />
   ) : (
     <>
       {(usuario.correo && usuario.idCliente) || usuario.correo ? (

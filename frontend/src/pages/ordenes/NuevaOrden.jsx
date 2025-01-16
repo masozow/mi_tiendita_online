@@ -25,6 +25,8 @@ import {
 } from "../../utils/carritoFunctions.js";
 import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
 import { useShoppingCart } from "../../store/ShoppingCartContext.jsx";
+import SkeletonComponent from "../../components/SkeletonComponent.jsx";
+import ErrorComponent from "../../components/ErrorComponent.jsx";
 
 const NuevaOrden = () => {
   const navigate = useNavigate();
@@ -177,9 +179,9 @@ const NuevaOrden = () => {
   };
 
   return isDataLoading ? (
-    <Typography>Cargando...</Typography>
+    <SkeletonComponent />
   ) : error ? (
-    <div>Error: {error.message}</div>
+    <ErrorComponent error={error} />
   ) : (
     <Container
       sx={{

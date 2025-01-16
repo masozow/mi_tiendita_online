@@ -3,6 +3,8 @@ import FormMarcas from "./FormMarcas";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const ModificarMarca = () => {
   const { id } = useParams();
@@ -26,9 +28,9 @@ const ModificarMarca = () => {
   }, [data]);
 
   return isLoading ? (
-    <Typography>Cargando...</Typography>
+    <SkeletonComponent />
   ) : error ? (
-    <div>Error: {error.message}</div>
+    <ErrorComponent error={error} />
   ) : (
     <>
       {marca.nombre && (

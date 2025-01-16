@@ -22,6 +22,8 @@ import { useNavigate } from "react-router-dom";
 import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const TodasCategorias = () => {
   const navigate = useNavigate();
@@ -53,9 +55,6 @@ const TodasCategorias = () => {
     }
   }, [data]);
 
-  if (isLoading) return <Typography>Cargando...</Typography>;
-  if (error) return <div>Error: {error.message}</div>;
-
   const handleEdit = (id) => {
     navigate(`/categoria/${id}`);
   };
@@ -81,7 +80,11 @@ const TodasCategorias = () => {
     }
   };
 
-  return (
+  return isLoading ? (
+    <SkeletonComponent />
+  ) : error ? (
+    <ErrorComponent error={error} />
+  ) : (
     <TableContainer>
       <Table sx={{ minWidth: "100%" }} aria-label="tabla de categorías">
         <TableHead>

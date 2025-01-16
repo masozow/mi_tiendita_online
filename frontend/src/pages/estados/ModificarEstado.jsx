@@ -3,6 +3,8 @@ import FormEstados from "./FormEstados";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const ModificarEstado = () => {
   const { id } = useParams();
@@ -26,9 +28,9 @@ const ModificarEstado = () => {
   }, [data]);
 
   return isLoading ? (
-    <Typography>Cargando...</Typography>
+    <SkeletonComponent />
   ) : error ? (
-    <div>Error: {error.message}</div>
+    <ErrorComponent error={error} />
   ) : (
     <>
       {estado.nombre && (
