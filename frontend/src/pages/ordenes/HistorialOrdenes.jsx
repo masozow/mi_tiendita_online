@@ -1,4 +1,3 @@
-import React from "react";
 import TablaOrdenesAcciones from "../../components/Ordenes/TablaOrdenesAcciones";
 
 const HistorialOrdenes = () => {

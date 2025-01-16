@@ -96,7 +96,7 @@ const TablaOrdenesAcciones = ({
     <ErrorComponent error={error} />
   ) : (
     <TableContainer>
-      <Table sx={{ minWidth: "100%" }} aria-label={tituloTabla}>
+      <Table sx={{ minWidth: "100%" }} aria-label={tituloTabla} stickyHeader>
         <TableHead>
           <TableRow>
             <TableCell align="center" colSpan={13}>

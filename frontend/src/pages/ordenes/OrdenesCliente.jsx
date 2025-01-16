@@ -1,5 +1,4 @@
-import React from "react";
-import TablaOrdenesAcciones from "../../components/TablaOrdenesAcciones";
+import TablaOrdenesAcciones from "../../components/Ordenes/TablaOrdenesAcciones";
 import { useAuth } from "../../store/AuthContext";
 
 const OrdenesCliente = () => {
