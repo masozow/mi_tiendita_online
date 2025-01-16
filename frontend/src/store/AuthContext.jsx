@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useQueryHook } from "../hooks/useQueryHook.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import SkeletonComponent from "../components/SkeletonComponent.jsx";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setIsWaiting(false);
-    }, 5000); // Maximum wait time of 5 seconds
+    }, 5000);
 
     return () => clearTimeout(timeout);
   }, []);
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
   }, [error, navigate]);
 
   if ((isLoading || isWaiting) && location.pathname !== "/login") {
-    return <p>Cargando...</p>;
+    return <SkeletonComponent />;
   }
 
   if (error && error.status !== 401 && location.pathname !== "/login") {

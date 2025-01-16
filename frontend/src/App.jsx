@@ -14,6 +14,7 @@ import HistorialOrdenes from "./pages/ordenes/HistorialOrdenes.jsx";
 import TodosUsuarios from "./pages/usuarios/TodosUsuarios.jsx";
 import AgregarUsuario from "./pages/usuarios/AgregarUsuario.jsx";
 import ModificarProducto from "./pages/productos/ModificarProducto.jsx";
+import NoExiste from "./pages/404/NoExiste.jsx";
 
 import { AuthProvider } from "./store/AuthContext.jsx";
 import { ShoppingCartProvider } from "./store/ShoppingCartContext.jsx";
@@ -149,7 +150,7 @@ const App = () => {
               <Route path="/estado" element={<TodosEstados />} />
 
               {/* -------- 404 ----- */}
-              <Route path="*" element={<div>404</div>} />
+              <Route path="*" element={<NoExiste />} />
             </Routes>
           </Container>
         </ShoppingCartProvider>

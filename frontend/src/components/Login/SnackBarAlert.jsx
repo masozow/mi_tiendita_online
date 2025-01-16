@@ -9,7 +9,11 @@ const SnackbarAlert = ({ snackbarState, onClose }) => {
       onClose={onClose}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}>
       <Alert onClose={onClose} severity={snackbarState.severity}>
-        {snackbarState.message}
+        {snackbarState?.message
+          ? typeof snackbarState.message === "string"
+            ? snackbarState.message.split(".")[0]
+            : JSON.stringify(message)
+          : ""}
       </Alert>
     </Snackbar>
   );
