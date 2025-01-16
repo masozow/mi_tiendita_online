@@ -15,8 +15,9 @@ import { errorAndLogHandler, errorLevels } from "../utilities/errorHandler.js";
  * @returns {Promise<void>}
  */
 const get = async (req, res) => {
+  const { ID_ESTADO } = req.query;
   try {
-    const Marcas = await marcas.obtenerTodo();
+    const Marcas = await marcas.obtenerTodo(ID_ESTADO ? ID_ESTADO : 1);
     res.status(200).json({ success: true, data: Marcas });
   } catch (error) {
     res.status(500).json(

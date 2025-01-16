@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   Table,
@@ -18,8 +18,13 @@ import { useAuth } from "../../store/AuthContext";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
+import { useNavigate } from "react-router-dom";
+import { useDynamicMutation } from "../../hooks/useDynamicMutation";
+import snackbarReducer from "../../store/snackBarReducer";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
 
 const TodasCategorias = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -28,8 +33,19 @@ const TodasCategorias = () => {
 
   const { data, isLoading, error } = useQueryHook(
     "todasCategorias",
-    "/api/categorias/"
+    "/api/categorias/?ID_ESTADO=0"
   );
+  const { mutateAsync } = useDynamicMutation("DELETE");
+
+  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    dispatchSnackbar({ type: "CLOSE" });
+  };
 
   useEffect(() => {
     if (data?.data) {
@@ -40,12 +56,29 @@ const TodasCategorias = () => {
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const handleEdit = (categoryId) => {
-    console.log("Edit category with ID:", categoryId);
+  const handleEdit = (id) => {
+    navigate(`/categoria/${id}`);
   };
 
-  const handleDelete = (categoryId) => {
-    console.log("Delete category with ID:", categoryId);
+  const handleDelete = async (id) => {
+    try {
+      const resultado = await mutateAsync({
+        URL: `/api/categorias/${id}`,
+      });
+      console.log("Response:", resultado);
+      dispatchSnackbar({
+        type: "OPEN",
+        message: resultado.data,
+        severity: resultado.success,
+      });
+      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+    } catch (error) {
+      dispatchSnackbar({
+        type: "OPEN",
+        message: error.message,
+        severity: "error",
+      });
+    }
   };
 
   return (
@@ -101,6 +134,10 @@ const TodasCategorias = () => {
           ))}
         </TableBody>
       </Table>
+      <SnackbarAlert
+        snackbarState={snackbarState}
+        onClose={handleSnackbarClose}
+      />
     </TableContainer>
   );
 };

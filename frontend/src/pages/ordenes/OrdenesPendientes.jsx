@@ -19,9 +19,11 @@ import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
 import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import snackbarReducer from "../../store/snackBarReducer";
-import SnackbarAlert from "../../components/Login/SnackbarAlert";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
+import { useNavigate } from "react-router-dom";
 
 const OrdenesPendientes = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -61,18 +63,17 @@ const OrdenesPendientes = () => {
         idEstado: 4,
       };
 
-      await mutateAsync({
+      const resultado = await mutateAsync({
         URL: `/api/ordenes/${ordenId}`,
         data: nuevoEstado,
       });
 
       dispatchSnackbar({
         type: "OPEN",
-        message: "Orden confirmada exitosamente",
-        severity: "success",
+        message: resultado.data,
+        severity: resultado.success,
       });
 
-      // Update the frontend state directly
       setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== ordenId));
     } catch (error) {
       dispatchSnackbar({
@@ -84,7 +85,7 @@ const OrdenesPendientes = () => {
   };
 
   const handleRowClick = (ordenId) => {
-    console.log("Row clicked in OrdenesPendientes:", ordenId);
+    navigate(`/ordenes/${ordenId}`);
   };
 
   return (
@@ -158,8 +159,7 @@ const OrdenesPendientes = () => {
                     <Button
                       aria-label="confirmar"
                       variant="contained"
-                      color="primary"
-                      onClick={(e) => e.stopPropagation()}>
+                      color="primary">
                       Confirmar
                     </Button>
                   }

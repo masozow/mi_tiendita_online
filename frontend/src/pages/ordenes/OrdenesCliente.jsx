@@ -22,7 +22,7 @@ import snackbarReducer from "../../store/snackBarReducer";
 import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import { useNavigate } from "react-router-dom";
 
-const HistorialOrdenes = () => {
+const OrdenesCliente = () => {
   const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
@@ -31,11 +31,11 @@ const HistorialOrdenes = () => {
     breakPointsFromTheme(theme);
 
   const { data, isLoading, error } = useQueryHook(
-    "todasOrdenes",
-    "/api/ordenes/"
+    `Ordenes_${user?.ID}`,
+    `/api/ordenes/usuario/${user?.ID}`
   );
 
-  const { mutateAsync } = useDynamicMutation("PUT");
+  const { mutateAsync } = useDynamicMutation("PATCH");
 
   const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
     open: false,
@@ -49,37 +49,39 @@ const HistorialOrdenes = () => {
 
   useEffect(() => {
     if (data?.data) {
-      const filteredData = data.data.filter((order) => order.ID_ESTADO === 4);
-      setFilas(filteredData);
+      setFilas(data.data);
     }
   }, [data]);
 
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const handleEntregar = async (ordenId) => {
+  const handleConfirmar = async (ordenId) => {
     try {
       const nuevoEstado = {
-        idEstado: 7,
+        idEstado: 4,
       };
 
       const response = await mutateAsync({
-        URL: `/api/ordenes/${ordenId}`,
+        URL: `/api/ordenes/cancel/${ordenId}`,
         data: nuevoEstado,
       });
-
+      console.log("Response:", response);
       dispatchSnackbar({
         type: "OPEN",
         message: response.data,
         severity: response.success,
       });
 
-      // Update the frontend state directly
-      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== ordenId));
+      if (response.success !== "error") {
+        setFilas((prevFilas) =>
+          prevFilas.filter((fila) => fila.ID !== ordenId)
+        );
+      }
     } catch (error) {
       dispatchSnackbar({
         type: "OPEN",
-        message: "Error al entregar la orden",
+        message: "Error al cancelar la orden: " + error.message,
         severity: "error",
       });
     }
@@ -91,12 +93,12 @@ const HistorialOrdenes = () => {
 
   return (
     <TableContainer>
-      <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes entregadas">
+      <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes pendientes">
         <TableHead>
           <TableRow>
             <TableCell align="center" colSpan={13}>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                Historial de Órdenes
+                Órdenes de {user?.NOMBRE}
               </Typography>
             </TableCell>
           </TableRow>
@@ -154,19 +156,24 @@ const HistorialOrdenes = () => {
               <TableCell>{fila.ID_CLIENTE}</TableCell>
               <TableCell>{fila.ID_OPERADOR}</TableCell>
               <TableCell align="center">
-                <Dialogo
-                  onConfirm={() => handleEntregar(fila.ID)}
-                  triggerButton={
-                    <Button
-                      aria-label="entregar"
-                      variant="contained"
-                      color="success">
-                      Entregar
-                    </Button>
-                  }
-                  titulo="Entregar Orden"
-                  mensaje={`¿Desea entregar la orden ${fila.ID}?`}
-                />
+                {fila.ID_ESTADO !== 4 &&
+                  fila.ID_ESTADO !== 2 &&
+                  fila.ID_ESTADO !== 7 && (
+                    <Dialogo
+                      onConfirm={() => handleConfirmar(fila.ID)}
+                      triggerButton={
+                        <Button
+                          aria-label="cancelar"
+                          variant="contained"
+                          color="error"
+                          onClick={(e) => e.stopPropagation()}>
+                          Cancelar
+                        </Button>
+                      }
+                      titulo="Cancelar Orden"
+                      mensaje={`¿Desea cancelar la orden ${fila.ID}?`}
+                    />
+                  )}
               </TableCell>
             </TableRow>
           ))}
@@ -180,4 +187,4 @@ const HistorialOrdenes = () => {
   );
 };
 
-export default HistorialOrdenes;
+export default OrdenesCliente;

@@ -85,6 +85,23 @@ const getByIDCliente = async (req, res) => {
   }
 };
 
+const getByIDUsuario = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const Ordenes = await ordenes.obtenerOrdenPorIDUsuario(id);
+    res.status(200).json({ success: true, data: Ordenes });
+  } catch (error) {
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error obteniendo las ordenes del cliente: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
+  }
+};
+
 /**
  * Obtiene todos los detalles de una orden por su ID.
  *
@@ -304,6 +321,7 @@ const Orden = {
   get,
   getByID,
   getByIDCliente,
+  getByIDUsuario,
   getDetalleByID,
   create,
   update,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   Table,
@@ -7,29 +7,37 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   IconButton,
   Typography,
-  useTheme,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useAuth } from "../../store/AuthContext";
-import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
+import { useNavigate } from "react-router-dom";
+import { useDynamicMutation } from "../../hooks/useDynamicMutation";
+import snackbarReducer from "../../store/snackBarReducer";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
 
 const TodosEstados = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
-  const { user } = useAuth();
-  const theme = useTheme();
-  const { isSmallScreen, isMediumScreen, isLargeScreen } =
-    breakPointsFromTheme(theme);
 
   const { data, isLoading, error } = useQueryHook(
-    "todosEstados",
-    "/api/estados/"
+    `todosEstados_`,
+    "/api/estados//?ACTIVO=2"
   );
+  const { mutateAsync } = useDynamicMutation("DELETE");
+
+  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    dispatchSnackbar({ type: "CLOSE" });
+  };
 
   useEffect(() => {
     if (data?.data) {
@@ -40,12 +48,28 @@ const TodosEstados = () => {
   if (isLoading) return <Typography>Cargando...</Typography>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const handleEdit = (estadoId) => {
-    console.log("Edit estado with ID:", estadoId);
+  const handleEdit = (id) => {
+    navigate(`/estado/${id}`);
   };
 
-  const handleDelete = (estadoId) => {
-    console.log("Delete estado with ID:", estadoId);
+  const handleDelete = async (id) => {
+    try {
+      const resultado = await mutateAsync({
+        URL: `/api/estados/${id}`,
+      });
+      dispatchSnackbar({
+        type: "OPEN",
+        message: resultado.data,
+        severity: resultado.success,
+      });
+      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+    } catch (error) {
+      dispatchSnackbar({
+        type: "OPEN",
+        message: error.message,
+        severity: "error",
+      });
+    }
   };
 
   return (
@@ -103,6 +127,10 @@ const TodosEstados = () => {
           ))}
         </TableBody>
       </Table>
+      <SnackbarAlert
+        snackbarState={snackbarState}
+        onClose={handleSnackbarClose}
+      />
     </TableContainer>
   );
 };

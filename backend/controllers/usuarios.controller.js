@@ -307,7 +307,6 @@ const createUsuarioOperador = async (req, res) => {
   const hashedPassword = await encription.hashedPassword(password);
 
   try {
-    // Create Usuario
     const usuarioResultado = await usuarios.insertar({
       correo,
       nombre,
@@ -318,7 +317,6 @@ const createUsuarioOperador = async (req, res) => {
       idRol,
     });
 
-    // Check if usuarioResultado[0].id is present
     if (!usuarioResultado[0]?.id) {
       throw new Error(
         "Error al crear el usuario: No se obtuvo el ID del usuario."
@@ -398,7 +396,72 @@ const update = async (req, res) => {
     );
   }
 };
+const updateUsuarioCliente = async (req, res) => {
+  const { id } = req.params;
+  console.log("id en params: ", id);
+  console.log("body: ", req.body);
+  const {
+    password,
+    correo,
+    nombre,
+    telefono,
+    fechaNacimiento,
+    idEstado,
+    idRol,
+    idCliente,
+    razonSocial,
+    direccion,
+  } = req.body;
 
+  const hashedPassword = password
+    ? await encription.hashedPassword(password)
+    : password;
+  try {
+    const usuarioResultado = await usuarios.actualizar({
+      id,
+      correo,
+      nombre,
+      password: hashedPassword,
+      telefono,
+      fechaNacimiento,
+      idEstado,
+      idRol,
+    });
+    if (!usuarioResultado[0]?.success === "error") {
+      throw new Error("Error al actualizar el usuario.");
+    }
+    const clienteResultado = await clientes.actualizar({
+      id: idCliente,
+      razonSocial,
+      nombre,
+      direccion,
+      idUsuario: id,
+      idEstado,
+    });
+    const combinedMessage = `${usuarioResultado[0].mensaje} ; ${clienteResultado[0].mensaje}`;
+    res.status(200).json(
+      await errorAndLogHandler({
+        level: errorLevels.info,
+        message:
+          combinedMessage +
+          JSON.stringify({ ...req.body, password: "changed_with_success" }) + //importante cambiar el password acá, si no se guardaría como texto plano en el log
+          "/ Actualizar Usuario + Cliente",
+        genericId: id,
+        userId: req.user.id,
+        shouldSaveLog: true,
+      })
+    );
+  } catch (error) {
+    res.status(500).json(
+      await errorAndLogHandler({
+        level: errorLevels.error,
+        message: `Error actualizando el usuario: ` + error.message,
+        genericId: id,
+        userId: req.user.id,
+      })
+    );
+  }
+};
 /**
  * Elimina un usuario.
  * @async
@@ -450,6 +513,7 @@ const Usuario = {
   createUsuarioCliente,
   createUsuarioOperador,
   update,
+  updateUsuarioCliente,
   delete_,
   login,
   logout,

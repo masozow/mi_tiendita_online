@@ -7,7 +7,7 @@ import { useCustomMutation } from "../../hooks/useLoginMutation.jsx";
 import { useAuth } from "../../store/AuthContext.jsx";
 import schema from "../../utils/yupSchemas.js";
 import { rolesDictionary } from "../../utils/rolesDictionary.js";
-import SnackbarAlert from "../../components/Login/SnackBarAlert.jsx";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
 import onLoginSubmit from "../../utils/onLoginSubmit.js";
 import snackbarReducer from "../../store/snackBarReducer.js";
 import getFieldErrorProps from "../../utils/getFieldErrorProps.js";
@@ -47,6 +47,16 @@ const Login = () => {
         px: { xs: "1rem", md: "2rem" },
         flexGrow: 1,
       }}>
+      <Typography
+        variant="h4"
+        sx={{
+          mb: "3rem",
+          fontWeight: 300,
+          fontFamily: "Roboto, sans-serif",
+          color: "primaary.main",
+        }}>
+        Mi Tiendita Online
+      </Typography>
       <Typography variant="h5" sx={{ mb: "1rem" }}>
         Iniciar sesión
       </Typography>

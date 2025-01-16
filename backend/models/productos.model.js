@@ -243,7 +243,7 @@ const obtenerTodosProductosActivos = async (idMarca = 0, idCategoria = 0) => {
 const obtenerTodoPorID = async (ID) => {
   try {
     const datos = await sequelize.query(
-      "SELECT * FROM vw_Total_productos_activos_stock_mayor_cero WHERE ID= :ID",
+      "SELECT * FROM vw_obtenerTodosProductos WHERE ID= :ID",
       {
         replacements: {
           ID,

@@ -133,14 +133,11 @@ const actualizar = async ({
  * @param {number} [idEstado=1] ID del estado de los usuarios a obtener.
  * @returns {Promise<Object[]>} Array de objetos con los datos de los usuarios.
  */
-const obtenerTodo = async (idEstado = 1) => {
+const obtenerTodo = async () => {
   try {
     const datos = await sequelize.query(
-      "SELECT * FROM vw_obtenerTodosUsuarios WHERE ID_ESTADO= :idEstado",
+      "SELECT * FROM vw_obtenerTodosUsuarios",
       {
-        replacements: {
-          idEstado,
-        },
         type: QueryTypes.SELECT,
       }
     );

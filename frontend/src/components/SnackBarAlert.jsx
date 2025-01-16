@@ -5,7 +5,7 @@ const SnackbarAlert = ({ open, message, severity, onClose }) => {
   useEffect(() => {
     console.log("SnackbarAlert - message:", message);
   }, [message]);
-  if (message.toString().toLowerCase().includes("error")) {
+  if (message?.toString().toLowerCase().includes("error")) {
     severity = "error";
   }
   return (

@@ -270,6 +270,26 @@ const obtenerOrdenPorIDCliente = async (idCliente) => {
   }
 };
 
+const obtenerOrdenPorIDUsuario = async (idUsuario) => {
+  try {
+    const datos = await sequelize.query(
+      "SELECT * FROM vw_ObtenerTodasOrdenes WHERE ID_USUARIO= :idUsuario",
+      {
+        replacements: {
+          idUsuario,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+    return datos;
+  } catch (err) {
+    errorAndLogHandler({
+      level: errorLevels.error,
+      message: "Error al obtener la vista: " + err,
+    });
+    throw err;
+  }
+};
 /**
  * Obtiene todos los detalles de una orden por su ID.
  *
@@ -315,6 +335,7 @@ const ordenes = {
   obtenerTodo,
   obtenerOrdenPorID,
   obtenerOrdenPorIDCliente,
+  obtenerOrdenPorIDUsuario,
   obtenerDetallePorID,
   cancelar,
 };

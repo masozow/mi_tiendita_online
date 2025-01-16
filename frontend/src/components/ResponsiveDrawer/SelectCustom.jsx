@@ -45,7 +45,7 @@ const SelectCustom = ({
             <em>Cargando...</em>
           </MenuItem>
         ) : (
-          data.data?.map((item) => (
+          data?.data?.map((item) => (
             <MenuItem key={item.ID} value={item.ID}>
               {item.NOMBRE}
             </MenuItem>

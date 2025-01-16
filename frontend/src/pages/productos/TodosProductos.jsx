@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import {
   Table,
@@ -18,10 +18,15 @@ import ImageWithFallback from "../../components/ImageWithFallback";
 import { useAuth } from "../../store/AuthContext";
 import { formatoMoneda } from "../../utils/carritoFunctions";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
-import Dialogo from "../../components/Dialogo/Dialogo"; // Import the Dialogo component
+import Dialogo from "../../components/Dialogo/Dialogo";
 import CustomChip from "../../components/CustomChip";
+import { useNavigate } from "react-router-dom";
+import { useDynamicMutation } from "../../hooks/useDynamicMutation";
+import snackbarReducer from "../../store/snackBarReducer";
+import SnackbarAlert from "../../components/Login/SnackBarAlert";
 
 const TodosProductos = () => {
+  const navigate = useNavigate();
   const [filas, setFilas] = useState([]);
   const { user } = useAuth();
   const theme = useTheme();
@@ -32,6 +37,17 @@ const TodosProductos = () => {
     "todosProductos",
     "/api/productos/"
   );
+  const { mutateAsync } = useDynamicMutation("DELETE");
+
+  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    dispatchSnackbar({ type: "CLOSE" });
+  };
 
   useEffect(() => {
     if (data?.data) {
@@ -43,12 +59,28 @@ const TodosProductos = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   const handleEdit = (productId) => {
-    console.log("Edit product with ID:", productId);
+    navigate(`/producto/${productId}`);
   };
 
-  const handleDelete = (productId) => {
-    console.log("Delete product with ID:", productId);
-    // Implement your delete logic here
+  const handleDelete = async (id) => {
+    try {
+      const resultado = await mutateAsync({
+        URL: `/api/productos/${id}`,
+      });
+      console.log("Response:", resultado);
+      dispatchSnackbar({
+        type: "OPEN",
+        message: resultado.data,
+        severity: resultado.success,
+      });
+      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== id));
+    } catch (error) {
+      dispatchSnackbar({
+        type: "OPEN",
+        message: error.message,
+        severity: "error",
+      });
+    }
   };
 
   return (
@@ -139,6 +171,10 @@ const TodosProductos = () => {
           ))}
         </TableBody>
       </Table>
+      <SnackbarAlert
+        snackbarState={snackbarState}
+        onClose={handleSnackbarClose}
+      />
     </TableContainer>
   );
 };

@@ -77,6 +77,7 @@ const actualizar = async ({
   idUsuario = null,
   idEstado = null,
 }) => {
+  console.log("Id en cliente: ", id);
   try {
     if (!id) {
       throw new Error("El id es obligatorio.");

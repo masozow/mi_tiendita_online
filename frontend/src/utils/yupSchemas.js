@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import { es } from "yup-locales";
+import { diffYears } from "@formkit/tempo";
 yup.setLocale(es);
 
 const loginSchema = yup.object().shape({
@@ -52,16 +53,20 @@ const categoriaSchema = yup.object().shape({
 
 const estadoSchema = yup.object().shape({
   nombre: yup.string().required("El nombre del estado es requerido"),
-  estadoUsable: yup.boolean().required("El estado usable es requerido"),
+  usable: yup.boolean().required("El estado usable es requerido"),
 });
 const usuarioClienteSchema = yup.object().shape({
   correo: yup.string().email().required("El correo es requerido"),
   nombre: yup.string().required("El nombre es requerido"),
-  password: yup.string().required("La contraseña es requerida"),
+  password: yup
+    .string()
+    .required()
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
   confirmarContrasena: yup
     .string()
     .oneOf([yup.ref("password"), null], "Las contraseñas deben coincidir")
-    .required("La confirmación de la contraseña es requerida"),
+    .required()
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
   telefono: yup
     .number()
     .required("El teléfono es requerido")
@@ -70,7 +75,14 @@ const usuarioClienteSchema = yup.object().shape({
       "El teléfono debe tener exactamente 8 dígitos",
       (val) => val.toString().length === 8
     ),
-  fechaNacimiento: yup.date().required("La fecha de nacimiento es requerida"),
+  fechaNacimiento: yup
+    .date("Debe introducir una fecha válida.")
+    .required("La fecha de nacimiento es requerida")
+    .test(
+      "fdn",
+      "Debe ser mayor de 18 años",
+      (value) => diffYears(new Date(), new Date(value)) >= 18
+    ),
   idEstado: yup
     .number()
     .integer()
@@ -97,7 +109,14 @@ const usuarioOperadorSchema = yup.object().shape({
       "El teléfono debe tener exactamente 8 dígitos",
       (val) => val.toString().length === 8
     ),
-  fechaNacimiento: yup.date().required("La fecha de nacimiento es requerida"),
+  fechaNacimiento: yup
+    .date("Debe introducir una fecha válida.")
+    .required("La fecha de nacimiento es requerida")
+    .test(
+      "fdn",
+      "Debe ser mayor de 18 años",
+      (value) => diffYears(new Date(), new Date(value)) >= 18
+    ),
   idEstado: yup.number().positive().required("El estado es requerido"),
   idRol: yup.number().required("El rol es requerido"),
 });

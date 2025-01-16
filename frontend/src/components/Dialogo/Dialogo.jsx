@@ -9,17 +9,20 @@ import Button from "@mui/material/Button";
 const Dialogo = ({ onConfirm, triggerButton, mensaje, titulo }) => {
   const [open, setOpen] = useState(false);
 
-  const handleOpenDialog = () => {
+  const handleOpenDialog = (e) => {
+    e.stopPropagation();
     setOpen(true);
   };
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = (e) => {
+    e.stopPropagation();
     setOpen(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = (e) => {
+    e.stopPropagation();
     onConfirm();
-    handleCloseDialog();
+    handleCloseDialog(e);
   };
 
   return (
