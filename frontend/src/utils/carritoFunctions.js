@@ -8,7 +8,9 @@ import {
 
 export const formatoMoneda = (num) =>
   `Q${num?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
-
+export const formatoStock = (stock) => {
+  return stock <= 0 ? " - Agotado" : "";
+};
 export const calcularTotal = (items) =>
   items && items.length > 0
     ? items.map(({ subtotal }) => subtotal).reduce((suma, i) => suma + i, 0)

@@ -18,7 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ImageWithFallback from "../../components/ImageWithFallback";
 import getColumns from "../../utils/getColumns";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
-import { formatoMoneda } from "../../utils/carritoFunctions";
+import { formatoMoneda, formatoStock } from "../../utils/carritoFunctions";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import ResponsiveDrawer from "../../components/ResponsiveDrawer/ResponsiveDrawer";
 import { useAuth } from "../../store/AuthContext";
@@ -142,8 +142,8 @@ const CatalogoProductos = () => {
             />
             {user.ID_ROL === rolesDictionary.Cliente ? (
               <ImageListItemBar
-                title={item.NOMBRE}
-                subtitle={formatoMoneda(item.PRECIO)}
+                title={item.NOMBRE + " - " + item.NOMBRE_MARCA}
+                subtitle={formatoMoneda(item.PRECIO) + formatoStock(item.STOCK)}
                 actionIcon={
                   <IconButton
                     sx={{

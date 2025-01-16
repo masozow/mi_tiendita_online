@@ -29,7 +29,6 @@ export const addItem = async (userId, item) => {
       const request = store.add(item);
 
       request.onsuccess = () => {
-        console.log("Item added to the cart:", item);
         resolve();
       };
 
@@ -122,7 +121,6 @@ export const clearAllItems = async (userId) => {
       const request = store.clear(); // Limpia todos los elementos
 
       request.onsuccess = () => {
-        console.log("All items cleared from the cart.");
         resolve();
       };
 
