@@ -12,20 +12,20 @@ import {
 import { useQueryHook } from "../../hooks/useQueryHook";
 import { useDynamicMutation } from "../../hooks/useDynamicMutation";
 import { formatoMoneda } from "../../utils/carritoFunctions";
-import Dialogo from "../../components/Dialogo/Dialogo";
-import CustomChip from "../../components/CustomChip";
+import Dialogo from "../Dialogo/Dialogo";
+import CustomChip from "../CustomChip";
 import snackbarReducer from "../../store/snackBarReducer";
-import SnackbarAlert from "../../components/Login/SnackBarAlert";
+import SnackbarAlert from "../Login/SnackBarAlert";
 import { useNavigate } from "react-router-dom";
-import SkeletonComponent from "../../components/SkeletonComponent";
-import ErrorComponent from "../../components/ErrorComponent";
+import SkeletonComponent from "../SkeletonComponent";
+import ErrorComponent from "../ErrorComponent";
 
 const TablaOrdenesAcciones = ({
   queryKey,
   queryURL,
   mutateMethod,
   mutateURL,
-  accionBoton,
+  estadoYCondicionBoton,
   etiquetaBoton,
   colorBoton,
   tituloDialogo,
@@ -63,7 +63,7 @@ const TablaOrdenesAcciones = ({
     try {
       const response = await mutateAsync({
         URL: mutateURL(ordenId),
-        data: { idEstado: accionBoton.idEstado },
+        data: { idEstado: estadoYCondicionBoton.idEstado },
       });
 
       dispatchSnackbar({
@@ -159,7 +159,7 @@ const TablaOrdenesAcciones = ({
               <TableCell>{fila.ID_CLIENTE}</TableCell>
               <TableCell>{fila.ID_OPERADOR}</TableCell>
               <TableCell align="center">
-                {accionBoton.condicion(fila.ID_ESTADO) && (
+                {estadoYCondicionBoton.condicion(fila.ID_ESTADO) && (
                   <Dialogo
                     onConfirm={() => handleAction(fila.ID)}
                     triggerButton={
