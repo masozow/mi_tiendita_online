@@ -21,7 +21,7 @@ export const ShoppingCartProvider = ({ children }) => {
 
       fetchCartItems();
     } else {
-      console.log("User is not defined in ShoppingCartProvider");
+      console.log("El usuario no está definido en ShoppingCartProvider");
     }
   }, [user]);
 

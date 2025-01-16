@@ -3,7 +3,6 @@ import { errorLevels, errorAndLogHandler } from "../utilities/errorHandler.js";
 
 const getDatosToken = async (req, res) => {
   const token = req.signedCookies?.authToken; // Token almacenado en cookie HTTP-only
-  console.log("Token en datos-token: ", req.signedCookies?.authToken);
   if (!token) {
     return res.status(401).json(
       await errorAndLogHandler({
@@ -15,7 +14,6 @@ const getDatosToken = async (req, res) => {
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET); // Reemplaza con tu clave secreta
-    console.log("Payload: ", payload);
     const { NOMBRE, NOMBRE_ROL, ID_ROL, ID } = payload; // Extrae los datos necesarios
     return res.status(200).json(
       await errorAndLogHandler({

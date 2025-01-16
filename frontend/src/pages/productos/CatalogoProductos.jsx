@@ -18,10 +18,11 @@ import AddIcon from "@mui/icons-material/Add";
 import ImageWithFallback from "../../components/ImageWithFallback";
 import getColumns from "../../utils/getColumns";
 import { useShoppingCart } from "../../store/ShoppingCartContext";
-import { formatoMoneda } from "../../utils/carritoFunctions";
+import { formatoMoneda, formatoStock } from "../../utils/carritoFunctions";
 import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
 import ResponsiveDrawer from "../../components/ResponsiveDrawer/ResponsiveDrawer";
-
+import { useAuth } from "../../store/AuthContext";
+import { rolesDictionary } from "../../utils/rolesDictionary";
 const initialState = {
   marca: 0,
   categoria: 0,
@@ -39,6 +40,7 @@ const reducerMarcaCatalogo = (state, action) => {
 };
 
 const CatalogoProductos = () => {
+  const { user, isLoading: isLoadingUser } = useAuth();
   const [state, dispatch] = useReducer(reducerMarcaCatalogo, initialState);
   const [filteredData, setFilteredData] = useState([]);
   const { data, isLoading, error } = useQueryHook(
@@ -138,31 +140,38 @@ const CatalogoProductos = () => {
               width="100%"
               objectFit="cover"
             />
-            <ImageListItemBar
-              title={item.NOMBRE}
-              subtitle={formatoMoneda(item.PRECIO)}
-              actionIcon={
-                <IconButton
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.9)",
-                    opacity: cartState.some(
+            {user.ID_ROL === rolesDictionary.Cliente ? (
+              <ImageListItemBar
+                title={item.NOMBRE + " - " + item.NOMBRE_MARCA}
+                subtitle={formatoMoneda(item.PRECIO) + formatoStock(item.STOCK)}
+                actionIcon={
+                  <IconButton
+                    sx={{
+                      color: "rgba(255, 255, 255, 0.9)",
+                      opacity: cartState.some(
+                        (cartItem) => cartItem.idProducto === item.ID
+                      )
+                        ? 0.3
+                        : 1,
+                    }}
+                    aria-label={`info about ${item.NOMBRE}`}
+                    onClick={(event) => handleIconClick(event, item)}>
+                    {cartState.some(
                       (cartItem) => cartItem.idProducto === item.ID
-                    )
-                      ? 0.3
-                      : 1,
-                  }}
-                  aria-label={`info about ${item.NOMBRE}`}
-                  onClick={(event) => handleIconClick(event, item)}>
-                  {cartState.some(
-                    (cartItem) => cartItem.idProducto === item.ID
-                  ) ? (
-                    <RemoveShoppingCartIcon />
-                  ) : (
-                    <AddShoppingCartIcon />
-                  )}
-                </IconButton>
-              }
-            />
+                    ) ? (
+                      <RemoveShoppingCartIcon />
+                    ) : (
+                      <AddShoppingCartIcon />
+                    )}
+                  </IconButton>
+                }
+              />
+            ) : (
+              <ImageListItemBar
+                title={item.NOMBRE}
+                subtitle={formatoMoneda(item.PRECIO)}
+              />
+            )}
           </ImageListItem>
         ))}
       </ImageList>

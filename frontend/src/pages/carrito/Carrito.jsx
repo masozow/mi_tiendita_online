@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
@@ -23,6 +22,7 @@ import {
   handleRemoveItem,
   handleClearCart,
 } from "../../utils/carritoFunctions";
+import SkeletonComponent from "../../components/SkeletonComponent";
 
 const Carrito = () => {
   const [filas, setFilas] = useState([]);
@@ -30,10 +30,12 @@ const Carrito = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
       obtenerItemsCarrito(user.ID, setFilas);
+      setIsLoading(false);
     }
   }, [user]);
 
@@ -60,8 +62,10 @@ const Carrito = () => {
     setOpenSnackbar(false);
   };
 
-  return (
-    <TableContainer component={Paper}>
+  return isLoading ? (
+    <SkeletonComponent />
+  ) : (
+    <TableContainer>
       <Table
         sx={{ minWidth: "10rem" }}
         aria-label="tabla de carrito de compras">

@@ -14,6 +14,7 @@ import HistorialOrdenes from "./pages/ordenes/HistorialOrdenes.jsx";
 import TodosUsuarios from "./pages/usuarios/TodosUsuarios.jsx";
 import AgregarUsuario from "./pages/usuarios/AgregarUsuario.jsx";
 import ModificarProducto from "./pages/productos/ModificarProducto.jsx";
+import NoExiste from "./pages/404/NoExiste.jsx";
 
 import { AuthProvider } from "./store/AuthContext.jsx";
 import { ShoppingCartProvider } from "./store/ShoppingCartContext.jsx";
@@ -83,8 +84,10 @@ const App = () => {
               </Route>
 
               {/* -------- Carrito ----- */}
-              <Route path="/carrito" element={<Carrito />} />
-
+              <Route
+                element={<ProtectedRoute roles={[rolesDictionary.Cliente]} />}>
+                <Route path="/carrito" element={<Carrito />} />
+              </Route>
               {/* -------- Ordenes ----- */}
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
@@ -93,8 +96,18 @@ const App = () => {
                   element={<HistorialOrdenes />}
                 />
               </Route>
-              <Route path="/ordenes/crear" element={<NuevaOrden />} />
-              <Route path="/ordenes/cliente" element={<OrdenesCliente />} />
+              <Route
+                element={
+                  <ProtectedRoute
+                    roles={[rolesDictionary.Cliente, rolesDictionary.Operador]}
+                  />
+                }>
+                <Route path="/ordenes/crear" element={<NuevaOrden />} />
+              </Route>
+              <Route
+                element={<ProtectedRoute roles={[rolesDictionary.Cliente]} />}>
+                <Route path="/ordenes/cliente" element={<OrdenesCliente />} />
+              </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
                 <Route
@@ -102,7 +115,14 @@ const App = () => {
                   element={<OrdenesPendientes />}
                 />
               </Route>
-              <Route path="/ordenes/:ordenId" element={<OrdenYDetalle />} />
+              <Route
+                element={
+                  <ProtectedRoute
+                    roles={[rolesDictionary.Cliente, rolesDictionary.Operador]}
+                  />
+                }>
+                <Route path="/ordenes/:ordenId" element={<OrdenYDetalle />} />
+              </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
                 <Route path="/ordenes/" element={<TodasOrdenes />} />
@@ -122,21 +142,39 @@ const App = () => {
               </Route>
 
               {/* -------- Categorias ----- */}
-              <Route path="/categoria/crear" element={<AgregarCategoria />} />
+              <Route
+                element={
+                  <ProtectedRoute
+                    roles={[rolesDictionary.Cliente, rolesDictionary.Operador]}
+                  />
+                }>
+                <Route path="/categoria/crear" element={<AgregarCategoria />} />
+              </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
                 <Route path="/categoria/:id" element={<ModificarCategoria />} />
               </Route>
-              <Route path="/categoria" element={<TodasCategorias />} />
-
+              <Route
+                element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
+                <Route path="/categoria" element={<TodasCategorias />} />
+              </Route>
               {/* -------- Marcas ----- */}
-              <Route path="/marca/crear" element={<AgregarMarca />} />
+              <Route
+                element={
+                  <ProtectedRoute
+                    roles={[rolesDictionary.Cliente, rolesDictionary.Operador]}
+                  />
+                }>
+                <Route path="/marca/crear" element={<AgregarMarca />} />
+              </Route>
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
                 <Route path="/marca/:id" element={<ModificarMarca />} />
               </Route>
-              <Route path="/marca" element={<TodasMarcas />} />
-
+              <Route
+                element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
+                <Route path="/marca" element={<TodasMarcas />} />
+              </Route>
               {/* -------- Estados ----- */}
               <Route
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
@@ -146,10 +184,12 @@ const App = () => {
                 element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
                 <Route path="/estado/:id" element={<ModificarEstado />} />
               </Route>
-              <Route path="/estado" element={<TodosEstados />} />
-
+              <Route
+                element={<ProtectedRoute roles={[rolesDictionary.Operador]} />}>
+                <Route path="/estado" element={<TodosEstados />} />
+              </Route>
               {/* -------- 404 ----- */}
-              <Route path="*" element={<div>404</div>} />
+              <Route path="*" element={<NoExiste />} />
             </Routes>
           </Container>
         </ShoppingCartProvider>

@@ -1,181 +1,21 @@
-import React, { useEffect, useState, useReducer } from "react";
-import { useQueryHook } from "../../hooks/useQueryHook";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  useTheme,
-  Button,
-} from "@mui/material";
-import { useAuth } from "../../store/AuthContext";
-import { formatoMoneda } from "../../utils/carritoFunctions";
-import { breakPointsFromTheme } from "../../utils/breakPointFunctions";
-import Dialogo from "../../components/Dialogo/Dialogo";
-import CustomChip from "../../components/CustomChip";
-import { useDynamicMutation } from "../../hooks/useDynamicMutation";
-import snackbarReducer from "../../store/snackBarReducer";
-import SnackbarAlert from "../../components/Login/SnackBarAlert";
-import { useNavigate } from "react-router-dom";
+import TablaOrdenesAcciones from "../../components/Ordenes/TablaOrdenesAcciones";
 
 const OrdenesPendientes = () => {
-  const navigate = useNavigate();
-  const [filas, setFilas] = useState([]);
-  const { user } = useAuth();
-  const theme = useTheme();
-  const { isSmallScreen, isMediumScreen, isLargeScreen } =
-    breakPointsFromTheme(theme);
-
-  const { data, isLoading, error } = useQueryHook(
-    "todasOrdenes",
-    "/api/ordenes/"
-  );
-
-  const { mutateAsync } = useDynamicMutation("PUT");
-
-  const [snackbarState, dispatchSnackbar] = useReducer(snackbarReducer, {
-    open: false,
-    message: "",
-    severity: "success",
-  });
-
-  const handleSnackbarClose = () => {
-    dispatchSnackbar({ type: "CLOSE" });
-  };
-
-  useEffect(() => {
-    if (data?.data) {
-      const filteredData = data.data.filter((order) => order.ID_ESTADO === 3);
-      setFilas(filteredData);
-    }
-  }, [data]);
-
-  if (isLoading) return <Typography>Cargando...</Typography>;
-  if (error) return <div>Error: {error.message}</div>;
-
-  const handleConfirmar = async (ordenId) => {
-    try {
-      const nuevoEstado = {
-        idEstado: 4,
-      };
-
-      const resultado = await mutateAsync({
-        URL: `/api/ordenes/${ordenId}`,
-        data: nuevoEstado,
-      });
-
-      dispatchSnackbar({
-        type: "OPEN",
-        message: resultado.data,
-        severity: resultado.success,
-      });
-
-      setFilas((prevFilas) => prevFilas.filter((fila) => fila.ID !== ordenId));
-    } catch (error) {
-      dispatchSnackbar({
-        type: "OPEN",
-        message: "Error al confirmar la orden",
-        severity: "error",
-      });
-    }
-  };
-
-  const handleRowClick = (ordenId) => {
-    navigate(`/ordenes/${ordenId}`);
-  };
-
   return (
-    <TableContainer>
-      <Table sx={{ minWidth: "100%" }} aria-label="tabla de órdenes pendientes">
-        <TableHead>
-          <TableRow>
-            <TableCell align="center" colSpan={13}>
-              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                Órdenes Pendientes
-              </Typography>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>
-              <b>ID</b>
-            </TableCell>
-            <TableCell>
-              <b>Fecha Creación</b>
-            </TableCell>
-            <TableCell>
-              <b>Nombre</b>
-            </TableCell>
-            <TableCell>
-              <b>Dirección</b>
-            </TableCell>
-            <TableCell>
-              <b>Teléfono</b>
-            </TableCell>
-            <TableCell>
-              <b>Fecha Entrega</b>
-            </TableCell>
-            <TableCell>
-              <b>Total</b>
-            </TableCell>
-            <TableCell>
-              <b>ID Estado</b>
-            </TableCell>
-            <TableCell>
-              <b>ID Cliente</b>
-            </TableCell>
-            <TableCell>
-              <b>ID Operador</b>
-            </TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filas.map((fila) => (
-            <TableRow
-              key={fila.ID}
-              hover
-              onClick={() => handleRowClick(fila.ID)}
-              style={{ cursor: "pointer" }}>
-              <TableCell>{fila.ID}</TableCell>
-              <TableCell>{fila.FECHA_CREACION}</TableCell>
-              <TableCell>{fila.NOMBRE}</TableCell>
-              <TableCell>{fila.DIRECCION}</TableCell>
-              <TableCell>{fila.TELEFONO}</TableCell>
-              <TableCell>{fila.FECHA_ENTREGA}</TableCell>
-              <TableCell>{formatoMoneda(fila.TOTAL)}</TableCell>
-              <TableCell align="center">
-                <CustomChip incomingLabel={fila.ID_ESTADO} />
-              </TableCell>
-              <TableCell>{fila.ID_CLIENTE}</TableCell>
-              <TableCell>{fila.ID_OPERADOR}</TableCell>
-              <TableCell align="center">
-                <Dialogo
-                  onConfirm={() => handleConfirmar(fila.ID)}
-                  triggerButton={
-                    <Button
-                      aria-label="confirmar"
-                      variant="contained"
-                      color="primary">
-                      Confirmar
-                    </Button>
-                  }
-                  titulo="Confirmar Orden"
-                  mensaje={`¿Desea confirmar la orden ${fila.ID}?`}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <SnackbarAlert
-        snackbarState={snackbarState}
-        onClose={handleSnackbarClose}
-      />
-    </TableContainer>
+    <TablaOrdenesAcciones
+      queryKey="todasOrdenes"
+      queryURL="/api/ordenes/"
+      mutateMethod="PUT"
+      mutateURL={(ordenId) => `/api/ordenes/${ordenId}`}
+      estadoYCondicionBoton={{ idEstado: 4, condicion: () => true }}
+      etiquetaBoton="Confirmar"
+      colorBoton="primary"
+      tituloDialogo="Confirmar Orden"
+      mensajeDialogo={(ordenId) => `¿Desea confirmar la orden ${ordenId}?`}
+      navigateURL={(ordenId) => `/ordenes/${ordenId}`}
+      tituloTabla="Órdenes Pendientes"
+      funcionFiltro={(data) => data.filter((orden) => orden.ID_ESTADO === 3)}
+    />
   );
 };
 

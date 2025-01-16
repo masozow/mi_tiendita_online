@@ -3,6 +3,8 @@ import FormProductos from "./FormProductos";
 import { useQueryHook } from "../../hooks/useQueryHook";
 import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
+import SkeletonComponent from "../../components/SkeletonComponent";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const ModificarProducto = () => {
   const { id } = useParams();
@@ -50,9 +52,9 @@ const ModificarProducto = () => {
   };
 
   return isLoading ? (
-    <Typography>Cargando...</Typography>
+    <SkeletonComponent />
   ) : error ? (
-    <div>Error: {error.message}</div>
+    <ErrorComponent error={error} />
   ) : (
     <>
       {producto.codigoProducto && (
