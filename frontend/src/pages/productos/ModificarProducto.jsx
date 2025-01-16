@@ -8,7 +8,7 @@ import ErrorComponent from "../../components/ErrorComponent";
 
 const ModificarProducto = () => {
   const { id } = useParams();
-  const { data, isLoading, error } = useQueryHook(
+  const { data, isLoading, error, refetch } = useQueryHook(
     `ObtenerProducto_${id}`,
     `/api/productos/${id}`
   );
@@ -23,6 +23,7 @@ const ModificarProducto = () => {
     idEstado: 0,
     fotoProducto: null,
   });
+
   useEffect(() => {
     if (data?.data && data?.data.length > 0) {
       setProducto({
@@ -38,18 +39,6 @@ const ModificarProducto = () => {
       });
     }
   }, [data]);
-
-  const dummyData = {
-    codigoProducto: "12345",
-    nombreProducto: "Producto de Prueba",
-    stockProducto: 100,
-    costoProducto: 50,
-    precioProducto: 100,
-    idCategoria: "1",
-    idMarca: "1",
-    idEstado: 1,
-    fotoProducto: "iPhone.jpg",
-  };
 
   return isLoading ? (
     <SkeletonComponent />

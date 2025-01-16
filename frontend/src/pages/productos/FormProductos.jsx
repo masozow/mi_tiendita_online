@@ -43,9 +43,6 @@ const FormProductos = ({ data, URL, httpMethod, submitMessage }) => {
   const handleSnackbarClose = () => {
     dispatchSnackbar({ type: "CLOSE" });
   };
-  useEffect(() => {
-    console.log("Data in form: ", data);
-  }, [data]);
 
   const theme = useTheme();
   const { isSmallScreen, isMediumScreen, isLargeScreen } =
@@ -93,16 +90,15 @@ const FormProductos = ({ data, URL, httpMethod, submitMessage }) => {
       dispatchSnackbar,
       mutateAsync,
       () => {
-        console.log("Producto data: ", formData);
-        if (data) {
-          navigate(-1);
-        }
         setImagePreview(null);
         setSelectedMarca("");
         setSelectedCategoria("");
         setSelectedEstado(1);
         reset();
         setFocus("codigoProducto");
+        if (data) {
+          navigate(-1);
+        }
       }
     );
   };
